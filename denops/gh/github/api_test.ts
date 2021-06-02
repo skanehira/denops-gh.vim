@@ -4,7 +4,7 @@ import {
 } from "https://deno.land/std@0.97.0/testing/asserts.ts";
 import { path } from "../deps.ts";
 import { yaml } from "../deps.ts";
-import { getToken } from "./api.ts";
+import { getIssues, getToken } from "./api.ts";
 import { fs } from "../deps.ts";
 
 Deno.test("get github token", async () => {
@@ -72,6 +72,7 @@ Deno.test("get config without token", async () => {
 Deno.test("get config without arg", async () => {
   const tmp = await Deno.makeTempDir();
   const oldHome = Deno.env.get("HOME") as string;
+
   Deno.env.set("HOME", tmp);
   const configPath = path.join(tmp, ".config", "gh", "hosts.yml");
   const config = {
@@ -90,4 +91,15 @@ Deno.test("get config without arg", async () => {
     await Deno.remove(configPath);
     Deno.env.set("HOME", oldHome);
   }
+});
+
+Deno.test("get issues", async () => {
+  const issues = await getIssues({
+    Owner: "skanehira",
+    Name: "gh.vim",
+  });
+
+  issues.forEach((issue) => {
+    console.dir(issue);
+  });
 });
