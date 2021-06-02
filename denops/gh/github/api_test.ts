@@ -30,6 +30,7 @@ Deno.test("get github token", async () => {
 });
 
 Deno.test("get config without $HOME", async () => {
+  const oldHome = Deno.env.get("HOME") as string;
   await assertThrowsAsync(
     () => {
       Deno.env.delete("HOME");
@@ -38,6 +39,7 @@ Deno.test("get config without $HOME", async () => {
     Error,
     "$HOME is empty",
   );
+  Deno.env.set("HOME", oldHome);
 });
 
 Deno.test("get config with not exists dir", async () => {
@@ -69,6 +71,7 @@ Deno.test("get config without token", async () => {
 
 Deno.test("get config without arg", async () => {
   const tmp = await Deno.makeTempDir();
+  const oldHome = Deno.env.get("HOME") as string;
   Deno.env.set("HOME", tmp);
   const configPath = path.join(tmp, ".config", "gh", "hosts.yml");
   const config = {
@@ -79,6 +82,12 @@ Deno.test("get config without arg", async () => {
 
   await fs.ensureFile(configPath);
   await Deno.writeTextFile(configPath, yaml.stringify(config));
-  const got = await getToken();
-  assertEquals(got, config["github.com"]["oauth_token"]);
+
+  try {
+    const got = await getToken();
+    assertEquals(got, config["github.com"]["oauth_token"]);
+  } finally {
+    await Deno.remove(configPath);
+    Deno.env.set("HOME", oldHome);
+  }
 });
