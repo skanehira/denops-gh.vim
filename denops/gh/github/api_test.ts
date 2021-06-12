@@ -4,7 +4,7 @@ import {
 } from "https://deno.land/std@0.97.0/testing/asserts.ts";
 import { path } from "../deps.ts";
 import { yaml } from "../deps.ts";
-import { getIssues, getToken } from "./api.ts";
+import { getToken } from "./api.ts";
 import { fs } from "../deps.ts";
 
 Deno.test("get github token", async () => {
@@ -91,15 +91,4 @@ Deno.test("get config without arg", async () => {
     await Deno.remove(configPath);
     Deno.env.set("HOME", oldHome);
   }
-});
-
-Deno.test("get issues", async () => {
-  const issues = await getIssues({
-    Owner: "skanehira",
-    Name: "gh.vim",
-  });
-
-  issues.forEach((issue) => {
-    console.dir(issue);
-  });
 });

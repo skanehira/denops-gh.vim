@@ -53,34 +53,10 @@ const fetchToken = once(async (path?: string) => {
   return await getToken(path);
 });
 
-const endpoint = "https://api.github.com/graphql";
+export const endpoint = "https://api.github.com/graphql";
 
-export interface Repository {
-  Name: string;
-  Owner: string;
-}
-
-export interface Issue {
-  ID: number;
-  Title: string;
-  State: string;
-}
-
-export async function getIssues(repo: Repository): Promise<Issue[]> {
+export async function query<T>(endpoint: string, query: unknown): Promise<T> {
   const token = await fetchToken();
-  const query = `
-  {
-    repository(owner: "${repo.Owner}", name: "${repo.Name}") {
-      issues(first: 100, states: [OPEN]) {
-        nodes{
-          id
-          title
-          state
-        }
-      }
-    }
-  }
-  `;
 
   const body = JSON.stringify({ query: query });
 
@@ -94,6 +70,6 @@ export async function getIssues(repo: Repository): Promise<Issue[]> {
     body: body,
   });
 
-  const json = await resp.json();
-  return json.data.repository.issues.nodes;
+  const respBody = await resp.json();
+  return respBody;
 }
