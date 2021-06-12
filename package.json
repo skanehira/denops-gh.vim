@@ -1,0 +1,19 @@
+{
+  "name": "denops-gh.vim",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:skanehira/denops-gh.vim.git",
+  "author": "skanehira <sho19921005@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^15.5.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.21.5",
+    "@graphql-codegen/introspection": "1.18.2",
+    "@graphql-codegen/typescript-resolvers": "^1.19.2"
+  },
+  "scripts": {
+    "generate": "graphql-codegen --config codegen.yml"
+  }
+}

@@ -4,5 +4,5 @@ coverage:
 	@deno coverage cov
 	@rm -rf cov
 test:
-	@deno test --allow-all --unstable --no-check
+	@deno test --allow-all --unstable --no-check denops/
 
