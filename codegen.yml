@@ -1,8 +1,0 @@
-overwrite: true
-schema: "./denops/gh/github/schema.docs.graphql"
-documents: null
-generates:
-  denops/gh/github/schema.ts:
-    plugins:
-      - typescript
-      - typescript-resolvers
