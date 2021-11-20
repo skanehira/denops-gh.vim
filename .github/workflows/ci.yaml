@@ -1,0 +1,73 @@
+name: ci
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+jobs:
+  lint:
+    strategy:
+      matrix:
+        deno-version: [v1.x]
+        os: [
+          ubuntu-latest,
+          #windows-latest,
+          macos-latest
+        ]
+    name: deno lint
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: denoland/setup-deno@main
+        with:
+          deno-version: ${{ matrix.deno-version }}
+      - name: run lint
+        run: deno lint
+  test:
+    strategy:
+      matrix:
+        runner:
+          #- windows-latest
+          - macos-latest
+          - ubuntu-latest
+        version:
+          - "1.x"
+        host_version:
+          - vim: "v8.2.3081"
+            nvim: "v0.5.0"
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - run: git config --global core.autocrlf false
+        if: runner.os == 'Windows'
+      - uses: actions/checkout@v2
+      - uses: denoland/setup-deno@main
+        with:
+          deno-version: "${{ matrix.version }}"
+      - uses: rhysd/action-setup-vim@v1
+        id: vim
+        with:
+          version: "${{ matrix.host_version.vim }}"
+        if: matrix.host_version.vim != ''
+      - uses: rhysd/action-setup-vim@v1
+        id: nvim
+        with:
+          neovim: true
+          version: "${{ matrix.host_version.nvim }}"
+        if: matrix.host_version.nvim != ''
+      - name: Clone denops
+        id: denops
+        run: |
+          git clone https://github.com/vim-denops/denops.vim $HOME/denops.vim
+          echo "::set-output name=path::$HOME/denops.vim"
+      - name: Test
+        run: |
+          make test
+        env:
+          DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable }}
+          DENOPS_TEST_NVIM: ${{ steps.nvim.outputs.executable }}
+          DENOPS_PATH: ${{ steps.denops.outputs.path }}
+        timeout-minutes: 5

@@ -1,8 +1,18 @@
-.PHOY: coverage
-coverage:
-	@deno test --allow-all --unstable --no-check --coverage=cov
+.PHONY: coverage
+coverage: test
 	@deno coverage cov
 	@rm -rf cov
-test:
-	@deno test --allow-all --unstable --no-check denops/
 
+.PHONY: test-local
+test-local:
+	@DENOPS_PATH=$$GHQ_ROOT/github.com/vim-denops/denops.vim DENOPS_TEST_NVIM=$$(which nvim) DENOPS_TEST_VIM=$$(which vim) deno test -A --unstable --coverage=cov
+	@deno coverage cov
+	@rm -rf cov
+
+.PHONY: test
+test:
+	@deno test -A --unstable
+
+.PHONY: update-deps
+update-deps:
+	@udd denops/template/deps.ts
