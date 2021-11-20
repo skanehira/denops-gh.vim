@@ -5,7 +5,7 @@ import { PullRequestConnection } from "./schema.ts";
 type AssociatedPullRequests = {
   data: {
     repository: {
-      object: {
+      object?: {
         associatedPullRequests: PullRequestConnection;
       };
     };
@@ -38,6 +38,10 @@ query {
   const resp = await query<AssociatedPullRequests>({
     query: q,
   });
+
+  if (!resp.data.repository.object) {
+    throw new Error("not found pull request");
+  }
 
   const nodes = resp.data.repository.object.associatedPullRequests.nodes;
   if (!nodes || !nodes.length) {
