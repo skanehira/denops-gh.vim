@@ -21,6 +21,10 @@ export type LabelConnection = {
   nodes: Label[];
 };
 
+export type Repository = {
+  name: string;
+};
+
 export type SearchIssueItem = {
   __typename?: "Issue";
   title: string;
@@ -29,6 +33,7 @@ export type SearchIssueItem = {
   labels: LabelConnection;
   closed: boolean;
   number: number;
+  repository: Repository;
   url: string;
   state: "OPEN" | "CLOSED" | "MERGED";
 };

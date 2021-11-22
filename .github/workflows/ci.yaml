@@ -65,6 +65,13 @@ jobs:
           echo "::set-output name=path::$HOME/denops.vim"
       - name: Test
         run: |
+          mkdir -p $HOME/.config/gh
+          cat <<EOF > $HOME/.config/gh/hosts.yml
+          github.com:
+            oauth_token: ${{ secrets.GITHUB_TOKEN }}
+            user: skanehira
+          EOF
+          cd mock && npm install && cd -
           make test
         env:
           DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable }}

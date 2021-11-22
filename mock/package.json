@@ -1,0 +1,16 @@
+{
+  "name": "mock",
+  "version": "1.0.0",
+  "description": "GitHub GraphQL API mock",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "skanehira",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^3.5.0",
+    "graphql": "^15.7.2"
+  }
+}
