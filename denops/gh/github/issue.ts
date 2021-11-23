@@ -10,8 +10,8 @@ export interface QueryIssues {
 export type IssueFilter = {
   endpoint?: string;
   after?: string;
-  Owner: string;
-  Name: string;
+  owner: string;
+  name: string;
   Filter?: IssueFilters;
 };
 
@@ -20,9 +20,8 @@ export async function getIssues(
 ): Promise<ResultIssue> {
   // default query
   const filter: string[] = [
-    `repo:${req.Owner}/${req.Name}`,
-    "is:ISSUE",
-    "is:OPEN",
+    `repo:${req.owner}/${req.name}`,
+    `type:issue`,
   ];
 
   if (req.Filter) {
@@ -36,6 +35,8 @@ export async function getIssues(
       filter.push(...req.Filter.states.map((v) => {
         return `state:${v}`;
       }));
+    } else {
+      filter.push("state:OPEN");
     }
 
     if (req.Filter.assignees) {
@@ -43,6 +44,8 @@ export async function getIssues(
         return `assignee:${v}`;
       }));
     }
+  } else {
+    filter.push("state:OPEN");
   }
 
   const q = `
@@ -68,6 +71,9 @@ export async function getIssues(
           },
           closed,
           number,
+          repository {
+            name,
+          }
           url,
           state,
         }

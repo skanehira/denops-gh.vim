@@ -1,10 +1,13 @@
 import { assertEquals, assertRejects } from "../deps.ts";
 import { getPRWithCommitHash } from "./pr.ts";
 
+const testEndpoint = "http://localhost:4000";
+
 Deno.test({
   name: "get pr wit commit hash",
   fn: async () => {
     const got = await getPRWithCommitHash({
+      endpoint: testEndpoint,
       owner: "skanehira",
       name: "getpr",
       commit: "110b584",
@@ -21,6 +24,7 @@ Deno.test({
     await assertRejects(
       async () => {
         await getPRWithCommitHash({
+          endpoint: testEndpoint,
           owner: "skanehira",
           name: "getpr",
           commit: "2222222",
