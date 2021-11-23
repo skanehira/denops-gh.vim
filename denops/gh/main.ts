@@ -1,13 +1,14 @@
 import { Denops } from "./deps.ts";
-import { getPRWithCommitHash } from "./github/pr.ts";
+import { getAssociatedPullRequest } from "./github/pr.ts";
+import { endpoint } from "./github/api.ts";
 
 export async function main(denops: Denops): Promise<void> {
   await denops.cmd(
-    `command! -nargs=? GhGetPRWithCommit call denops#notify("${denops.name}", "getPRWithCommit", [<f-args>])`,
+    `command! -nargs=? GhGetAssociatedPullRequest call denops#notify("${denops.name}", "getAssociatedPullRequest", [<f-args>])`,
   );
 
   denops.dispatcher = {
-    async getPRWithCommit(...arg: unknown[]): Promise<void> {
+    async getAssociatedPullRequest(...arg: unknown[]): Promise<void> {
       const parse = (): {
         owner?: string;
         name?: string;
@@ -30,7 +31,7 @@ export async function main(denops: Denops): Promise<void> {
       };
 
       const req = parse();
-      const url = await getPRWithCommitHash(req);
+      const url = await getAssociatedPullRequest(endpoint, req);
       console.log(url);
     },
   };

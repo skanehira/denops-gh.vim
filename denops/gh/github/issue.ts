@@ -7,8 +7,7 @@ export interface QueryIssues {
   };
 }
 
-export type IssueFilter = {
-  endpoint?: string;
+export type IssueCondition = {
   after?: string;
   owner: string;
   name: string;
@@ -16,31 +15,32 @@ export type IssueFilter = {
 };
 
 export async function getIssues(
-  req: IssueFilter,
+  endpoint: string,
+  cond: IssueCondition,
 ): Promise<ResultIssue> {
   // default query
   const filter: string[] = [
-    `repo:${req.owner}/${req.name}`,
+    `repo:${cond.owner}/${cond.name}`,
     `type:issue`,
   ];
 
-  if (req.Filter) {
-    if (req.Filter.labels) {
-      filter.push(...req.Filter.labels.map((v) => {
+  if (cond.Filter) {
+    if (cond.Filter.labels) {
+      filter.push(...cond.Filter.labels.map((v) => {
         return `label:${v}`;
       }));
     }
 
-    if (req.Filter.states) {
-      filter.push(...req.Filter.states.map((v) => {
+    if (cond.Filter.states) {
+      filter.push(...cond.Filter.states.map((v) => {
         return `state:${v}`;
       }));
     } else {
       filter.push("state:OPEN");
     }
 
-    if (req.Filter.assignees) {
-      filter.push(...req.Filter.assignees.map((v) => {
+    if (cond.Filter.assignees) {
+      filter.push(...cond.Filter.assignees.map((v) => {
         return `assignee:${v}`;
       }));
     }
@@ -87,7 +87,7 @@ export async function getIssues(
   }`;
 
   const json = await query<QueryIssues>({
-    endpoint: req.endpoint,
+    endpoint: endpoint,
     query: q,
   });
   return json.data.search;

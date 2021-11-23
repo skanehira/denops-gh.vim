@@ -12,17 +12,18 @@ type AssociatedPullRequests = {
   };
 };
 
-export async function getPRWithCommitHash(
-  req: { endpoint: string; owner?: string; name?: string; commit: string },
+export async function getAssociatedPullRequest(
+  endpoint: string,
+  cond: { owner?: string; name?: string; commit: string },
 ): Promise<string> {
   const curp = await getRepo();
-  req.owner = req.owner || curp.Owner;
-  req.name = req.name || curp.Name;
+  cond.owner = cond.owner || curp.Owner;
+  cond.name = cond.name || curp.Name;
 
   const q = `
 query {
-  repository(owner: "${req.owner}", name: "${req.name}"){
-    object(expression: "${req.commit}"){
+  repository(owner: "${cond.owner}", name: "${cond.name}"){
+    object(expression: "${cond.commit}"){
       ... on Commit {
         associatedPullRequests(first: 1){
           nodes {
@@ -38,12 +39,13 @@ query {
 }`;
 
   const resp = await query<AssociatedPullRequests>({
-    endpoint: req.endpoint,
+    endpoint: endpoint,
     query: q,
   });
 
   if (!resp.data.repository.object) {
-    console.error(resp);
+    console.error("query: ", q);
+    console.error("resp: ", resp);
     throw new Error("not found pull request");
   }
 

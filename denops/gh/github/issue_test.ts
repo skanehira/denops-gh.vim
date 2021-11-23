@@ -4,11 +4,13 @@ import { assertEquals } from "../deps.ts";
 Deno.test({
   name: "get issues",
   fn: async () => {
-    const got = await getIssues({
-      endpoint: "http://localhost:4000",
-      owner: "skanehira",
-      name: "gh.vim",
-    });
+    const got = await getIssues(
+      "http://localhost:4000",
+      {
+        owner: "skanehira",
+        name: "gh.vim",
+      },
+    );
 
     const want = {
       nodes: [
