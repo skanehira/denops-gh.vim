@@ -25,12 +25,14 @@ export type Repository = {
   name: string;
 };
 
-export type SearchIssueItem = {
+export type IssueItem = {
   __typename?: "Issue";
+  id: string;
   title: string;
   author: Actor;
   assignees: UserConnection;
   labels: LabelConnection;
+  body: string;
   closed: boolean;
   number: number;
   repository: Repository;
@@ -47,7 +49,7 @@ export type PageInfo = {
 };
 
 export type ResultIssue = {
-  nodes: SearchIssueItem[];
+  nodes: IssueItem[];
   pageInfo: PageInfo;
 };
 
@@ -64,4 +66,13 @@ export type PullRequest = {
 
 export type PullRequestConnection = {
   nodes: PullRequest[];
+};
+
+export type UpdateIssueInput = {
+  id: string;
+  title?: string;
+  state?: "OPEN" | "CLOSED";
+  body?: string;
+  labels?: string[];
+  assignees?: string[];
 };

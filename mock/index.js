@@ -8,6 +8,7 @@ const typeDefs = gql`${schema}`;
 const issues = [
   {
     __typename: "Issue",
+    id: "MDU6SXNzdWU3MDk3MzE0NTA=",
     title: "Add feature of quote reply",
     author: {
       __typename: "User",
@@ -39,6 +40,7 @@ const issues = [
   },
   {
     __typename: "Issue",
+    id: "MDU6SXNzdWU3MDk3MzE0NTB=",
     title: "Allow autoselect owner and project of current directory(git repo)",
     author: {
       __typename: "User",
