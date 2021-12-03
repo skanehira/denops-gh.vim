@@ -44,7 +44,7 @@ const isFeature = (arg: string): arg is Feature => {
   return ["issues", "comments", "pulls"].some((v) => v === arg);
 };
 
-export const isValidAction = (arg: string): arg is ActionType => {
+export const isAction = (arg: string): arg is ActionType => {
   return [
     "issues:new",
     "issues:edit",
@@ -69,12 +69,12 @@ export const buildSchema = (bufname: string): BufferSchema => {
     throwErr();
   }
 
-  const parts = path.split("/") as string[];
-  if (parts.length < 3) { // the schema must have owner and repo
+  const fields = path.split("/");
+  if (fields.length < 3) { // the schema must have owner and repo
     throwErr();
   }
 
-  let [owner, repo, feature] = parts;
+  let [owner, repo, feature] = fields;
 
   if (!isFeature(feature)) {
     throwErr();
@@ -91,7 +91,7 @@ export const buildSchema = (bufname: string): BufferSchema => {
   // ["4", "comments"]
   // ["4", "comments", "1211311112"],
   // ["4", "comments", "new"]
-  const undecided = parts.splice(3);
+  const undecided = fields.splice(3);
   const len = undecided.length;
 
   if (len === 0) {

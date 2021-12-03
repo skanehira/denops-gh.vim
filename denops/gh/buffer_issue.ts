@@ -40,9 +40,19 @@ export async function actionEditIssue(denops: Denops, schema: BufferSchema) {
   }
 }
 
-export async function actionApdateIssue(denops: Denops, _schema: BufferSchema) {
+export async function actionUpdateIssue(denops: Denops, _schema: BufferSchema) {
+  if (!await denops.eval("&modified")) {
+    // if issue body doesn't changed, do nothing
+    return;
+  }
+
   const issue = await vars.b.get(denops, "gh_issue") as IssueItem;
   const body = await denops.eval(`getline(1, "$")`) as string[];
+  if (body.length === 1 && body[0] === "") {
+    console.error("issue body cannot be empty");
+    return;
+  }
+
   const input = {
     id: issue.id,
     body: body.join("\r\n"),
