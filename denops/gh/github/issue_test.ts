@@ -15,6 +15,7 @@ Deno.test({
     const want = {
       nodes: [
         {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           title: "Add feature of quote reply",
           author: {
             login: "skanehira",
