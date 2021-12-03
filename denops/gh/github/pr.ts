@@ -12,13 +12,19 @@ type AssociatedPullRequests = {
   };
 };
 
+export type PRCondition = {
+  owner?: string;
+  name?: string;
+  commit: string;
+};
+
 export async function getAssociatedPullRequest(
   endpoint: string,
-  cond: { owner?: string; name?: string; commit: string },
+  cond: PRCondition,
 ): Promise<string> {
-  const curp = await getRepo();
-  cond.owner = cond.owner || curp.Owner;
-  cond.name = cond.name || curp.Name;
+  const currentRepo = await getRepo();
+  cond.owner = cond.owner || currentRepo.Owner;
+  cond.name = cond.name || currentRepo.Name;
 
   const q = `
 query {

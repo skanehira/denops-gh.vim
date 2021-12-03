@@ -31,8 +31,8 @@ export type IssueItem = {
   title: string;
   author: Actor;
   assignees: UserConnection;
-  labels: LabelConnection;
   body: string;
+  labels: LabelConnection;
   closed: boolean;
   number: number;
   repository: Repository;
@@ -53,10 +53,13 @@ export type ResultIssue = {
   pageInfo: PageInfo;
 };
 
+export type State = "open" | "closed";
+
 export type IssueFilters = {
   labels?: string[];
-  states: ["open" | "closed"];
-  assignees: string[];
+  states?: State[];
+  assignees?: string[];
+  title?: string;
 };
 
 export type PullRequest = {
