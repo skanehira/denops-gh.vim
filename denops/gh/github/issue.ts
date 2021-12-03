@@ -71,6 +71,8 @@ export async function getIssues(
     `type:issue`,
   ];
 
+  const first = `first: ${cond.first ? cond.first : 10}`;
+
   if (cond.Filter) {
     if (cond.Filter.labels) {
       filter.push(...cond.Filter.labels.map((v) => {
@@ -91,13 +93,17 @@ export async function getIssues(
         return `assignee:${v}`;
       }));
     }
+
+    if (cond.Filter.title) {
+      filter.push(`${cond.Filter.title} in:title`);
+    }
   } else {
     filter.push("state:OPEN");
   }
 
   const q = `
   {
-    search(first: 10, type: ISSUE, query: "${filter.join(" ")}") {
+    search(${first}, type: ISSUE, query: "${filter.join(" ")}") {
       nodes {
         ... on Issue {
           ${issueBodyQuery}
