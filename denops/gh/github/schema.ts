@@ -25,6 +25,15 @@ export type Repository = {
   name: string;
 };
 
+export type IssueComment = {
+  id: string;
+  body?: string;
+};
+
+export type IssueCommentConnection = {
+  nodes: IssueComment[];
+};
+
 export type IssueItem = {
   __typename?: "Issue";
   id: string;
@@ -38,6 +47,13 @@ export type IssueItem = {
   repository: Repository;
   url: string;
   state: "OPEN" | "CLOSED" | "MERGED";
+  comments: IssueCommentConnection;
+};
+
+export const isIssueItem = (arg: unknown): arg is IssueItem => {
+  return ["id", "title", "author", "number", "closed"].some((v) =>
+    v in (arg as Record<string, unknown>)
+  );
 };
 
 export type PageInfo = {
