@@ -19,17 +19,19 @@ export type PRCondition = {
 };
 
 export async function getAssociatedPullRequest(
-  endpoint: string,
-  cond: PRCondition,
+  args: {
+    endpoint?: string;
+    cond: PRCondition;
+  },
 ): Promise<string> {
   const currentRepo = await getRepo();
-  cond.owner = cond.owner || currentRepo.Owner;
-  cond.name = cond.name || currentRepo.Name;
+  args.cond.owner = args.cond.owner || currentRepo.Owner;
+  args.cond.name = args.cond.name || currentRepo.Name;
 
   const q = `
 query {
-  repository(owner: "${cond.owner}", name: "${cond.name}"){
-    object(expression: "${cond.commit}"){
+  repository(owner: "${args.cond.owner}", name: "${args.cond.name}"){
+    object(expression: "${args.cond.commit}"){
       ... on Commit {
         associatedPullRequests(first: 1){
           nodes {
@@ -42,16 +44,15 @@ query {
       }
     }
   }
-}`;
+}
+`;
 
   const resp = await query<AssociatedPullRequests>({
-    endpoint: endpoint,
+    endpoint: args.endpoint,
     query: q,
   });
 
   if (!resp.data.repository.object) {
-    console.error("query: ", q);
-    console.error("resp: ", resp);
     throw new Error("not found pull request");
   }
 

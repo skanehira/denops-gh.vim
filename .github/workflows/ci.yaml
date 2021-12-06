@@ -68,13 +68,13 @@ jobs:
           mkdir -p $HOME/.config/gh
           cat <<EOF > $HOME/.config/gh/hosts.yml
           github.com:
-            oauth_token: ${{ secrets.GITHUB_TOKEN }}
+            oauth_token: $GH_TOKEN
             user: skanehira
           EOF
-          cd mock && npm install && cd -
           make test
         env:
           DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable }}
           DENOPS_TEST_NVIM: ${{ steps.nvim.outputs.executable }}
           DENOPS_PATH: ${{ steps.denops.outputs.path }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         timeout-minutes: 5

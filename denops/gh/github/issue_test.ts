@@ -1,60 +1,26 @@
 import { getIssues } from "./issue.ts";
-import { assertEquals } from "../deps.ts";
+import { path } from "../deps.ts";
+import { assertEqualFile } from "../utils/test.ts";
 
 Deno.test({
   name: "get issues",
   fn: async () => {
-    const got = await getIssues(
-      "http://localhost:4000",
+    const actual = await getIssues(
       {
-        owner: "skanehira",
-        name: "gh.vim",
+        cond: {
+          owner: "skanehira",
+          name: "test",
+        },
       },
     );
 
-    const want = {
-      nodes: [
-        {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-          title: "Add feature of quote reply",
-          author: {
-            login: "skanehira",
-          },
-          assignees: {
-            nodes: [],
-          },
-          body: "# test body\nHello World",
-          labels: {
-            nodes: [
-              {
-                name: "enhancement",
-                color: "a2eeef",
-              },
-              {
-                name: "help wanted",
-                color: "008672",
-              },
-            ],
-          },
-          closed: false,
-          number: 121,
-          url: "https://github.com/skanehira/gh.vim/issues/121",
-          state: "OPEN",
-          repository: {
-            name: "gh.vim",
-          },
-          comments: {
-            nodes: [],
-          },
-        },
-      ],
-      pageInfo: {
-        hasNextPage: false,
-        startCursor: "Y3Vyc29yOjE=",
-        endCursor: "Y3Vyc29yOjEw",
-      },
-    };
-
-    assertEquals(want, got);
+    const file = path.join(
+      "denops",
+      "gh",
+      "github",
+      "testdata",
+      "want_issue_list.json",
+    );
+    await assertEqualFile(file, actual);
   },
 });

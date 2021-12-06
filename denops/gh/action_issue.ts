@@ -1,10 +1,5 @@
 import { autocmd, Denops, mapping } from "./deps.ts";
-import {
-  ActionContext,
-  defaults,
-  isActionContext,
-  setActionCtx,
-} from "./action.ts";
+import { ActionContext, isActionContext, setActionCtx } from "./action.ts";
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
 import { isIssueItem, IssueItem } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
@@ -16,10 +11,12 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
   }
 
   try {
-    const issue = await getIssue(defaults.endpoint, {
-      owner: schema.owner,
-      repo: schema.repo,
-      number: schema.issue.number,
+    const issue = await getIssue({
+      cond: {
+        owner: schema.owner,
+        repo: schema.repo,
+        number: schema.issue.number,
+      },
     });
     await denops.call("setline", 1, issue.body.split("\n"));
     await denops.cmd("set ft=markdown nomodified buftype=acwrite");
@@ -41,47 +38,48 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
       },
     );
 
+    // TODO: remove those codes
     // if Shougo/ddc.vim is installed, autocomeplete issue and user name in buffer.
-    if (await denops.call("exists", "*ddc#custom#patch_buffer")) {
-      await denops.call(
-        "ddc#custom#patch_buffer",
-        "sources",
-        ["gh_issues"],
-      );
+    // if (await denops.call("exists", "*ddc#custom#patch_buffer")) {
+    //   await denops.call(
+    //     "ddc#custom#patch_buffer",
+    //     "sources",
+    //     ["gh_issues"],
+    //   );
 
-      await denops.call("ddc#custom#patch_buffer", "sourceOptions", {
-        gh_issues: { matcherKey: "menu" },
-      });
-      await denops.call(
-        "ddc#custom#patch_buffer",
-        "specialBufferCompletion",
-        true,
-      );
-    }
+    //   await denops.call("ddc#custom#patch_buffer", "sourceOptions", {
+    //     gh_issues: { matcherKey: "menu" },
+    //   });
+    //   await denops.call(
+    //     "ddc#custom#patch_buffer",
+    //     "specialBufferCompletion",
+    //     true,
+    //   );
+    // }
 
     // if matsui54/denops-popup-preview.vim is installed,
     // preview autocomplete info.
-    await denops.call("popup_preview#enable");
+    // await denops.call("popup_preview#enable");
 
-    const oldOpt = await denops.eval("&completeopt") as string;
-    const opt = oldOpt.split(",").filter((v) => v !== "preview").join(",");
-    await denops.cmd(
-      `set completeopt=${opt}`,
-    );
+    // const oldOpt = await denops.eval("&completeopt") as string;
+    // const opt = oldOpt.split(",").filter((v) => v !== "preview").join(",");
+    // await denops.cmd(
+    //   `set completeopt=${opt}`,
+    // );
 
-    // restore completopt when buffer is wipeouted
-    await autocmd.group(
-      denops,
-      `gh_issue_bufwipe_${schema.issue.number}`,
-      (helper) => {
-        helper.remove("*", "<buffer>");
-        helper.define(
-          "BufWipeout",
-          "<buffer>",
-          `set completeopt=${oldOpt}`,
-        );
-      },
-    );
+    // // restore completopt when buffer is wipeouted
+    // await autocmd.group(
+    //   denops,
+    //   `gh_issue_bufwipe_${schema.issue.number}`,
+    //   (helper) => {
+    //     helper.remove("*", "<buffer>");
+    //     helper.define(
+    //       "BufWipeout",
+    //       "<buffer>",
+    //       `set completeopt=${oldOpt}`,
+    //     );
+    //   },
+    // );
   } catch (e) {
     console.error(e.message);
   }
@@ -109,7 +107,7 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
     body: body.join("\r\n"),
   };
   try {
-    await updateIssue(defaults.endpoint, input);
+    await updateIssue({ input });
     await denops.cmd("setlocal nomodified");
   } catch (e) {
     console.error(e.message);
@@ -126,12 +124,14 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
   denops.cmd("setlocal ft=gh-issues");
 
   try {
-    const issues = await getIssues(defaults.endpoint, {
-      first: 30,
-      owner: schema.owner,
-      name: schema.repo,
-      Filter: {
-        states: ["open"],
+    const issues = await getIssues({
+      cond: {
+        first: 30,
+        owner: schema.owner,
+        name: schema.repo,
+        Filter: {
+          states: ["open"],
+        },
       },
     });
     if (issues.nodes.length === 0) {
