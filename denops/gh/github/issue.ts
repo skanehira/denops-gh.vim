@@ -67,43 +67,45 @@ const issueBodyQuery = `
 `;
 
 export async function getIssues(
-  endpoint: string,
-  cond: GetIssuesCondition,
+  args: {
+    endpoint?: string;
+    cond: GetIssuesCondition;
+  },
 ): Promise<ResultIssue> {
   // default query
   const filter: string[] = [
-    `repo:${cond.owner}/${cond.name}`,
+    `repo:${args.cond.owner}/${args.cond.name}`,
     `type:issue`,
   ];
 
-  const first = `first: ${cond.first ? cond.first : 10}`;
+  const first = `first: ${args.cond.first ? args.cond.first : 10}`;
 
-  if (cond.Filter) {
-    if (cond.Filter.labels) {
-      filter.push(...cond.Filter.labels.map((v) => {
+  if (args.cond.Filter) {
+    if (args.cond.Filter.labels) {
+      filter.push(...args.cond.Filter.labels.map((v) => {
         return `label:${v}`;
       }));
     }
 
-    if (cond.Filter.states) {
-      filter.push(...cond.Filter.states.map((v) => {
+    if (args.cond.Filter.states) {
+      filter.push(...args.cond.Filter.states.map((v) => {
         return `state:${v}`;
       }));
     } else {
-      filter.push("state:OPEN");
+      filter.push("state:open");
     }
 
-    if (cond.Filter.assignees) {
-      filter.push(...cond.Filter.assignees.map((v) => {
+    if (args.cond.Filter.assignees) {
+      filter.push(...args.cond.Filter.assignees.map((v) => {
         return `assignee:${v}`;
       }));
     }
 
-    if (cond.Filter.title) {
-      filter.push(`${cond.Filter.title} in:title`);
+    if (args.cond.Filter.title) {
+      filter.push(`${args.cond.Filter.title} in:title`);
     }
   } else {
-    filter.push("state:OPEN");
+    filter.push("state:open");
   }
 
   const q = `
@@ -123,7 +125,7 @@ export async function getIssues(
   }`;
 
   const json = await query<GetIssuesResult>({
-    endpoint: endpoint,
+    endpoint: args.endpoint,
     query: q,
   });
   json.data.search.nodes = json.data.search.nodes.map((issue) => {
@@ -134,24 +136,26 @@ export async function getIssues(
 }
 
 export async function getIssue(
-  endpoint: string,
-  cond: GetIssueCondition,
+  args: {
+    endpoint?: string;
+    cond: GetIssueCondition;
+  },
 ): Promise<IssueItem> {
   const q = `
   {
-    repository(owner: "${cond.owner}", name: "${cond.repo}") {
-      issue(number: ${cond.number}) {
+    repository(owner: "${args.cond.owner}", name: "${args.cond.repo}") {
+      issue(number: ${args.cond.number}) {
         ${issueBodyQuery}
       }
     }
   }
   `;
   const json = await query<GetIssueResult>({
-    endpoint: endpoint,
+    endpoint: args.endpoint,
     query: q,
   });
   if (!json.data.repository.issue) {
-    throw new Error(`not found issue number: ${cond.number}`);
+    throw new Error(`not found issue number: ${args.cond.number}`);
   }
   json.data.repository.issue.body = json.data.repository.issue.body.replace(
     /\r\n/g,
@@ -161,16 +165,18 @@ export async function getIssue(
 }
 
 export async function updateIssue(
-  endpoint: string,
-  input: UpdateIssueInput,
+  args: {
+    endpoint?: string;
+    input: UpdateIssueInput;
+  },
 ): Promise<IssueItem> {
   // TODO update others fields
   const q = `
   updateIssue(input: {
-    id: "${input.id}"
-    ${input.title ? "title:" + input.title : ""}
-    ${input.body ? "body:" + `"${input.body}"` : ""}
-    ${input.state ? "state:" + input.state : ""}
+    id: "${args.input.id}"
+    ${args.input.title ? "title:" + args.input.title : ""}
+    ${args.input.body ? "body:" + `"${args.input.body}"` : ""}
+    ${args.input.state ? "state:" + args.input.state : ""}
   }) {
     issue {
       ${issueBodyQuery}
@@ -178,7 +184,7 @@ export async function updateIssue(
   }`;
 
   const json = await mutation<{ data: { updateIssue: { issue: IssueItem } } }>({
-    endpoint: endpoint,
+    endpoint: args.endpoint,
     input: q,
   });
   return json.data.updateIssue.issue;

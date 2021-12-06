@@ -5,7 +5,6 @@ import {
   actionListIssue,
   actionUpdateIssue,
 } from "./action_issue.ts";
-import { endpoint as defaultEndpoint } from "./github/api.ts";
 
 export type ActionType =
   | "issues:new"
@@ -18,10 +17,6 @@ export type ActionType =
   | "comments:list"
   | "comments:edit"
   | "comments:new";
-
-export const defaults = {
-  endpoint: defaultEndpoint,
-};
 
 export type ActionContext = {
   schema: BufferSchema;

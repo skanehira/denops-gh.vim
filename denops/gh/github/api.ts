@@ -3,14 +3,14 @@ import { getConfig } from "../config.ts";
 export const endpoint = "https://api.github.com/graphql";
 
 export async function query<T>(
-  req: { endpoint: string; query: string },
+  req: { endpoint?: string; query: string },
 ): Promise<T> {
   return await post<T>({ endpoint: req.endpoint, body: req.query });
 }
 
 export async function mutation<T>(
   req: {
-    endpoint: string;
+    endpoint?: string;
     input: string;
   },
 ): Promise<T> {
@@ -23,7 +23,7 @@ export async function mutation<T>(
 }
 
 export async function post<T>(req: {
-  endpoint: string;
+  endpoint?: string;
   body: string;
 }): Promise<T> {
   const config = await getConfig();

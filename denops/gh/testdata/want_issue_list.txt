@@ -1,0 +1,2 @@
+#27 test2  OPEN @skanehira            ()                  
+#26 テスト OPEN @skanehira @skanehira (bug, duplicate)  1
