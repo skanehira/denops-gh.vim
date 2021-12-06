@@ -1,8 +1,8 @@
-import { autocmd, Denops, isString, vars } from "./deps.ts";
+import { autocmd, Denops, isString } from "./deps.ts";
 import { getAssociatedPullRequest } from "./github/pr.ts";
 import { endpoint } from "./github/api.ts";
-import { buildSchema, isSchema } from "./buffer.ts";
-import { actionStore } from "./buffer_action.ts";
+import { buildSchema, initializeBuffer } from "./buffer.ts";
+import { actionStore, getActionCtx, setActionCtx } from "./action.ts";
 
 export async function main(denops: Denops): Promise<void> {
   await denops.cmd(
@@ -25,24 +25,29 @@ export async function main(denops: Denops): Promise<void> {
       }
       try {
         const schema = buildSchema(bufname);
-        await vars.b.set(denops, "gh_schema", schema);
-        await denops.dispatch(denops.name, "doAction");
+        await setActionCtx(denops, { schema: schema });
+        await initializeBuffer(denops);
+        await denops.dispatch(
+          denops.name,
+          "doAction",
+        );
       } catch (e) {
         console.error(e.message);
       }
     },
 
     async doAction(): Promise<void> {
-      const schema = await vars.b.get(denops, "gh_schema");
-      if (!isSchema(schema)) {
-        throw new Error(`arg is not type of 'Schema': ${schema}`);
+      try {
+        const ctx = await getActionCtx(denops);
+        const schema = ctx.schema;
+        const action = actionStore.get(schema.actionType);
+        if (!action) {
+          throw new Error(`not found action: ${schema.actionType}`);
+        }
+        await action(denops, ctx);
+      } catch (err) {
+        console.error(err.message);
       }
-
-      const action = actionStore.get(schema.actionType);
-      if (!action) {
-        throw new Error(`not found action: ${schema.actionType}`);
-      }
-      await action(denops, schema);
     },
 
     async getAssociatedPullRequest(...arg: unknown[]): Promise<void> {

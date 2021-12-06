@@ -37,6 +37,9 @@ const issues = [
     repository: {
       name: "gh.vim",
     },
+    comments: {
+      nodes: []
+    }
   },
   {
     __typename: "Issue",
@@ -70,6 +73,9 @@ const issues = [
     repository: {
       name: "gh.vim",
     },
+    comments: {
+      nodes: []
+    }
   },
 ];
 

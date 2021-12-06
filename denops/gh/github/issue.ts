@@ -59,6 +59,11 @@ const issueBodyQuery = `
   }
   url
   state
+  comments(first: 10) {
+    nodes{
+      id
+    }
+  }
 `;
 
 export async function getIssues(
@@ -121,6 +126,10 @@ export async function getIssues(
     endpoint: endpoint,
     query: q,
   });
+  json.data.search.nodes = json.data.search.nodes.map((issue) => {
+    issue.body = issue.body.replace("\r\n", "\n");
+    return issue;
+  });
   return json.data.search;
 }
 
@@ -144,7 +153,10 @@ export async function getIssue(
   if (!json.data.repository.issue) {
     throw new Error(`not found issue number: ${cond.number}`);
   }
-
+  json.data.repository.issue.body = json.data.repository.issue.body.replace(
+    /\r\n/g,
+    "\n",
+  );
   return json.data.repository.issue;
 }
 

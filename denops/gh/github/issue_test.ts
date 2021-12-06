@@ -43,6 +43,9 @@ Deno.test({
           repository: {
             name: "gh.vim",
           },
+          comments: {
+            nodes: [],
+          },
         },
       ],
       pageInfo: {

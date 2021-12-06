@@ -1,21 +1,5 @@
 import { Denops } from "./deps.ts";
-
-export type ActionType =
-  | "issues:new"
-  | "issues:edit"
-  | "issues:update"
-  | "issues:list"
-  | "pulls:new"
-  | "pulls:list"
-  | "pulls:edit"
-  | "comments:list"
-  | "comments:edit"
-  | "comments:new";
-
-export type ActionFn = (
-  denops: Denops,
-  schema: BufferSchema,
-) => Promise<void>;
+import { ActionType } from "./action.ts";
 
 export type BufferSchema = {
   owner: string;
@@ -42,21 +26,6 @@ type Feature = "issues" | "comments" | "pulls";
 
 const isFeature = (arg: string): arg is Feature => {
   return ["issues", "comments", "pulls"].some((v) => v === arg);
-};
-
-export const isAction = (arg: string): arg is ActionType => {
-  return [
-    "issues:new",
-    "issues:edit",
-    "issues:update",
-    "issues:list",
-    "pulls:new",
-    "pulls:list",
-    "pulls:edit",
-    "comments:list",
-    "comments:edit",
-    "comments:new",
-  ].some((v) => v === arg);
 };
 
 export const buildSchema = (bufname: string): BufferSchema => {
@@ -144,6 +113,6 @@ export const buildSchema = (bufname: string): BufferSchema => {
 
 export async function initializeBuffer(denops: Denops): Promise<void> {
   await denops.cmd(
-    `setlocal nolist buftype=nofile bufhidden=hide noswapfile nonumber cursorline`,
+    `setlocal nolist buftype=nofile bufhidden=hide noswapfile nonumber cursorline nowrap`,
   );
 }
