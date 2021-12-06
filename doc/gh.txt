@@ -1,0 +1,146 @@
+*gh.txt*	Vim/Neovim plugin for GitHub
+
+Author: skanehira <sho19921005@gmail.com>
+License : MIT license  {{{
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
+    The above copyright notice and this permission notice shall be included
+    in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+}}}
+
+==============================================================================
+CONTENTS					*gh-contents*
+
+INTRODUCTION			|gh-introduction|
+USAGE				|gh-usage|
+INTERFACE			|gh-interface|
+  VARIABLES			  |gh-variables|
+  BUFFER			  |gh-buffers|
+  KEY-MAPPINGS			  |gh-key-mappings|
+  FUNCTIONS			  |gh-functions|
+TODO				|gh-todo|
+CHANGELOG			|gh-changelog|
+
+
+==============================================================================
+INTRODUCTION					*gh-introduction*
+
+*gh.vim* is a Vim/Neovim plugin for GitHub
+
+Latest version:
+https://github.com/skanehira/denops-gh.vim
+
+
+==============================================================================
+USAGE						*gh-usage*
+
+						*gh-setup*
+
+At first time, you have to add access token in config file.
+If you are already using gh(https://github.com/cli/cli), doesn't need any setup.
+If your not, please make $HOME/.config/gh/hosts.yml
+and add settings like bellow.
+
+>
+  github.com:
+      oauth_token: {token}
+      user: {username}
+>
+
+==============================================================================
+INTERFACE					*gh-interface*
+
+------------------------------------------------------------------------------
+VARIABLES					*gh-variables*
+
+
+------------------------------------------------------------------------------
+BUFFER						*gh-buffer*
+
+						*gh-buffer-issue-list*
+gh://{owner}/{repo}/issues
+  Show {owner}/{repo} issues.
+
+						*gh-buffer-issue-edit*
+gh://{owner}/{repo}/issues/{number}
+  Edit issue body.
+  When you type |:w|, then issue body will be updated.
+
+						*gh-buffer-issue-new*
+gh://{owner}/{repo}/issues/new 
+  TODO
+
+						*gh-buffer-issue-comment-list*
+gh://{owner}/{repo}/issues/:number/comments
+  TODO
+
+						*gh-buffer-issue-comment-new*
+gh://{owner}/{repo}/issues/:number/comments/new
+  TODO
+
+						*gh-buffer-issue-comment-edit*
+gh://{owner}/{repo}/issues/:number/comments/:id
+  TODO
+
+						*gh-buffer-pull-list*
+gh://{owner}/{repo}/pulls
+  TODO
+
+						*gh-buffer-repo-readme*
+gh://{owner}/{repo}
+  TODO
+
+						*gh-buffer-action-list*
+gh://{owner}/{repo}/actions
+  TODO
+
+						*gh-buffer-file-list*
+gh://{owner}/{repo}/[:branch|:tree_sha]/files
+  TODO
+
+						*gh-buffer-gist-list*
+gh://{owner}/gists[?privacy=public]
+  TODO
+
+						*gh-buffer-gist*
+gh://{owner}/gists/:id
+  TODO
+
+------------------------------------------------------------------------------
+KEY-MAPPINGS					*gh-key-mappings*
+
+TODO
+
+default mappings
+
+{buffer}			{mode}		{lhs}		{rhs}
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+FUNCTIONS					*gh-functions*
+
+
+==============================================================================
+TODO						*gh-todo*
+
+
+
+==============================================================================
+CHANGELOG					*gh-changelog*
+
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:
