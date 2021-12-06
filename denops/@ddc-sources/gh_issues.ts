@@ -7,9 +7,9 @@ import {
 } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
 import { Denops, vars } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
 import { getIssues } from "../gh/github/issue.ts";
-import { endpoint } from "../gh/github/api.ts";
 import { IssueItem } from "../gh/github/schema.ts";
 import { BufferSchema, isSchema } from "../gh/buffer.ts";
+import { getActionCtx } from "../gh/action.ts";
 
 type Params = {
   maxSize: number;
@@ -53,19 +53,17 @@ export class Source extends BaseSource<Params, IssueItem> {
       }
     }
 
-    const schema = await vars.b.get(args.denops, "gh_schema") as BufferSchema;
-    if (!isSchema(schema)) {
-      console.error(`invalid schema: ${schema}`, schema);
-      return [];
-    }
+    const action = await getActionCtx(args.denops);
 
-    const result = await getIssues(endpoint, {
-      first: 10,
-      name: schema.repo,
-      owner: schema.owner,
-      Filter: {
-        states: ["open", "closed"],
-        title: word.slice(1),
+    const result = await getIssues({
+      cond: {
+        first: 10,
+        name: action.schema.repo,
+        owner: action.schema.owner,
+        Filter: {
+          states: ["open", "closed"],
+          title: word.slice(1),
+        },
       },
     });
 

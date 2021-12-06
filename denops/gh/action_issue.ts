@@ -38,48 +38,7 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
       },
     );
 
-    // TODO: remove those codes
-    // if Shougo/ddc.vim is installed, autocomeplete issue and user name in buffer.
-    // if (await denops.call("exists", "*ddc#custom#patch_buffer")) {
-    //   await denops.call(
-    //     "ddc#custom#patch_buffer",
-    //     "sources",
-    //     ["gh_issues"],
-    //   );
-
-    //   await denops.call("ddc#custom#patch_buffer", "sourceOptions", {
-    //     gh_issues: { matcherKey: "menu" },
-    //   });
-    //   await denops.call(
-    //     "ddc#custom#patch_buffer",
-    //     "specialBufferCompletion",
-    //     true,
-    //   );
-    // }
-
-    // if matsui54/denops-popup-preview.vim is installed,
-    // preview autocomplete info.
-    // await denops.call("popup_preview#enable");
-
-    // const oldOpt = await denops.eval("&completeopt") as string;
-    // const opt = oldOpt.split(",").filter((v) => v !== "preview").join(",");
-    // await denops.cmd(
-    //   `set completeopt=${opt}`,
-    // );
-
-    // // restore completopt when buffer is wipeouted
-    // await autocmd.group(
-    //   denops,
-    //   `gh_issue_bufwipe_${schema.issue.number}`,
-    //   (helper) => {
-    //     helper.remove("*", "<buffer>");
-    //     helper.define(
-    //       "BufWipeout",
-    //       "<buffer>",
-    //       `set completeopt=${oldOpt}`,
-    //     );
-    //   },
-    // );
+    await denops.cmd("doautocmd User gh_open_issue");
   } catch (e) {
     console.error(e.message);
   }

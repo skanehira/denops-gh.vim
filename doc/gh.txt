@@ -77,7 +77,36 @@ gh://{owner}/{repo}/issues
 						*gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
   Edit issue body.
-  When you type |:w|, then issue body will be updated.
+  When you type |:write|, then issue body will be updated.
+
+  If you want to auto complete issue number on buffer,
+  please install Shougo/ddc.vim and add settings like bellow to your vimrc.
+
+  NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
+	issue's body in popup/float window
+>
+  augroup gh_autocmd
+    au!
+    autocmd User gh_open_issue call EnableAutoCompletion()
+  augroup END
+
+  function! EnableAutoCompletion() abort
+    " Enable source 'gh_issues' to current buffer.
+    call ddc#custom#patch_buffer('sources', ['gh_issues'])
+    call ddc#custom#patch_buffer('sourceOptions', {
+          \ 'gh_issues': {
+            \  'matcherKey': 'menu'
+          \ }})
+    call ddc#custom#patch_buffer('specialBufferCompletion', v:true)
+
+    " If matsui54/denops-popup-preview.vim is installed,
+    " you can preview issue body's info.
+    call popup_preview#enable()
+
+    " remove 'preview' from completeopt
+    execute('set completeopt=' .. join(filter(split(eval('&completeopt'), ','), { _, v -> v !=# 'preview' }), ','))
+  endfunction
+<
 
 						*gh-buffer-issue-new*
 gh://{owner}/{repo}/issues/new 
