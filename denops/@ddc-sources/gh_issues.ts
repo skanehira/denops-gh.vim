@@ -5,10 +5,9 @@ import {
   DdcOptions,
   SourceOptions,
 } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
-import { Denops, vars } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
+import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
 import { getIssues } from "../gh/github/issue.ts";
 import { IssueItem } from "../gh/github/schema.ts";
-import { BufferSchema, isSchema } from "../gh/buffer.ts";
 import { getActionCtx } from "../gh/action.ts";
 
 type Params = {
