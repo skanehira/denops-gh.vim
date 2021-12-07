@@ -1,8 +1,9 @@
-import { autocmd, Denops, mapping } from "./deps.ts";
+import { autocmd, Denops } from "./deps.ts";
 import { ActionContext, isActionContext, setActionCtx } from "./action.ts";
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
 import { isIssueItem, IssueItem } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
+import { map } from "./mapping.ts";
 
 export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
   const schema = ctx.schema;
@@ -98,11 +99,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
     }
     await setIssueToBuffer(denops, ctx, issues.nodes);
 
-    // TODO refactoring
-    await mapping.map(
+    await map(
       denops,
       "e",
-      `:call gh#_action("issues:edit")<CR>`,
+      "<Plug>(gh-issue-edit)",
+      `:<C-u>call gh#_action("issues:edit")<CR>`,
       {
         buffer: true,
         silent: true,
