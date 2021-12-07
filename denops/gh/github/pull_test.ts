@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects } from "../deps.ts";
-import { getAssociatedPullRequest } from "./pr.ts";
+import { getAssociatedPullRequest } from "./pull.ts";
 
 Deno.test({
   name: "get pr wit commit hash",

@@ -1,5 +1,5 @@
 import { autocmd, Denops, isString } from "./deps.ts";
-import { getAssociatedPullRequest } from "./github/pr.ts";
+import { getAssociatedPullRequest } from "./github/pull.ts";
 import { endpoint } from "./github/api.ts";
 import { buildSchema, initializeBuffer } from "./buffer.ts";
 import { actionStore, getActionCtx, setActionCtx } from "./action.ts";
@@ -73,7 +73,7 @@ export async function main(denops: Denops): Promise<void> {
       };
 
       const req = parse();
-      const url = await getAssociatedPullRequest(endpoint, req);
+      const url = await getAssociatedPullRequest({ endpoint, cond: req });
       console.log(url);
     },
   };
