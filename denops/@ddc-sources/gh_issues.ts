@@ -14,7 +14,7 @@ type Params = {
   maxSize: number;
 };
 
-const cache = new Map<string, IssueItem>();
+const issueCache = new Map<string, IssueItem>();
 
 export class Source extends BaseSource<Params, IssueItem> {
   async gatherCandidates(args: {
@@ -33,8 +33,8 @@ export class Source extends BaseSource<Params, IssueItem> {
       return [];
     }
 
-    if (cache.size >= 1) {
-      const result = Array.from(cache.values()).filter((issue) =>
+    if (issueCache.size >= 1) {
+      const result = Array.from(issueCache.values()).filter((issue) =>
         issue.title.startsWith(word.slice(1))
       ).map(
         (issue) => {
@@ -68,7 +68,7 @@ export class Source extends BaseSource<Params, IssueItem> {
 
     for (const issue of result.nodes) {
       issue.body = issue.body.replaceAll("\r\n", "\n");
-      cache.set(String(issue.number), issue);
+      issueCache.set(String(issue.number), issue);
     }
 
     return result.nodes.map((issue) => {
