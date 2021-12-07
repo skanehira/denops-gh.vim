@@ -104,7 +104,7 @@ gh://{owner}/{repo}/issues/{number}
     call popup_preview#enable()
 
     " remove 'preview' from completeopt
-    execute('set completeopt=' .. join(filter(split(eval('&completeopt'), ','), { _, v -> v !=# 'preview' }), ','))
+    set completeopt-=preview
   endfunction
 <
 
