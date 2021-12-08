@@ -1,9 +1,17 @@
 import { autocmd, Denops } from "./deps.ts";
 import { ActionContext, isActionContext, setActionCtx } from "./action.ts";
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
+import { getIssueTemplate } from "./github/repository.ts";
 import { isIssueItem, IssueItem } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
 import { map } from "./mapping.ts";
+import {
+  menu,
+  open,
+  runTerminal,
+  textEncoder,
+  vimRegister,
+} from "./utils/helper.ts";
 
 export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
   const schema = ctx.schema;
@@ -19,8 +27,9 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
         number: schema.issue.number,
       },
     });
-    await denops.call("setline", 1, issue.body.split("\n"));
-    await denops.cmd("set ft=markdown nomodified buftype=acwrite");
+    await denops.cmd("set ft=markdown buftype=acwrite");
+    await denops.call("setline", 1, issue.body.split("\r\n"));
+    await denops.cmd("setlocal nomodified");
 
     schema.actionType = "issues:update";
     ctx.args = issue;
@@ -99,18 +108,33 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
     }
     await setIssueToBuffer(denops, ctx, issues.nodes);
 
-    await map(
-      denops,
-      "e",
-      "<Plug>(gh-issue-edit)",
-      `:<C-u>call gh#_action("issues:edit")<CR>`,
+    const keyMaps = [
       {
-        buffer: true,
-        silent: true,
-        mode: "n",
-        noremap: true,
+        defaultKey: "e",
+        lhs: "<Plug>(gh-issue-edit)",
+        rhs: `:<C-u>call gh#_action("issues:edit")<CR>`,
       },
-    );
+      {
+        defaultKey: "n",
+        lhs: "<Plug>(gh-issue-new)",
+        rhs: `:<C-u>new gh://${schema.owner}/${schema.repo}/issues/new<CR>`,
+      },
+    ];
+
+    for (const m of keyMaps) {
+      await map(
+        denops,
+        m.defaultKey,
+        m.lhs,
+        m.rhs,
+        {
+          buffer: true,
+          silent: true,
+          mode: "n",
+          noremap: true,
+        },
+      );
+    }
   } catch (e) {
     console.error(e.message);
   }
@@ -142,4 +166,100 @@ export async function setIssueToBuffer(
 
   ctx.args = issues;
   await setActionCtx(denops, ctx);
+}
+
+export async function actionNewIssue(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  const templates = await getIssueTemplate({
+    repo: {
+      owner: ctx.schema.owner,
+      name: ctx.schema.repo,
+    },
+  });
+
+  templates.push({ name: "Blank", body: "" });
+  const templs = templates.map((t) => t.name);
+
+  await menu(denops, templs, async (arg: unknown) => {
+    // remove callback function from denops worker
+    delete denops.dispatcher.menu_callback;
+
+    const name = arg as string;
+    const template = templates.filter((t) => t.name == name)[0];
+    await denops.cmd("setlocal ft=markdown buftype=acwrite");
+    if (name !== "Blank") {
+      await denops.call("setline", 1, template.body.split("\n"));
+    }
+    await denops.cmd("setlocal nomodified");
+
+    const bufnr = denops.call("bufnr");
+
+    await autocmd.group(
+      denops,
+      `gh_issue_new_${bufnr}`,
+      (helper) => {
+        helper.remove("*", "<buffer>");
+        helper.define(
+          "BufWriteCmd",
+          "<buffer>",
+          `call gh#_action("issues:create")`,
+        );
+      },
+    );
+
+    await denops.cmd("doautocmd User gh_open_issue");
+  });
+}
+
+export async function actionCreateIssue(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  const text = (await denops.eval(`getline(1, "$")`) as string[]).join("\n");
+  const data = textEncoder.encode(text);
+  const tmp = await Deno.makeTempFile();
+  await Deno.writeFile(tmp, data);
+
+  await runTerminal(denops, [
+    "gh",
+    "issue",
+    "create",
+    "-F",
+    tmp,
+    "-R",
+    `${ctx.schema.owner}/${ctx.schema.repo}`,
+  ], async (denops, exitCode) => {
+    if (exitCode === 0) {
+      const text = await denops.eval(`getline(1, "$")`) as string[];
+      for (let i = text.length - 1; i > 0; i--) {
+        const url = text[i];
+        if (url.substring(0, 18) === "https://github.com") {
+          const path = text[i].substring(19);
+          await denops.cmd("bw");
+          await denops.cmd("bw");
+          const chosen = await denops.call("gh#_chose_action", [
+            { text: "(e)dit", value: "edit" },
+            { text: "(y)nk issue url", value: "yank" },
+            { text: "(o)open browser", value: "open" },
+          ]) as string;
+
+          switch (chosen) {
+            case "edit":
+              await denops.cmd(`e gh://${path}`);
+              break;
+            case "yank":
+              await denops.call("setreg", vimRegister, url);
+              console.log(`yanked: ${url}`);
+              break;
+            case "open":
+              open(url);
+              break;
+          }
+          break;
+        }
+      }
+    }
+  });
 }

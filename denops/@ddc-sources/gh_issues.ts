@@ -67,7 +67,6 @@ export class Source extends BaseSource<Params, IssueItem> {
     });
 
     for (const issue of result.nodes) {
-      issue.body = issue.body.replaceAll("\r\n", "\n");
       issueCache.set(String(issue.number), issue);
     }
 

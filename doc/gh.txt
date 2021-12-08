@@ -47,18 +47,11 @@ https://github.com/skanehira/denops-gh.vim
 ==============================================================================
 USAGE						*gh-usage*
 
+SETUP
 						*gh-setup*
 
-At first time, you have to add access token in config file.
-If you are already using gh(https://github.com/cli/cli), doesn't need any setup.
-If your not, please make $HOME/.config/gh/hosts.yml
-and add settings like bellow.
-
->
-  github.com:
-      oauth_token: {token}
-      user: {username}
->
+At first time, you have to install gh(https://github.com/cli/cli)
+and setup auth token. Please refer oficall documents.
 
 ==============================================================================
 INTERFACE					*gh-interface*
@@ -77,13 +70,13 @@ gh://{owner}/{repo}/issues
 						*gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
   Edit issue body.
-  When you type |:write|, then issue body will be updated.
+  When you type |:write|, then issue body would be updated.
 
   If you want to auto complete issue number on buffer,
   please install Shougo/ddc.vim and add settings like bellow to your vimrc.
 
   NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
-	issue's body in popup/float window
+        issue's body in popup/float window
 >
   augroup gh_autocmd
     au!
@@ -110,7 +103,11 @@ gh://{owner}/{repo}/issues/{number}
 
 						*gh-buffer-issue-new*
 gh://{owner}/{repo}/issues/new 
-  TODO
+  Create a new issue.
+  If {owner}/{repo} has any issue templates, you can chose it and edit
+  template body.
+  When you type |:write|, then 'gh' would be executed in terminal, and
+  you can chose any options(e.g add labels).
 
 						*gh-buffer-issue-comment-list*
 gh://{owner}/{repo}/issues/:number/comments
