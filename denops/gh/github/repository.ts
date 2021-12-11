@@ -1,17 +1,5 @@
 import { query } from "./api.ts";
-
-type IssueTemplate = {
-  name: string;
-  body: string;
-};
-
-type GetIssueTemplates = {
-  data: {
-    repository: {
-      issueTemplates: IssueTemplate[];
-    };
-  };
-};
+import { GetIssueTemplates, IssueTemplate } from "./schema.ts";
 
 export async function getIssueTemplate(args: {
   endpoint?: string;

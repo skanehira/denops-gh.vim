@@ -1,6 +1,12 @@
 import { assertEquals } from "../deps.ts";
 import { textDecoder, textEncoder } from "./helper.ts";
 
+export async function parseJSON<T>(file: string): Promise<T> {
+  const contents = await Deno.readFile(file);
+  const data = JSON.parse(textDecoder.decode(contents)) as T;
+  return data;
+}
+
 export async function assertEqualFile(
   file: string,
   actual: unknown,

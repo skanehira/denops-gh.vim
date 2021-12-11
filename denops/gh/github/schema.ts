@@ -95,3 +95,16 @@ export type UpdateIssueInput = {
   labels?: string[];
   assignees?: string[];
 };
+
+export type IssueTemplate = {
+  name: string;
+  body: string;
+};
+
+export type GetIssueTemplates = {
+  data: {
+    repository: {
+      issueTemplates: IssueTemplate[];
+    };
+  };
+};

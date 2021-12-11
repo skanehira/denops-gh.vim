@@ -126,3 +126,15 @@ export function open(uri: string) {
 }
 
 export const vimRegister = Deno.build.os === "darwin" ? "*" : "+";
+
+export const inprogress = async <T>(
+  denops: Denops,
+  f: () => Promise<void | T>,
+) => {
+  try {
+    console.log("loading...");
+    return await f();
+  } finally {
+    await denops.cmd("echo ''");
+  }
+};

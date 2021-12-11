@@ -2,10 +2,11 @@ import { autocmd, Denops } from "./deps.ts";
 import { ActionContext, isActionContext, setActionCtx } from "./action.ts";
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
 import { getIssueTemplate } from "./github/repository.ts";
-import { isIssueItem, IssueItem } from "./github/schema.ts";
+import { isIssueItem, IssueItem, IssueTemplate } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
 import { map } from "./mapping.ts";
 import {
+  inprogress,
   menu,
   open,
   runTerminal,
@@ -14,44 +15,46 @@ import {
 } from "./utils/helper.ts";
 
 export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
-  const schema = ctx.schema;
-  if (!schema.issue) {
-    throw new Error(`invalid schema: ${schema}`);
-  }
+  await inprogress(denops, async () => {
+    const schema = ctx.schema;
+    if (!schema.issue) {
+      throw new Error(`invalid schema: ${schema}`);
+    }
 
-  try {
-    const issue = await getIssue({
-      cond: {
-        owner: schema.owner,
-        repo: schema.repo,
-        number: schema.issue.number,
-      },
-    });
-    await denops.cmd("set ft=markdown buftype=acwrite");
-    await denops.call("setline", 1, issue.body.split("\r\n"));
-    await denops.cmd("setlocal nomodified");
+    try {
+      const issue = await getIssue({
+        cond: {
+          owner: schema.owner,
+          repo: schema.repo,
+          number: schema.issue.number,
+        },
+      });
+      await denops.cmd("set ft=markdown buftype=acwrite");
+      await denops.call("setline", 1, issue.body.split("\r\n"));
+      await denops.cmd("setlocal nomodified");
 
-    schema.actionType = "issues:update";
-    ctx.args = issue;
-    setActionCtx(denops, ctx);
+      schema.actionType = "issues:update";
+      ctx.args = issue;
+      setActionCtx(denops, ctx);
 
-    await autocmd.group(
-      denops,
-      `gh_issue_edit_${schema.issue.number}`,
-      (helper) => {
-        helper.remove("*", "<buffer>");
-        helper.define(
-          "BufWriteCmd",
-          "<buffer>",
-          `call gh#_action("issues:update")`,
-        );
-      },
-    );
+      await autocmd.group(
+        denops,
+        `gh_issue_edit_${schema.issue.number}`,
+        (helper) => {
+          helper.remove("*", "<buffer>");
+          helper.define(
+            "BufWriteCmd",
+            "<buffer>",
+            `call gh#_action("issues:update")`,
+          );
+        },
+      );
 
-    await denops.cmd("doautocmd User gh_open_issue");
-  } catch (e) {
-    console.error(e.message);
-  }
+      await denops.cmd("doautocmd User gh_open_issue");
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
 }
 
 export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
@@ -75,12 +78,15 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
     id: ctx.args.id,
     body: body.join("\r\n"),
   };
-  try {
-    await updateIssue({ input });
-    await denops.cmd("setlocal nomodified");
-  } catch (e) {
-    console.error(e.message);
-  }
+  inprogress(denops, async () => {
+    try {
+      console.log("loading...");
+      await updateIssue({ input });
+      await denops.cmd("setlocal nomodified");
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
 }
 
 export async function actionListIssue(denops: Denops, ctx: ActionContext) {
@@ -89,55 +95,56 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
     return;
   }
   const schema = ctx.schema;
-
   denops.cmd("setlocal ft=gh-issues");
 
-  try {
-    const issues = await getIssues({
-      cond: {
-        first: 30,
-        owner: schema.owner,
-        name: schema.repo,
-        Filter: {
-          states: ["open"],
+  await inprogress(denops, async () => {
+    try {
+      const issues = await getIssues({
+        cond: {
+          first: 30,
+          owner: schema.owner,
+          name: schema.repo,
+          Filter: {
+            states: ["open"],
+          },
         },
-      },
-    });
-    if (issues.nodes.length === 0) {
-      throw new Error("not found any issues");
-    }
-    await setIssueToBuffer(denops, ctx, issues.nodes);
+      });
+      if (issues.nodes.length === 0) {
+        throw new Error("not found any issues");
+      }
+      await setIssueToBuffer(denops, ctx, issues.nodes);
 
-    const keyMaps = [
-      {
-        defaultKey: "e",
-        lhs: "<Plug>(gh-issue-edit)",
-        rhs: `:<C-u>call gh#_action("issues:edit")<CR>`,
-      },
-      {
-        defaultKey: "n",
-        lhs: "<Plug>(gh-issue-new)",
-        rhs: `:<C-u>new gh://${schema.owner}/${schema.repo}/issues/new<CR>`,
-      },
-    ];
-
-    for (const m of keyMaps) {
-      await map(
-        denops,
-        m.defaultKey,
-        m.lhs,
-        m.rhs,
+      const keyMaps = [
         {
-          buffer: true,
-          silent: true,
-          mode: "n",
-          noremap: true,
+          defaultKey: "e",
+          lhs: "<Plug>(gh-issue-edit)",
+          rhs: `:<C-u>call gh#_action("issues:edit")<CR>`,
         },
-      );
+        {
+          defaultKey: "n",
+          lhs: "<Plug>(gh-issue-new)",
+          rhs: `:<C-u>new gh://${schema.owner}/${schema.repo}/issues/new<CR>`,
+        },
+      ];
+
+      for (const m of keyMaps) {
+        await map(
+          denops,
+          m.defaultKey,
+          m.lhs,
+          m.rhs,
+          {
+            buffer: true,
+            silent: true,
+            mode: "n",
+            noremap: true,
+          },
+        );
+      }
+    } catch (e) {
+      console.error(e.message);
     }
-  } catch (e) {
-    console.error(e.message);
-  }
+  });
 }
 
 export async function setIssueToBuffer(
@@ -172,22 +179,24 @@ export async function actionNewIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  const templates = await getIssueTemplate({
-    repo: {
-      owner: ctx.schema.owner,
-      name: ctx.schema.repo,
-    },
+  const templates = await inprogress<IssueTemplate[]>(denops, async () => {
+    const templates = await getIssueTemplate({
+      repo: {
+        owner: ctx.schema.owner,
+        name: ctx.schema.repo,
+      },
+    });
+    templates.push({ name: "Blank", body: "" });
+    return templates;
   });
 
-  templates.push({ name: "Blank", body: "" });
-  const templs = templates.map((t) => t.name);
-
+  const templs = templates!.map((t) => t.name);
   await menu(denops, templs, async (arg: unknown) => {
     // remove callback function from denops worker
     delete denops.dispatcher.menu_callback;
 
     const name = arg as string;
-    const template = templates.filter((t) => t.name == name)[0];
+    const template = templates!.filter((t) => t.name == name)[0];
     await denops.cmd("setlocal ft=markdown buftype=acwrite");
     if (name !== "Blank") {
       await denops.call("setline", 1, template.body.split("\n"));
