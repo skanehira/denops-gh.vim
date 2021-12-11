@@ -1,13 +1,16 @@
 import { Denops, vars } from "./deps.ts";
 import { BufferSchema, isSchema } from "./buffer.ts";
 import {
+  actionCreateIssue,
   actionEditIssue,
   actionListIssue,
+  actionNewIssue,
   actionUpdateIssue,
 } from "./action_issue.ts";
 
 export type ActionType =
   | "issues:new"
+  | "issues:create"
   | "issues:edit"
   | "issues:update"
   | "issues:list"
@@ -56,5 +59,7 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:edit", actionEditIssue],
     ["issues:update", actionUpdateIssue],
     ["issues:list", actionListIssue],
+    ["issues:new", actionNewIssue],
+    ["issues:create", actionCreateIssue],
   ],
 );

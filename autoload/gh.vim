@@ -22,6 +22,8 @@ function! gh#def_highlight() abort
 endfunction
 
 function! gh#_action(type) abort
+  let b:gh_action_ctx.schema.actionType = a:type
+
   if a:type ==# "issues:edit"
     if empty(b:gh_action_ctx.args)
       echoerr("b:gh_action_ctx.args is empty")
@@ -29,8 +31,60 @@ function! gh#_action(type) abort
     endif
     let issue = b:gh_action_ctx.args[line(".")-1]
     let schema = b:gh_action_ctx.schema
-    execute(printf("new gh://%s/%s/issues/%d", schema.owner, schema.repo, issue.number))
-  elseif a:type ==# "issues:update"
-    call denops#notify("gh", "doAction", [])
+    let opencmd = gh#_chose_action([
+          \ {"text": "(e)dit", "value": "edit"},
+          \ {"text": "(n)ew", "value": "new"},
+          \ {"text": "(v)new", "value": "vnew"},
+          \ {"text": "(t)abnew", "value": "tabnew"},
+          \ ])
+    echo "" | redraw
+    echom opencmd
+    if opencmd ==# ""
+      return
+    endif
+    execute(printf("%s gh://%s/%s/issues/%d", opencmd, schema.owner, schema.repo, issue.number))
+    return
   endif
+  call denops#notify("gh", "doAction", [])
+endfunction
+
+function! gh#_message(msg) abort
+  echohl Directory
+  echo a:msg
+  echohl None
+endfunction
+
+" returns chosed action
+" actions must be object array liek bellow
+" [
+"   {"text": "(e)dit", value: "edit"}
+"   {"text": "(n)ew", value: "new"}
+" ]
+" NOTE: text must contains '()' to detect input and its must be 1 character
+function! gh#_chose_action(actions) abort
+  call gh#_message(join(map(copy(a:actions), { _, v -> v.text }), ", ") .. ": ")
+  let result = nr2char(getchar())
+  let result = filter(a:actions, { _, v -> v.text =~# printf(".*\(%s\).*", result)})
+  return len(result) ? result[0].value : ""
+endfunction
+
+function! gh#_menu_callback(idx, result) abort
+  if has('nvim')
+    call nvim_win_close(a:idx, v:true)
+    call denops#notify("gh", "menu_callback", [a:result])
+  else
+    if a:idx ==# -1
+      return
+    endif
+    let text = trim(win_execute(a:idx, "echo getline('.')"))
+    call denops#notify("gh", "menu_callback", [text])
+  endif
+endfunction
+
+function! gh#_nvim_on_exit_terminal(jobid, exit_code, type) abort
+  call denops#notify("gh", "on_exit_terminal_" .. a:jobid, [a:exit_code])
+endfunction
+
+function! gh#_vim_on_exit_terminal(job, exit_code) abort
+  call denops#notify("gh", "on_exit_terminal_" .. bufnr(), [a:exit_code])
 endfunction
