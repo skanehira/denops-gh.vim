@@ -3,7 +3,6 @@ import { getCandidates, issueCache } from "./gh_issues.ts";
 import { Denops, path, test } from "../gh/deps.ts";
 import { setActionCtx } from "../gh/action.ts";
 import { assertEqualFile, parseJSON } from "../gh/utils/test.ts";
-import { textDecoder } from "../gh/utils/helper.ts";
 import { IssueItem } from "../gh/github/schema.ts";
 
 test({
