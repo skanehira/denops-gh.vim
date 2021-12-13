@@ -63,7 +63,7 @@ endfunction
 " NOTE: text must contains '()' to detect input and its must be 1 character
 function! gh#_chose_action(actions) abort
   call gh#_message(join(map(copy(a:actions), { _, v -> v.text }), ", ") .. ": ")
-  let result = nr2char(getchar())
+  let result = getcharstr()
   let result = filter(a:actions, { _, v -> v.text =~# printf(".*\(%s\).*", result)})
   return len(result) ? result[0].value : ""
 endfunction
