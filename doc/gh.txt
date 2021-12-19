@@ -160,6 +160,7 @@ default mappings
 --------------------------------------------------------------------
 |gh-buffer-issue-list|      normal     e         <Plug>(gh-issue-edit)
                           normal     n         <Plug>(gh-issue-new)
+                          normal     o         <Plug>(gh-issue-open)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*

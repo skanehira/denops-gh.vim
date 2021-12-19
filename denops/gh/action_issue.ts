@@ -125,6 +125,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           lhs: "<Plug>(gh-issue-new)",
           rhs: `:<C-u>new gh://${schema.owner}/${schema.repo}/issues/new<CR>`,
         },
+        {
+          defaultKey: "o",
+          lhs: "<Plug>(gh-issue-open)",
+          rhs: `:<C-u>call gh#_action("issues:open")<CR>`,
+        },
       ];
 
       for (const m of keyMaps) {
@@ -271,4 +276,18 @@ export async function actionCreateIssue(
       }
     }
   });
+}
+
+export async function actionOpenIssue(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  const issues = ctx.args as IssueItem[];
+  if (issues.length == 0) {
+    return;
+  }
+  const idx = (await denops.call("line", ".") as number) - 1;
+  const issue = issues[idx];
+  console.log(`open ${issue.url}`);
+  open(issue.url);
 }

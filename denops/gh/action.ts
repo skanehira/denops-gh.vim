@@ -5,10 +5,12 @@ import {
   actionEditIssue,
   actionListIssue,
   actionNewIssue,
+  actionOpenIssue,
   actionUpdateIssue,
 } from "./action_issue.ts";
 
 export type ActionType =
+  | "issues:open"
   | "issues:new"
   | "issues:create"
   | "issues:edit"
@@ -61,5 +63,6 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:list", actionListIssue],
     ["issues:new", actionNewIssue],
     ["issues:create", actionCreateIssue],
+    ["issues:open", actionOpenIssue],
   ],
 );
