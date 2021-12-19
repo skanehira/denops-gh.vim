@@ -3,9 +3,37 @@ export type Actor = {
   url: string;
 };
 
+export type Team = {
+  name: string;
+};
+
+export type TeamConnection = {
+  nodes: Team[];
+};
+
+export type Organization = {
+  name: string;
+  teams: TeamConnection;
+};
+
+export type OrganizationConnection = {
+  nodes: Organization[];
+};
+
 export type User = {
   id: string;
   login: string;
+  bio?: string;
+};
+
+export type GetUsers = {
+  data: {
+    repository: {
+      mentionableUsers: {
+        nodes: User[];
+      };
+    };
+  };
 };
 
 export type UserConnection = {

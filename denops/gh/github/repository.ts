@@ -1,5 +1,5 @@
 import { query } from "./api.ts";
-import { GetIssueTemplates, IssueTemplate } from "./schema.ts";
+import { GetIssueTemplates, GetUsers, IssueTemplate, User } from "./schema.ts";
 
 export async function getIssueTemplate(args: {
   endpoint?: string;
@@ -30,4 +30,35 @@ export async function getIssueTemplate(args: {
     return t;
   });
   return t;
+}
+
+export async function getMentionableUsers(args: {
+  endpoint?: string;
+  repo: {
+    owner: string;
+    name: string;
+  };
+  word: string;
+}): Promise<User[]> {
+  const q = `
+{
+  repository(owner: "${args.repo.owner}", name: "${args.repo.name}") {
+    mentionableUsers(first: 10, query: "${args.word}") {
+      nodes {
+        login
+        bio
+      }
+    }
+  }
+}
+`;
+
+  const resp = await query<GetUsers>(
+    {
+      endpoint: args.endpoint,
+      query: q,
+    },
+  );
+
+  return resp.data.repository.mentionableUsers.nodes;
 }
