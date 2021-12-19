@@ -1,4 +1,4 @@
-*gh.txt*	Vim/Neovim plugin for GitHub
+*gh.txt*       Vim/Neovim plugin for GitHub
 
 Author: skanehira <sho19921005@gmail.com>
 License : MIT license  {{{
@@ -22,21 +22,21 @@ License : MIT license  {{{
 }}}
 
 ==============================================================================
-CONTENTS					*gh-contents*
+CONTENTS                                  *gh-contents*
 
-INTRODUCTION			|gh-introduction|
-USAGE				|gh-usage|
-INTERFACE			|gh-interface|
-  VARIABLES			  |gh-variables|
-  BUFFER			  |gh-buffers|
-  KEY-MAPPINGS			  |gh-key-mappings|
-  FUNCTIONS			  |gh-functions|
-TODO				|gh-todo|
-CHANGELOG			|gh-changelog|
+INTRODUCTION                              |gh-introduction|
+USAGE                                     |gh-usage|
+INTERFACE                                 |gh-interface|
+  VARIABLES                                 |gh-variables|
+  BUFFER                                    |gh-buffers|
+  KEY-MAPPINGS                              |gh-key-mappings|
+  FUNCTIONS                                 |gh-functions|
+TODO                                      |gh-todo|
+CHANGELOG                                 |gh-changelog|
 
 
 ==============================================================================
-INTRODUCTION					*gh-introduction*
+INTRODUCTION                              *gh-introduction*
 
 *gh.vim* is a Vim/Neovim plugin for GitHub
 
@@ -45,29 +45,29 @@ https://github.com/skanehira/denops-gh.vim
 
 
 ==============================================================================
-USAGE						*gh-usage*
+USAGE                                     *gh-usage*
 
 SETUP
-						*gh-setup*
+                                          *gh-setup*
 
 At first time, you have to install gh(https://github.com/cli/cli)
 and setup auth token. Please refer oficall documents.
 
 ==============================================================================
-INTERFACE					*gh-interface*
+INTERFACE                                 *gh-interface*
 
 ------------------------------------------------------------------------------
-VARIABLES					*gh-variables*
+VARIABLES                                 *gh-variables*
 
 
 ------------------------------------------------------------------------------
-BUFFER						*gh-buffer*
+BUFFER                                    *gh-buffer*
 
-						*gh-buffer-issue-list*
+                                          *gh-buffer-issue-list*
 gh://{owner}/{repo}/issues
   Show {owner}/{repo} issues.
 
-						*gh-buffer-issue-edit*
+                                          *gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
   Edit issue body.
   When you type |:write|, then issue body would be updated.
@@ -105,7 +105,7 @@ gh://{owner}/{repo}/issues/{number}
   '#Add' would complements issues that title is start with 'Add..'
   '@sk' would complements user that name is start with 'sk...'
 
-						*gh-buffer-issue-new*
+                                          *gh-buffer-issue-new*
 gh://{owner}/{repo}/issues/new 
   Create a new issue.
   If {owner}/{repo} has any issue templates, you can chose it and edit
@@ -113,63 +113,63 @@ gh://{owner}/{repo}/issues/new
   When you type |:write|, then 'gh' would be executed in terminal, and
   you can chose any options(e.g add labels).
 
-						*gh-buffer-issue-comment-list*
+                                          *gh-buffer-issue-comment-list*
 gh://{owner}/{repo}/issues/:number/comments
   TODO
 
-						*gh-buffer-issue-comment-new*
+                                          *gh-buffer-issue-comment-new*
 gh://{owner}/{repo}/issues/:number/comments/new
   TODO
 
-						*gh-buffer-issue-comment-edit*
+                                          *gh-buffer-issue-comment-edit*
 gh://{owner}/{repo}/issues/:number/comments/:id
   TODO
 
-						*gh-buffer-pull-list*
+                                          *gh-buffer-pull-list*
 gh://{owner}/{repo}/pulls
   TODO
 
-						*gh-buffer-repo-readme*
+                                          *gh-buffer-repo-readme*
 gh://{owner}/{repo}
   TODO
 
-						*gh-buffer-action-list*
+                                          *gh-buffer-action-list*
 gh://{owner}/{repo}/actions
   TODO
 
-						*gh-buffer-file-list*
+                                          *gh-buffer-file-list*
 gh://{owner}/{repo}/[:branch|:tree_sha]/files
   TODO
 
-						*gh-buffer-gist-list*
+                                          *gh-buffer-gist-list*
 gh://{owner}/gists[?privacy=public]
   TODO
 
-						*gh-buffer-gist*
+                                          *gh-buffer-gist*
 gh://{owner}/gists/:id
   TODO
 
 ------------------------------------------------------------------------------
-KEY-MAPPINGS					*gh-key-mappings*
+KEY-MAPPINGS                              *gh-key-mappings*
 
 TODO
 
 default mappings
 
-{buffer}			{mode}		{lhs}		{rhs}
+{buffer}                     {mode}              {lhs}              {rhs}
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
-FUNCTIONS					*gh-functions*
+FUNCTIONS                                 *gh-functions*
 
 
 ==============================================================================
-TODO						*gh-todo*
+TODO                                      *gh-todo*
 
 
 
 ==============================================================================
-CHANGELOG					*gh-changelog*
+CHANGELOG                                 *gh-changelog*
 
 
 ==============================================================================
