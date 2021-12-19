@@ -80,7 +80,6 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
   };
   inprogress(denops, async () => {
     try {
-      console.log("loading...");
       await updateIssue({ input });
       await denops.cmd("setlocal nomodified");
     } catch (e) {
