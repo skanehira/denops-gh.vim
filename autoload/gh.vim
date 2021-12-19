@@ -38,7 +38,6 @@ function! gh#_action(type) abort
           \ {"text": "(t)abnew", "value": "tabnew"},
           \ ])
     echo "" | redraw
-    echom opencmd
     if opencmd ==# ""
       return
     endif
