@@ -1,0 +1,12 @@
+[
+  {
+    "word": "skanehira",
+    "info": "Like Vim, Go.\nMany CLI/TUI Tools, Vim plugin author.",
+    "kind": "[User]",
+    "menu": "skanehira",
+    "user_data": {
+      "login": "skanehira",
+      "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author."
+    }
+  }
+]
