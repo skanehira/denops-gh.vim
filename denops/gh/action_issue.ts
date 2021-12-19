@@ -30,7 +30,7 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
         },
       });
       await denops.cmd("set ft=markdown buftype=acwrite");
-      await denops.call("setline", 1, issue.body.split("\r\n"));
+      await denops.call("setline", 1, issue.body.split("\n"));
       await denops.cmd("setlocal nomodified");
 
       schema.actionType = "issues:update";
