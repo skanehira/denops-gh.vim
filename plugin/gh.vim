@@ -8,3 +8,4 @@ endif
 let g:loaded_gh = 1
 
 call gh#_define_highlight()
+call gh#_define_signs()

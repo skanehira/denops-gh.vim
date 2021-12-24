@@ -129,6 +129,16 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           lhs: "<Plug>(gh-issue-open)",
           rhs: `:<C-u>call gh#_action("issues:open")<CR>`,
         },
+        {
+          defaultKey: "<C-j>",
+          lhs: "<Plug>(gh-issue-select-next)",
+          rhs: `:<C-u>call gh#_select_toggle('+')<CR>`,
+        },
+        {
+          defaultKey: "<C-k>",
+          lhs: "<Plug>(gh-issue-select-prev)",
+          rhs: `:<C-u>call gh#_select_toggle('-')<CR>`,
+        },
       ];
 
       for (const m of keyMaps) {
@@ -285,8 +295,14 @@ export async function actionOpenIssue(
   if (issues.length == 0) {
     return;
   }
-  const idx = (await denops.call("line", ".") as number) - 1;
-  const issue = issues[idx];
-  console.log(`open ${issue.url}`);
-  open(issue.url);
+  const idxs = await denops.call("gh#_get_selected_idx") as number[];
+  if (!idxs.length) {
+    const idx = (await denops.call("line", ".") as number) - 1;
+    idxs.push(idx);
+  }
+  for (const idx of idxs) {
+    const issue = issues[idx];
+    open(issue.url);
+  }
+  await denops.call("gh#_clear_selected");
 }

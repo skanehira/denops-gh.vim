@@ -25,27 +25,98 @@ function! gh#_define_highlight() abort
   hi! link gh_pull_labels gh_orange
 endfunction
 
+let s:sign_id = 0
+
+function! gh#_define_signs() abort
+  sign define gh_select text=* texthl=ErrorMsg
+endfunction
+
+function! s:sign_toggle(name) abort
+  let sign_info = sign_getplaced(bufname(),
+        \ {
+          \ 'lnum': line('.'),
+          \ 'group': 'gh',
+        \ })
+  let signs = filter(sign_info[0].signs, { _, v -> 
+        \ v.group is# 'gh' && v.name is# a:name })
+
+  " add new sign
+  if len(signs) is# 0
+    let s:sign_id += 1
+    call sign_place(
+          \ s:sign_id,
+          \ 'gh',
+          \ a:name,
+          \ bufname(),
+          \ {
+            \ 'lnum': line('.'),
+            \ 'priority': 99, 
+            \})
+    return
+  endif
+
+  " remove sign
+  call sign_unplace(
+        \ 'gh',
+        \ {
+          \ 'buffer': bufname(),
+          \ 'id': signs[0].id,
+          \ })
+  let s:sign_id -= 1
+endfunction
+
+function! gh#_select_toggle(arg) abort
+  let s:way = a:arg is# '+' ? 'j' : 'k'
+  if s:way is# 'k'
+    exe 'normal!' s:way
+    call s:sign_toggle('gh_select')
+  else
+    call s:sign_toggle('gh_select')
+    exe 'normal!' s:way
+  endif
+endfunction
+
+function! gh#_get_selected_idx() abort
+  let sign_info = sign_getplaced(bufname(), {'group': 'gh'})
+  let idxs = map(sign_info[0].signs, { _, v ->
+        \ v.lnum - 1})
+  return idxs
+endfunction
+
+function! gh#_clear_selected() abort
+  call sign_unplace('gh', {'buffer': bufname()})
+endfunction
+
+function! s:issue_edit() abort
+  if empty(b:gh_action_ctx.args)
+    echoerr("b:gh_action_ctx.args is empty")
+    return
+  endif
+  if len(gh#_get_selected_idx()) > 0
+    call gh#_error("gh.vim doesn't support edit multiple issue at same moment")
+    return
+  endif
+
+  let schema = b:gh_action_ctx.schema
+  let issue = b:gh_action_ctx.args[line('.')-1]
+  let opencmd = gh#_chose_action([
+        \ {"text": "(e)dit", "value": "edit"},
+        \ {"text": "(n)ew", "value": "new"},
+        \ {"text": "(v)new", "value": "vnew"},
+        \ {"text": "(t)abnew", "value": "tabnew"},
+        \ ])
+  if opencmd ==# ""
+    return
+  endif
+
+  call execute(printf("%s gh://%s/%s/issues/%d", opencmd, schema.owner, schema.repo, issue.number))
+endfunction
+
 function! gh#_action(type) abort
   let b:gh_action_ctx.schema.actionType = a:type
 
   if a:type ==# "issues:edit"
-    if empty(b:gh_action_ctx.args)
-      echoerr("b:gh_action_ctx.args is empty")
-      return
-    endif
-    let issue = b:gh_action_ctx.args[line(".")-1]
-    let schema = b:gh_action_ctx.schema
-    let opencmd = gh#_chose_action([
-          \ {"text": "(e)dit", "value": "edit"},
-          \ {"text": "(n)ew", "value": "new"},
-          \ {"text": "(v)new", "value": "vnew"},
-          \ {"text": "(t)abnew", "value": "tabnew"},
-          \ ])
-    echo "" | redraw
-    if opencmd ==# ""
-      return
-    endif
-    execute(printf("%s gh://%s/%s/issues/%d", opencmd, schema.owner, schema.repo, issue.number))
+    call s:issue_edit()
     return
   endif
   call denops#notify("gh", "doAction", [])
@@ -53,6 +124,12 @@ endfunction
 
 function! gh#_message(msg) abort
   echohl Directory
+  echo a:msg
+  echohl None
+endfunction
+
+function! gh#_error(msg) abort
+  echohl ErrorMsg
   echo a:msg
   echohl None
 endfunction
