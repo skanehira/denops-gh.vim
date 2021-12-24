@@ -1,4 +1,8 @@
-function! gh#def_highlight() abort
+" gh
+" Author: skanehira
+" License: MIT
+
+function! gh#_define_highlight() abort
   hi! gh_blue ctermfg=110 guifg=#84a0c6
   hi! gh_green ctermfg=150 guifg=#b4be82
   hi! gh_orange ctermfg=216 guifg=#e2a478
