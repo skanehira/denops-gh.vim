@@ -38,10 +38,10 @@ function! s:sign_toggle(name) abort
           \ 'group': 'gh',
         \ })
   let signs = filter(sign_info[0].signs, { _, v -> 
-        \ v.group is# 'gh' && v.name is# a:name })
+        \ v.group ==# 'gh' && v.name ==# a:name })
 
   " add new sign
-  if len(signs) is# 0
+  if len(signs) ==# 0
     let s:sign_id += 1
     call sign_place(
           \ s:sign_id,
@@ -66,8 +66,8 @@ function! s:sign_toggle(name) abort
 endfunction
 
 function! gh#_select_toggle(arg) abort
-  let s:way = a:arg is# '+' ? 'j' : 'k'
-  if s:way is# 'k'
+  let s:way = a:arg ==# '+' ? 'j' : 'k'
+  if s:way ==# 'k'
     exe 'normal!' s:way
     call s:sign_toggle('gh_select')
   else
@@ -112,14 +112,27 @@ function! s:issue_edit() abort
   call execute(printf("%s gh://%s/%s/issues/%d", opencmd, schema.owner, schema.repo, issue.number))
 endfunction
 
+function! s:issue_yank() abort
+  let idxs = gh#_get_selected_idx()
+  if len(idxs) ==# 0
+    call add(idxs, line(".")-1)
+  endif
+  let urls = map(idxs, {_, v -> b:gh_action_ctx.args[v].url})
+  call utils#yank(urls)
+  call gh#_message("yanked")
+  call gh#_clear_selected()
+endfunction
+
 function! gh#_action(type) abort
   let b:gh_action_ctx.schema.actionType = a:type
 
   if a:type ==# "issues:edit"
     call s:issue_edit()
-    return
+  elseif a:type ==# "issues:yank"
+    call s:issue_yank()
+  else
+    call denops#notify("gh", "doAction", [])
   endif
-  call denops#notify("gh", "doAction", [])
 endfunction
 
 function! gh#_message(msg) abort

@@ -130,6 +130,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           rhs: `:<C-u>call gh#_action("issues:open")<CR>`,
         },
         {
+          defaultKey: "y",
+          lhs: "<Plug>(gh-issue-yank)",
+          rhs: `:<C-u>call gh#_action("issues:yank")<CR>`,
+        },
+        {
           defaultKey: "<C-j>",
           lhs: "<Plug>(gh-issue-select-next)",
           rhs: `:<C-u>call gh#_select_toggle('+')<CR>`,

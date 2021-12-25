@@ -1,5 +1,15 @@
 import { assertEquals } from "../deps.ts";
 import { textDecoder, textEncoder } from "./helper.ts";
+import { buildSchema } from "../buffer.ts";
+import { ActionContext } from "../action.ts";
+import { path } from "../deps.ts";
+
+export const autoloadDir = path.join(
+  path.dirname(
+    path.dirname(path.dirname(path.dirname(path.fromFileUrl(import.meta.url)))),
+  ),
+  "autoload",
+);
 
 export async function parseJSON<T>(file: string): Promise<T> {
   const contents = await Deno.readFile(file);
@@ -31,4 +41,10 @@ export async function assertEqualTextFile(
   }
   const expected = textDecoder.decode(await Deno.readFile(file));
   assertEquals(actual, expected);
+}
+
+export function newActionContext(bufname: string): ActionContext {
+  const schema = buildSchema(bufname);
+  const ctx = { schema: schema };
+  return ctx;
 }
