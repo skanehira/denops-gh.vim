@@ -10,3 +10,4 @@ export * as vars from "https://deno.land/x/denops_std@v2.2.0/variable/mod.ts";
 export { default as stringWidth } from "https://cdn.skypack.dev/string-width@5.0.1?dts";
 export * as mapping from "https://deno.land/x/denops_std@v2.0.0/mapping/mod.ts";
 export * from "https://deno.land/x/denops_std@v2.2.0/test/mod.ts";
+export * from "https://deno.land/x/denops_std@v2.2.0/helper/mod.ts";

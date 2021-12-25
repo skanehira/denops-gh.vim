@@ -1,7 +1,12 @@
-import { assertEquals, Denops, path, test } from "./deps.ts";
+import { assertEquals, Denops, load, path, test } from "./deps.ts";
 import { actionEditIssue, actionListIssue } from "./action_issue.ts";
 import { buildSchema } from "./buffer.ts";
-import { assertEqualTextFile } from "./utils/test.ts";
+import {
+  assertEqualTextFile,
+  autoloadDir,
+  newActionContext,
+} from "./utils/test.ts";
+import { vimRegister } from "./utils/helper.ts";
 
 test({
   mode: "all",
@@ -37,4 +42,24 @@ test({
     ];
     assertEquals(actual, want);
   },
+});
+
+test({
+  mode: "all",
+  name: "action yank issue urls",
+  fn: async (denops: Denops) => {
+    for await (const entry of Deno.readDir(autoloadDir)) {
+      if (entry.isFile) {
+        await load(denops, path.toFileUrl(path.join(autoloadDir, entry.name)));
+      }
+    }
+
+    const ctx = newActionContext("gh://skanehira/test/issues");
+    await actionListIssue(denops, ctx);
+    await denops.call("gh#_action", "issues:yank");
+    const got = await denops.call("getreg", vimRegister);
+    const want = "https://github.com/skanehira/test/issues/27";
+    assertEquals(got, want);
+  },
+  timeout: 5000,
 });

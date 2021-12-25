@@ -156,11 +156,14 @@ TODO
 
 default mappings
 
-{buffer}                  {mode}     {lhs}     {rhs}
+{buffer}                {mode}     {lhs}     {rhs}
 --------------------------------------------------------------------
-|gh-buffer-issue-list|      normal     e         <Plug>(gh-issue-edit)
-                          normal     n         <Plug>(gh-issue-new)
-                          normal     o         <Plug>(gh-issue-open)
+|gh-buffer-issue-list|    normal     e         <Plug>(gh-issue-edit)
+                        normal     n         <Plug>(gh-issue-new)
+                        normal     o         <Plug>(gh-issue-open)
+                        normal     <C-j>     <Plug>(gh-issue-select-next)
+                        normal     <C-k>     <Plug>(gh-issue-select-prev)
+                        normal     y         <Plug>(gh-issue-yank)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*

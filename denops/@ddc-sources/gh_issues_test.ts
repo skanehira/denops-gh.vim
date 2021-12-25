@@ -27,6 +27,7 @@ test({
       issueCache.clear();
     }
   },
+  timeout: 3000,
 });
 
 test({
@@ -63,6 +64,7 @@ test({
       issueCache.clear();
     }
   },
+  timeout: 3000,
 });
 
 test({
@@ -87,6 +89,7 @@ test({
       issueCache.clear();
     }
   },
+  timeout: 3000,
 });
 
 test({
@@ -123,4 +126,5 @@ test({
       userCache.clear();
     }
   },
+  timeout: 3000,
 });
