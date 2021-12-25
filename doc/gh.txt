@@ -106,9 +106,9 @@ gh://{owner}/{repo}/issues/{number}
   '@sk' would complements user that name is start with 'sk...'
 
                                           *gh-buffer-issue-new*
-gh://{owner}/{repo}/issues/new 
+gh://{owner}/{repo}/issues/new
   Create a new issue.
-  If {owner}/{repo} has any issue templates, you can chose it and edit
+  If {owner}/{repo} has issue templates, you can chose it and edit
   template body.
   When you type |:write|, then 'gh' would be executed in terminal, and
   you can chose any options(e.g add labels).
