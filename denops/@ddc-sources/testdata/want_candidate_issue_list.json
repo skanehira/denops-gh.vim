@@ -17,7 +17,7 @@
           }
         ]
       },
-      "body": "## 🐛 Summary\r\nバグ\r\n\r\n## 👀 Steps\r\n(バグの再現手順)\r\n\r\n1. Do action\r\n2. Do another action\r\n3. Wrong Behavior !!\r\n\r\n## 🆗 Expected\r\n(本来あるべき姿)\r\n\r\n## 🚑 Actual\r\n(Issueを作成した時点の動作)\r\n\r\n## 📎 Images or log(optional)\r\n(バグ発生時の画像もしくはログ)\r\n",
+      "body": "## 🐛 Summary\nバグ\n\n## 👀 Steps\n(バグの再現手順)\n\n1. Do action\n2. Do another action\n3. Wrong Behavior !!\n\n## 🆗 Expected\n(本来あるべき姿)\n\n## 🚑 Actual\n(Issueを作成した時点の動作)\n\n## 📎 Images or log(optional)\n(バグ発生時の画像もしくはログ)\n",
       "labels": {
         "nodes": [
           {
@@ -47,3 +47,4 @@
     }
   }
 ]
+
