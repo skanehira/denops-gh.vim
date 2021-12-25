@@ -22,7 +22,7 @@ export type OrganizationConnection = {
 
 export type User = {
   id: string;
-  login: string;
+  login?: string;
   bio?: string;
 };
 

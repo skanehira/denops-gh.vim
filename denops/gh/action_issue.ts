@@ -191,9 +191,9 @@ export async function setIssueToBuffer(
       number: "#" + issue.number,
       title: issue.title,
       state: issue.state as string,
-      author: "@" + issue.author.login,
+      author: issue.author?.login ? "@" + issue.author.login : "",
       assignees: issue.assignees.nodes.slice(0, 2).map((user) => {
-        return "@" + user.login;
+        return user?.login ? "@" + user.login : "";
       }).join(" "),
       labels: `(${issue.labels.nodes.map((label) => label.name).join(", ")})`,
       comment: issue.comments.nodes.length
