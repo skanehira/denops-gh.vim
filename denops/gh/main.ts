@@ -2,7 +2,12 @@ import { autocmd, Denops, isString } from "./deps.ts";
 import { getAssociatedPullRequest } from "./github/pull.ts";
 import { endpoint } from "./github/api.ts";
 import { buildSchema, initializeBuffer } from "./buffer.ts";
-import { actionStore, getActionCtx, setActionCtx } from "./action.ts";
+import {
+  ActionContext,
+  actionStore,
+  getActionCtx,
+  setActionCtx,
+} from "./action.ts";
 
 export async function main(denops: Denops): Promise<void> {
   await denops.cmd(
@@ -25,7 +30,11 @@ export async function main(denops: Denops): Promise<void> {
       }
       try {
         const schema = buildSchema(bufname);
-        await setActionCtx(denops, { schema: schema });
+        const ctx: ActionContext = { schema: schema };
+        if (schema.actionType === "issues:list") {
+          ctx.args = { filters: "state:open" };
+        }
+        await setActionCtx(denops, ctx);
         await initializeBuffer(denops);
         await denops.dispatch(
           denops.name,

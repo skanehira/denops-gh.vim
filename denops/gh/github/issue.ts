@@ -1,9 +1,4 @@
-import {
-  IssueFilters,
-  IssueItem,
-  ResultIssue,
-  UpdateIssueInput,
-} from "./schema.ts";
+import { IssueItem, ResultIssue, UpdateIssueInput } from "./schema.ts";
 import { mutation, query } from "./api.ts";
 
 export type GetIssuesResult = {
@@ -17,7 +12,7 @@ export type GetIssuesCondition = {
   after?: string;
   owner: string;
   name: string;
-  Filter?: IssueFilters;
+  Filter?: string;
 };
 
 export type GetIssueResult = {
@@ -81,29 +76,7 @@ export async function getIssues(
   const first = `first: ${args.cond.first ? args.cond.first : 10}`;
 
   if (args.cond.Filter) {
-    if (args.cond.Filter.labels) {
-      filter.push(...args.cond.Filter.labels.map((v) => {
-        return `label:${v}`;
-      }));
-    }
-
-    if (args.cond.Filter.states) {
-      filter.push(...args.cond.Filter.states.map((v) => {
-        return `state:${v}`;
-      }));
-    } else {
-      filter.push("state:open");
-    }
-
-    if (args.cond.Filter.assignees) {
-      filter.push(...args.cond.Filter.assignees.map((v) => {
-        return `assignee:${v}`;
-      }));
-    }
-
-    if (args.cond.Filter.title) {
-      filter.push(`${args.cond.Filter.title} in:title`);
-    }
+    filter.push(args.cond.Filter.replaceAll('"', '\\"'));
   } else {
     filter.push("state:open");
   }

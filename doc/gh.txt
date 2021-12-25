@@ -66,6 +66,16 @@ BUFFER                                    *gh-buffer*
                                           *gh-buffer-issue-list*
 gh://{owner}/{repo}/issues
   Show {owner}/{repo} issues.
+  You can do some actions, like edit, open issue in browser and search.
+
+  NOTE: About search action.
+    You can use search feature typing 's' in issue list buffer.
+    Then you can use qualifiers to find specific issues in |cmdline|.
+    Exmaple, if you input 'state:closed label:bug', it would show issues
+    that state is closed and label is bug
+    Please refer bellow to know more qualifiers.
+
+      https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests
 
                                           *gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
@@ -164,6 +174,7 @@ default mappings
                         normal     <C-j>     <Plug>(gh-issue-select-next)
                         normal     <C-k>     <Plug>(gh-issue-select-prev)
                         normal     y         <Plug>(gh-issue-yank)
+			normal     s         <Plug>(gh-issue-search)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*

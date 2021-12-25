@@ -6,8 +6,10 @@ import {
   actionListIssue,
   actionNewIssue,
   actionOpenIssue,
+  actionSearchIssues,
   actionUpdateIssue,
 } from "./action_issue.ts";
+import { IssueItem } from "./github/schema.ts";
 
 export type ActionType =
   | "issues:open"
@@ -16,6 +18,7 @@ export type ActionType =
   | "issues:edit"
   | "issues:update"
   | "issues:list"
+  | "issues:search"
   | "pulls:new"
   | "pulls:list"
   | "pulls:edit"
@@ -56,6 +59,15 @@ export const isActionContext = (arg: unknown): arg is ActionContext => {
   return ["schema"].some((v) => v in (arg as Record<string, unknown>));
 };
 
+export type IssueListArg = {
+  issues?: IssueItem[];
+  filters: string;
+};
+
+export const isIssueListArgs = (arg: unknown): arg is IssueListArg => {
+  return ["filters"].some((v) => v in (arg as Record<string, unknown>));
+};
+
 export const actionStore = new Map<ActionType, ActionFn>(
   [
     ["issues:edit", actionEditIssue],
@@ -64,5 +76,6 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:new", actionNewIssue],
     ["issues:create", actionCreateIssue],
     ["issues:open", actionOpenIssue],
+    ["issues:search", actionSearchIssues],
   ],
 );
