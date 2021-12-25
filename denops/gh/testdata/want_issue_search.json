@@ -1,0 +1,188 @@
+{
+  "args": {
+    "issues": [
+      {
+        "id": "MDU6SXNzdWU4MTI3NzgzMjY=",
+        "state": "CLOSED",
+        "author": {
+          "login": "skanehira"
+        },
+        "body": "## 💪 タスク\n(どんなタスクかを書く)\n\n### 🔖 関連issue\n(関連しているissueがあれば書く)\n\n### 📄 資料\n(参考資料、サイトなどあれば書く )\n\n### ✅ 作業\n(どんな作業があるのか、大まかに書く)\n\n### 🚀 ゴール\n(タスクのゴールを書く)\n",
+        "assignees": {
+          "nodes": [
+            {
+              "login": "skanehira"
+            }
+          ]
+        },
+        "labels": {
+          "nodes": [
+            {
+              "name": "enhancement",
+              "color": "a2eeef"
+            },
+            {
+              "name": "help wanted",
+              "color": "008672"
+            },
+            {
+              "name": "good first issue",
+              "color": "7057ff"
+            },
+            {
+              "name": "invalid",
+              "color": "e4e669"
+            },
+            {
+              "name": "question",
+              "color": "d876e3"
+            },
+            {
+              "name": "wontfix",
+              "color": "ffffff"
+            }
+          ]
+        },
+        "url": "https://github.com/skanehira/test/issues/25",
+        "repository": {
+          "name": "test"
+        },
+        "number": 25,
+        "closed": true,
+        "comments": {
+          "nodes": []
+        },
+        "title": "test2"
+      },
+      {
+        "id": "MDU6SXNzdWU4MTI3NTQyNDI=",
+        "state": "CLOSED",
+        "author": {
+          "login": "skanehira"
+        },
+        "body": "## 🐛 Summary\n(バグの概要)\n\n## 👀 Steps\n(バグの再現手順)\n\n1. Do action\n2. Do another action\n3. Wrong Behavior !!\n\n## 🆗 Expected\n(本来あるべき姿)\n\n## 🚑 Actual\n(Issueを作成した時点の動作)\n\n## 📎 Images or log(optional)\n(バグ発生時の画像もしくはログ)\n",
+        "assignees": {
+          "nodes": [
+            {
+              "login": "skanehira"
+            }
+          ]
+        },
+        "labels": {
+          "nodes": [
+            {
+              "name": "wontfix",
+              "color": "ffffff"
+            }
+          ]
+        },
+        "url": "https://github.com/skanehira/test/issues/23",
+        "repository": {
+          "name": "test"
+        },
+        "number": 23,
+        "closed": true,
+        "comments": {
+          "nodes": []
+        },
+        "title": "test"
+      },
+      {
+        "id": "MDU6SXNzdWU4MTI3NDM1OTY=",
+        "state": "CLOSED",
+        "author": {
+          "login": "skanehira"
+        },
+        "body": "this is test task\n",
+        "assignees": {
+          "nodes": [
+            {
+              "login": "skanehira"
+            }
+          ]
+        },
+        "labels": {
+          "nodes": [
+            {
+              "name": "good first issue",
+              "color": "7057ff"
+            },
+            {
+              "name": "invalid",
+              "color": "e4e669"
+            },
+            {
+              "name": "wontfix",
+              "color": "ffffff"
+            }
+          ]
+        },
+        "url": "https://github.com/skanehira/test/issues/21",
+        "repository": {
+          "name": "test"
+        },
+        "number": 21,
+        "closed": true,
+        "comments": {
+          "nodes": []
+        },
+        "title": "test100"
+      },
+      {
+        "id": "MDU6SXNzdWU4MTI2NjE3MTU=",
+        "state": "CLOSED",
+        "author": {
+          "login": "skanehira"
+        },
+        "body": "## 🐛 Summary\n(バグの概要)\n\n## 👀 Steps\n(バグの再現手順)\n\n1. Do action\n2. Do another action\n3. Wrong Behavior !!\n\n## 🆗 Expected\n(本来あるべき姿)\n\n## 🚑 Actual\n(Issueを作成した時点の動作)\n\n## 📎 Images or log(optional)\n(バグ発生時の画像もしくはログ)\n",
+        "assignees": {
+          "nodes": [
+            {
+              "login": "skanehira"
+            }
+          ]
+        },
+        "labels": {
+          "nodes": [
+            {
+              "name": "help wanted",
+              "color": "008672"
+            },
+            {
+              "name": "good first issue",
+              "color": "7057ff"
+            },
+            {
+              "name": "invalid",
+              "color": "e4e669"
+            },
+            {
+              "name": "question",
+              "color": "d876e3"
+            },
+            {
+              "name": "wontfix",
+              "color": "ffffff"
+            }
+          ]
+        },
+        "url": "https://github.com/skanehira/test/issues/16",
+        "repository": {
+          "name": "test"
+        },
+        "number": 16,
+        "closed": true,
+        "comments": {
+          "nodes": []
+        },
+        "title": "test"
+      }
+    ],
+    "filters": "state:closed label:wontfix"
+  },
+  "schema": {
+    "actionType": "issues:list",
+    "owner": "skanehira",
+    "repo": "test"
+  }
+}

@@ -88,8 +88,8 @@ function! gh#_clear_selected() abort
 endfunction
 
 function! s:issue_edit() abort
-  if empty(b:gh_action_ctx.args)
-    echoerr("b:gh_action_ctx.args is empty")
+  if empty(b:gh_action_ctx.args.issues)
+    echoerr("b:gh_action_ctx.args.issues is empty")
     return
   endif
   if len(gh#_get_selected_idx()) > 0
@@ -98,7 +98,7 @@ function! s:issue_edit() abort
   endif
 
   let schema = b:gh_action_ctx.schema
-  let issue = b:gh_action_ctx.args[line('.')-1]
+  let issue = b:gh_action_ctx.args.issues[line('.')-1]
   let opencmd = gh#_chose_action([
         \ {"text": "(e)dit", "value": "edit"},
         \ {"text": "(n)ew", "value": "new"},
@@ -117,10 +117,25 @@ function! s:issue_yank() abort
   if len(idxs) ==# 0
     call add(idxs, line(".")-1)
   endif
-  let urls = map(idxs, {_, v -> b:gh_action_ctx.args[v].url})
+  let urls = map(idxs, {_, v -> b:gh_action_ctx.args.issues[v].url})
   call utils#yank(urls)
   call gh#_message("yanked")
   call gh#_clear_selected()
+endfunction
+
+function! s:issue_search() abort
+  if !has_key(b:gh_action_ctx.args, "filters")
+    call gh#_error("ctx.args type is not 'IssueListArg'")
+    return
+  endif
+  let filters = input("filters: ", b:gh_action_ctx.args.filters)
+
+  " if doesn't changed filters, do nothing
+  if filters ==# "" || filters ==# b:gh_action_ctx.args.filters
+    return
+  endif
+  let b:gh_action_ctx.args.filters = filters
+  call denops#notify("gh", "doAction", [])
 endfunction
 
 function! gh#_action(type) abort
@@ -130,6 +145,8 @@ function! gh#_action(type) abort
     call s:issue_edit()
   elseif a:type ==# "issues:yank"
     call s:issue_yank()
+  elseif a:type ==# "issues:search"
+    call s:issue_search()
   else
     call denops#notify("gh", "doAction", [])
   endif

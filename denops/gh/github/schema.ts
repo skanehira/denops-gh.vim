@@ -99,13 +99,6 @@ export type ResultIssue = {
 
 export type State = "open" | "closed";
 
-export type IssueFilters = {
-  labels?: string[];
-  states?: State[];
-  assignees?: string[];
-  title?: string;
-};
-
 export type PullRequest = {
   title: string;
   url: string;

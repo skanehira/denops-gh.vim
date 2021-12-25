@@ -45,6 +45,9 @@ export async function assertEqualTextFile(
 
 export function newActionContext(bufname: string): ActionContext {
   const schema = buildSchema(bufname);
-  const ctx = { schema: schema };
+  const ctx: ActionContext = { schema: schema };
+  if (schema.actionType == "issues:list") {
+    ctx.args = { filters: "state:open" };
+  }
   return ctx;
 }

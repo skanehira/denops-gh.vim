@@ -1,5 +1,11 @@
 import { autocmd, Denops } from "./deps.ts";
-import { ActionContext, isActionContext, setActionCtx } from "./action.ts";
+import {
+  ActionContext,
+  isActionContext,
+  isIssueListArgs,
+  IssueListArg,
+  setActionCtx,
+} from "./action.ts";
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
 import { getIssueTemplate } from "./github/repository.ts";
 import { isIssueItem, IssueItem, IssueTemplate } from "./github/schema.ts";
@@ -93,8 +99,14 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
     console.error(`ctx is not action context: ${Deno.inspect(ctx)}`);
     return;
   }
+  if (!isIssueListArgs(ctx.args)) {
+    console.error("ctx.args type is not 'IssueListArg'");
+    return;
+  }
+  const args = ctx.args;
+
   const schema = ctx.schema;
-  denops.cmd("setlocal ft=gh-issues");
+  denops.cmd("setlocal ft=gh-issues modifiable | silent %d_");
 
   await inprogress(denops, async () => {
     try {
@@ -103,9 +115,7 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           first: 30,
           owner: schema.owner,
           name: schema.repo,
-          Filter: {
-            states: ["open"],
-          },
+          Filter: args.filters,
         },
       });
       if (issues.nodes.length === 0) {
@@ -143,6 +153,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           defaultKey: "<C-k>",
           lhs: "<Plug>(gh-issue-select-prev)",
           rhs: `:<C-u>call gh#_select_toggle('-')<CR>`,
+        },
+        {
+          defaultKey: "s",
+          lhs: "<Plug>(gh-issue-search)",
+          rhs: `:<C-u>call gh#_action("issues:search")<CR>`,
         },
       ];
 
@@ -190,7 +205,7 @@ export async function setIssueToBuffer(
   await denops.call("setline", 1, rows);
   await denops.cmd("setlocal nomodifiable");
 
-  ctx.args = issues;
+  (ctx.args as IssueListArg).issues = issues;
   await setActionCtx(denops, ctx);
 }
 
@@ -296,8 +311,11 @@ export async function actionOpenIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  const issues = ctx.args as IssueItem[];
-  if (issues.length == 0) {
+  if (!isIssueListArgs(ctx.args)) {
+    console.error(`ctx.args type is not 'IssueListArg'`);
+    return;
+  }
+  if (ctx.args.issues!.length == 0) {
     return;
   }
   const idxs = await denops.call("gh#_get_selected_idx") as number[];
@@ -306,8 +324,15 @@ export async function actionOpenIssue(
     idxs.push(idx);
   }
   for (const idx of idxs) {
-    const issue = issues[idx];
+    const issue = ctx.args.issues![idx];
     open(issue.url);
   }
   await denops.call("gh#_clear_selected");
+}
+
+export async function actionSearchIssues(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  await actionListIssue(denops, ctx);
 }

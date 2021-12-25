@@ -42,10 +42,7 @@ export const getCandidates = async (
           first: 10,
           name: action.schema.repo,
           owner: action.schema.owner,
-          Filter: {
-            states: ["open", "closed"],
-            title: word.slice(1),
-          },
+          Filter: `state:open state:closed ${word.slice(1)} in:title`,
         },
       });
     });
