@@ -69,13 +69,44 @@ gh://{owner}/{repo}/issues
   You can do some actions, like edit, open issue in browser and search.
 
   NOTE: About search action.
-    You can use search feature typing 's' in issue list buffer.
-    Then you can use qualifiers to find specific issues in |cmdline|.
+    You can use search feature when typing 's' in issue list buffer.
+    Then you can use qualifiers to find specific issues in issue search buffer.
     Exmaple, if you input 'state:closed label:bug', it would show issues
     that state is closed and label is bug
     Please refer bellow to know more qualifiers.
-
       https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests
+
+    In issue search buffer, you can enable auto complements for some
+    qualifiers.
+
+>
+      augroup gh_autocmd
+        au!
+        au User gh_open_issues_search call EnableAutoCompletionForSearchIssue()
+      augroup END
+
+      function! EnableAutoCompletionForSearchIssue() abort
+        call ddc#custom#patch_buffer('sources', ['gh_issues_search'])
+        call ddc#custom#patch_buffer('specialBufferCompletion', v:true)
+        call ddc#custom#patch_buffer('sourceOptions', {
+              \ 'gh_issues_search': {
+                \  'minAutoCompleteLength': 1,
+                \  'minKeywordLength': v:true,
+                \  'isVolatile': v:true
+              \ }})
+        " If you want to complements with japanese, you should add keywordPattern
+        call ddc#custom#patch_buffer({'keywordPattern':
+              \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
+
+        " If matsui54/denops-popup-preview.vim is installed,
+        " you can preview issue body's info.
+        call popup_preview#enable()
+
+        " remove 'preview' from completeopt
+        let b:old_completeopt = &completeopt
+        set completeopt-=preview
+      endfunction
+<
 
                                           *gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
@@ -99,8 +130,12 @@ gh://{owner}/{repo}/issues/{number}
     call ddc#custom#patch_buffer('sourceOptions', {
           \ 'gh_issues': {
             \  'matcherKey': 'menu'
+            \  'minAutoCompleteLength': 1,
           \ }})
     call ddc#custom#patch_buffer('specialBufferCompletion', v:true)
+    " If you want to complements with japanese, you should add keywordPattern
+    call ddc#custom#patch_buffer({'keywordPattern':
+          \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
 
     " If matsui54/denops-popup-preview.vim is installed,
     " you can preview issue body's info.
