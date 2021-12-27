@@ -22,7 +22,7 @@ test({
         "want_candidate_issue_list.json",
       );
 
-      assertEqualFile(file, actual);
+      await assertEqualFile(file, actual);
     } finally {
       issueCache.clear();
     }
@@ -59,7 +59,7 @@ test({
         "want_candidate_issue_list.json",
       );
 
-      assertEqualFile(file, actual);
+      await assertEqualFile(file, actual);
     } finally {
       issueCache.clear();
     }
@@ -84,7 +84,7 @@ test({
         "want_candidate_user_list.json",
       );
 
-      assertEqualFile(file, actual);
+      await assertEqualFile(file, actual);
     } finally {
       issueCache.clear();
     }
@@ -121,7 +121,7 @@ test({
         "want_candidate_user_list.json",
       );
 
-      assertEqualFile(file, actual);
+      await assertEqualFile(file, actual);
     } finally {
       userCache.clear();
     }
