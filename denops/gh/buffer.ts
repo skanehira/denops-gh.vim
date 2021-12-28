@@ -115,5 +115,4 @@ export async function initializeBuffer(denops: Denops): Promise<void> {
   await denops.cmd(
     `setlocal nolist buftype=nofile bufhidden=hide noswapfile nonumber cursorline nowrap`,
   );
-  await denops.cmd("mapclear");
 }
