@@ -76,9 +76,8 @@ gh://{owner}/{repo}/issues
     Please refer bellow to know more qualifiers.
       https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests
 
-    In issue search buffer, you can enable auto complements for some
-    qualifiers.
-
+    In issue search buffer, If you add bellow settings,
+    you can enable auto complements for some qualifiers.
 >
       augroup gh_autocmd
         au!
@@ -91,8 +90,6 @@ gh://{owner}/{repo}/issues
         call ddc#custom#patch_buffer('sourceOptions', {
               \ 'gh_issues_search': {
                 \  'minAutoCompleteLength': 1,
-                \  'minKeywordLength': v:true,
-                \  'isVolatile': v:true
               \ }})
         " If you want to complements with japanese, you should add keywordPattern
         call ddc#custom#patch_buffer({'keywordPattern':
@@ -103,10 +100,14 @@ gh://{owner}/{repo}/issues
         call popup_preview#enable()
 
         " remove 'preview' from completeopt
-        let b:old_completeopt = &completeopt
         set completeopt-=preview
       endfunction
 <
+    Current avalaible qualifiers is bellow.(WIP)
+
+    | Qualifiers | Description           |
+    | ---------- | --------------------- |
+    | mentions   | mentionable user name |
 
                                           *gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
@@ -209,7 +210,7 @@ default mappings
                         normal     <C-j>     <Plug>(gh-issue-select-next)
                         normal     <C-k>     <Plug>(gh-issue-select-prev)
                         normal     y         <Plug>(gh-issue-yank)
-			normal     s         <Plug>(gh-issue-search)
+                        normal     s         <Plug>(gh-issue-search)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*
