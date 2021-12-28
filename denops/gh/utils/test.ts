@@ -1,4 +1,4 @@
-import { assertEquals } from "../deps.ts";
+import { assertEquals, fs } from "../deps.ts";
 import { textDecoder, textEncoder } from "./helper.ts";
 import { buildSchema } from "../buffer.ts";
 import { ActionContext } from "../action.ts";
@@ -23,6 +23,7 @@ export async function assertEqualFile(
 ): Promise<void> {
   if (Deno.env.get("UPDATE_GOLDEN")) {
     const contents = JSON.stringify(actual, null, 2);
+    await fs.ensureFile(file);
     await Deno.writeFile(file, textEncoder.encode(contents));
     return;
   }
