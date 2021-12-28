@@ -12,7 +12,7 @@ Auto complements issue number and user name in edit issue buffer.
 
 Search issue using [qualifiers](https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests).
 
-<img src=https://i.gyazo.com/0b06487b51e94c3825534c8ea368463e.gif width=1000>
+<img src=https://i.gyazo.com/36e1e4a16f0bbd01287181ceb1a64f9b.gif width=1000>
 
 ## Author
 skanehira

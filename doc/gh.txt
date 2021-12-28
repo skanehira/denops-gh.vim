@@ -103,11 +103,14 @@ gh://{owner}/{repo}/issues
         set completeopt-=preview
       endfunction
 <
-    Current avalaible qualifiers is bellow.(WIP)
+    Current avalaible qualifiers is bellow.
 
-    | Qualifiers | Description           |
-    | ---------- | --------------------- |
-    | mentions   | mentionable user name |
+    | Qualifiers | Description                |
+    | ---------- | -------------------------- |
+    | mentions   | mentionable user name      |
+    | author     | issue created by user name |
+    | assignee   | assignable user name       |
+    | label      | label name                 |
 
                                           *gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
