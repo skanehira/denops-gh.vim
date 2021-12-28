@@ -226,9 +226,6 @@ export async function actionNewIssue(
 
   const templs = templates!.map((t) => t.name);
   await menu(denops, templs, async (arg: unknown) => {
-    // remove callback function from denops worker
-    delete denops.dispatcher.menu_callback;
-
     const name = arg as string;
     const template = templates!.filter((t) => t.name == name)[0];
     await denops.cmd("setlocal ft=markdown buftype=acwrite");
@@ -263,6 +260,7 @@ export async function actionCreateIssue(
   const text = (await denops.eval(`getline(1, "$")`) as string[]).join("\n");
   const data = textEncoder.encode(text);
   const tmp = await Deno.makeTempFile();
+  const issueBufnr = await denops.call("bufnr");
   await Deno.writeFile(tmp, data);
 
   await runTerminal(denops, [
@@ -280,8 +278,8 @@ export async function actionCreateIssue(
         const url = text[i];
         if (url.substring(0, 18) === "https://github.com") {
           const path = text[i].substring(19);
-          await denops.cmd("bw");
-          await denops.cmd("bw");
+          await denops.cmd("bw!");
+          await denops.cmd(`bw! ${issueBufnr}`);
           const chosen = await denops.call("gh#_chose_action", [
             { text: "(e)dit", value: "edit" },
             { text: "(y)nk issue url", value: "yank" },

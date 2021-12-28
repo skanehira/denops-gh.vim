@@ -25,7 +25,10 @@ export const menu = async (
   // NOTE: workaround
   // register callback function to call from vim
   // its will remove when done
-  denops.dispatcher["menu_callback"] = callback;
+  denops.dispatcher["menu_callback"] = async (arg: unknown): Promise<void> => {
+    await callback(arg);
+    delete denops.dispatcher.menu_callback;
+  };
 };
 
 export async function nvimMenu(denops: Denops, text: string[]) {
