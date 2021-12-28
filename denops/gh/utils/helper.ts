@@ -141,3 +141,16 @@ export const inprogress = async <T>(
     await denops.cmd("echo ''");
   }
 };
+
+export function trim(word: string, pat?: string): string {
+  if (!pat) {
+    return word.trim();
+  }
+  if (word && word.at(0) === pat) {
+    word = word.substring(1);
+  }
+  if (word && word.at(-1) === pat) {
+    word = word.substring(0, word.length - 1);
+  }
+  return word;
+}

@@ -37,7 +37,10 @@ const issueBodyQuery = `
   }
   assignees(first: 10) {
     nodes {
+      id
       login
+      name
+      bio
     }
   }
   body
@@ -45,6 +48,7 @@ const issueBodyQuery = `
     nodes {
       name
       color
+      description
     }
   }
   closed

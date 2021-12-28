@@ -11,33 +11,42 @@
         "assignees": {
           "nodes": [
             {
-              "login": "skanehira"
+              "id": "MDQ6VXNlcjc4ODg1OTE=",
+              "name": "skanehira",
+              "login": "skanehira",
+              "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author."
             }
           ]
         },
         "labels": {
           "nodes": [
             {
+              "description": "New feature or request",
               "name": "enhancement",
               "color": "a2eeef"
             },
             {
+              "description": "Extra attention is needed",
               "name": "help wanted",
               "color": "008672"
             },
             {
+              "description": "Good for newcomers",
               "name": "good first issue",
               "color": "7057ff"
             },
             {
+              "description": "This doesn't seem right",
               "name": "invalid",
               "color": "e4e669"
             },
             {
+              "description": "Further information is requested",
               "name": "question",
               "color": "d876e3"
             },
             {
+              "description": "This will not be worked on",
               "name": "wontfix",
               "color": "ffffff"
             }
@@ -64,13 +73,17 @@
         "assignees": {
           "nodes": [
             {
-              "login": "skanehira"
+              "id": "MDQ6VXNlcjc4ODg1OTE=",
+              "name": "skanehira",
+              "login": "skanehira",
+              "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author."
             }
           ]
         },
         "labels": {
           "nodes": [
             {
+              "description": "This will not be worked on",
               "name": "wontfix",
               "color": "ffffff"
             }
@@ -97,21 +110,27 @@
         "assignees": {
           "nodes": [
             {
-              "login": "skanehira"
+              "id": "MDQ6VXNlcjc4ODg1OTE=",
+              "name": "skanehira",
+              "login": "skanehira",
+              "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author."
             }
           ]
         },
         "labels": {
           "nodes": [
             {
+              "description": "Good for newcomers",
               "name": "good first issue",
               "color": "7057ff"
             },
             {
+              "description": "This doesn't seem right",
               "name": "invalid",
               "color": "e4e669"
             },
             {
+              "description": "This will not be worked on",
               "name": "wontfix",
               "color": "ffffff"
             }
@@ -138,29 +157,37 @@
         "assignees": {
           "nodes": [
             {
-              "login": "skanehira"
+              "id": "MDQ6VXNlcjc4ODg1OTE=",
+              "name": "skanehira",
+              "login": "skanehira",
+              "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author."
             }
           ]
         },
         "labels": {
           "nodes": [
             {
+              "description": "Extra attention is needed",
               "name": "help wanted",
               "color": "008672"
             },
             {
+              "description": "Good for newcomers",
               "name": "good first issue",
               "color": "7057ff"
             },
             {
+              "description": "This doesn't seem right",
               "name": "invalid",
               "color": "e4e669"
             },
             {
+              "description": "Further information is requested",
               "name": "question",
               "color": "d876e3"
             },
             {
+              "description": "This will not be worked on",
               "name": "wontfix",
               "color": "ffffff"
             }

@@ -1,5 +1,13 @@
 import { query } from "./api.ts";
-import { GetIssueTemplates, GetUsers, IssueTemplate, User } from "./schema.ts";
+import {
+  GetAssignableUsers,
+  GetIssueTemplates,
+  GetLabels,
+  GetMentionableUsers,
+  IssueTemplate,
+  Label,
+  User,
+} from "./schema.ts";
 
 export async function getIssueTemplate(args: {
   endpoint?: string;
@@ -53,7 +61,7 @@ export async function getMentionableUsers(args: {
 }
 `;
 
-  const resp = await query<GetUsers>(
+  const resp = await query<GetMentionableUsers>(
     {
       endpoint: args.endpoint,
       query: q,
@@ -61,4 +69,67 @@ export async function getMentionableUsers(args: {
   );
 
   return resp.data.repository.mentionableUsers.nodes;
+}
+
+export async function getAssignableUsers(args: {
+  endpoint?: string;
+  repo: {
+    owner: string;
+    name: string;
+  };
+  word: string;
+}): Promise<User[]> {
+  const q = `
+{
+  repository(owner: "${args.repo.owner}", name: "${args.repo.name}") {
+    assignableUsers(first: 10, query: "${args.word}") {
+      nodes{
+        login
+        bio
+      }
+    }
+  }
+}
+  `;
+
+  const resp = await query<GetAssignableUsers>(
+    {
+      endpoint: args.endpoint,
+      query: q,
+    },
+  );
+
+  return resp.data.repository.assignableUsers.nodes;
+}
+
+export async function getLabels(args: {
+  endpoint?: string;
+  repo: {
+    owner: string;
+    name: string;
+  };
+  word: string;
+}): Promise<Label[]> {
+  const q = `
+{
+  repository(owner: "${args.repo.owner}", name: "${args.repo.name}") {
+    labels(first: 10, query: "${args.word}") {
+      nodes{
+        name
+        color
+        description
+      }
+    }
+  }
+}
+  `;
+
+  const resp = await query<GetLabels>(
+    {
+      endpoint: args.endpoint,
+      query: q,
+    },
+  );
+
+  return resp.data.repository.labels.nodes;
 }

@@ -13,7 +13,10 @@
       "assignees": {
         "nodes": [
           {
-            "login": "skanehira"
+            "id": "MDQ6VXNlcjc4ODg1OTE=",
+            "login": "skanehira",
+            "name": "skanehira",
+            "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author."
           }
         ]
       },
@@ -22,11 +25,13 @@
         "nodes": [
           {
             "name": "bug",
-            "color": "d73a4a"
+            "color": "d73a4a",
+            "description": "Something isn't working"
           },
           {
             "name": "duplicate",
-            "color": "cfd3d7"
+            "color": "cfd3d7",
+            "description": "This issue or pull request already exists"
           }
         ]
       },
@@ -47,4 +52,3 @@
     }
   }
 ]
-

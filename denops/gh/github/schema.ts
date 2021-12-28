@@ -23,15 +23,28 @@ export type OrganizationConnection = {
 export type User = {
   id: string;
   login: string;
+  name?: string;
   bio?: string;
 };
 
 export type GetUsers = {
   data: {
+    search: UserConnection;
+  };
+};
+
+export type GetMentionableUsers = {
+  data: {
     repository: {
-      mentionableUsers: {
-        nodes: User[];
-      };
+      mentionableUsers: UserConnection;
+    };
+  };
+};
+
+export type GetAssignableUsers = {
+  data: {
+    repository: {
+      assignableUsers: UserConnection;
     };
   };
 };
@@ -40,9 +53,18 @@ export type UserConnection = {
   nodes: User[];
 };
 
+export type GetLabels = {
+  data: {
+    repository: {
+      labels: LabelConnection;
+    };
+  };
+};
+
 export type Label = {
   name: string;
   color: string;
+  description: string;
 };
 
 export type LabelConnection = {
