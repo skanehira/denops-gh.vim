@@ -31,7 +31,7 @@ INTERFACE                                 |gh-interface|
   BUFFER                                    |gh-buffers|
   KEY-MAPPINGS                              |gh-key-mappings|
   FUNCTIONS                                 |gh-functions|
-TODO                                      |gh-todo|
+FAQ                                       |gh-faq|
 CHANGELOG                                 |gh-changelog|
 
 
@@ -79,6 +79,14 @@ gh://{owner}/{repo}/issues
     In issue search buffer, If you add bellow settings,
     you can enable auto complements for some qualifiers.
 >
+      " If matsui54/denops-popup-preview.vim are installed,
+      " you can preview issue body's info in popup window.
+      call popup_preview#enable()
+
+      " remove 'preview' from completeopt
+      " when you use  denops-popup-preview.vim
+      set completeopt-=preview
+
       augroup gh_autocmd
         au!
         au User gh_open_issues_search call EnableAutoCompletionForSearchIssue()
@@ -94,13 +102,6 @@ gh://{owner}/{repo}/issues
         " If you want to complements with japanese, you should add keywordPattern
         call ddc#custom#patch_buffer({'keywordPattern':
               \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
-
-        " If matsui54/denops-popup-preview.vim is installed,
-        " you can preview issue body's info.
-        call popup_preview#enable()
-
-        " remove 'preview' from completeopt
-        set completeopt-=preview
       endfunction
 <
     Current avalaible qualifiers is bellow.
@@ -123,6 +124,14 @@ gh://{owner}/{repo}/issues/{number}
   NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
         issue's body in popup/float window
 >
+  " If matsui54/denops-popup-preview.vim are installed,
+  " you can preview issue body's info in popup window.
+  call popup_preview#enable()
+
+  " remove 'preview' from completeopt
+  " when you use  denops-popup-preview.vim
+  set completeopt-=preview
+
   augroup gh_autocmd
     au!
     autocmd User gh_open_issue call EnableAutoCompletion()
@@ -140,13 +149,6 @@ gh://{owner}/{repo}/issues/{number}
     " If you want to complements with japanese, you should add keywordPattern
     call ddc#custom#patch_buffer({'keywordPattern':
           \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
-
-    " If matsui54/denops-popup-preview.vim is installed,
-    " you can preview issue body's info.
-    call popup_preview#enable()
-
-    " remove 'preview' from completeopt
-    set completeopt-=preview
   endfunction
 <
 
@@ -220,9 +222,7 @@ FUNCTIONS                                 *gh-functions*
 
 
 ==============================================================================
-TODO                                      *gh-todo*
-
-
+FAQ                                       *gh-faq*
 
 ==============================================================================
 CHANGELOG                                 *gh-changelog*
