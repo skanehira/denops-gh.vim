@@ -1,0 +1,24 @@
+{
+  "id": "MDU6SXNzdWU3MDk3MzE0NTA=",
+  "title": "test1",
+  "author": {
+    "login": "skanehira"
+  },
+  "assignees": {
+    "nodes": []
+  },
+  "body": "# this is test\r\ntest issue",
+  "labels": {
+    "nodes": []
+  },
+  "closed": false,
+  "number": 1,
+  "repository": {
+    "name": "test"
+  },
+  "url": "https://github.com/skanehira/test/issues/1",
+  "state": "OPEN",
+  "comments": {
+    "nodes": []
+  }
+}
