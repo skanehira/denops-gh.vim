@@ -83,6 +83,17 @@ function! gh#_get_selected_idx() abort
   return idxs
 endfunction
 
+function! gh#_get_selected_issue() abort
+  let idxs = gh#_get_selected_idx()
+  if empty(idxs)
+    call add(idxs, line(".")-1)
+  endif
+
+  let issues = filter(copy(b:gh_action_ctx.args.issues),
+        \ { i ->  index(idxs, i) != -1 })
+  return issues
+endfunction
+
 function! gh#_clear_selected() abort
   call sign_unplace('gh', {'buffer': bufname()})
 endfunction
@@ -113,11 +124,8 @@ function! s:issue_edit() abort
 endfunction
 
 function! s:issue_yank() abort
-  let idxs = gh#_get_selected_idx()
-  if len(idxs) ==# 0
-    call add(idxs, line(".")-1)
-  endif
-  let urls = map(idxs, {_, v -> b:gh_action_ctx.args.issues[v].url})
+  let issues = gh#_get_selected_issue()
+  let urls = map(issues, { _, issue -> issue.url })
   call utils#yank(urls)
   call gh#_message("yanked")
   call gh#_clear_selected()
