@@ -127,7 +127,7 @@ function! s:issue_yank() abort
   let issues = gh#_get_selected_issue()
   let urls = map(issues, { _, issue -> issue.url })
   call utils#yank(urls)
-  call gh#_message("yanked")
+  call gh#_message(["yanked:"] + map(copy(urls), { _, url -> "  " .. url }))
   call gh#_clear_selected()
 endfunction
 
@@ -188,16 +188,25 @@ function! gh#_action(type) abort
   endif
 endfunction
 
-function! gh#_message(msg) abort
-  echohl Directory
-  echo a:msg
+function! s:echo_msg(msg, hl) abort
+  exe "echohl" a:hl
+  if type(a:msg) ==# v:t_list
+    for m in a:msg
+      redraw
+      echom m
+    endfor
+  else
+    echom a:msg
+  endif
   echohl None
 endfunction
 
+function! gh#_message(msg) abort
+  call s:echo_msg(a:msg, 'Directory')
+endfunction
+
 function! gh#_error(msg) abort
-  echohl ErrorMsg
-  echo a:msg
-  echohl None
+  call s:echo_msg(a:msg, 'ErrorMsg')
 endfunction
 
 " returns chosed action
