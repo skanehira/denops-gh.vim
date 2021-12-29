@@ -125,22 +125,22 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
 
       const keyMaps = [
         {
-          defaultKey: "e",
+          defaultKey: "ghe",
           lhs: "<Plug>(gh-issue-edit)",
           rhs: `:<C-u>call gh#_action("issues:edit")<CR>`,
         },
         {
-          defaultKey: "n",
+          defaultKey: "ghn",
           lhs: "<Plug>(gh-issue-new)",
           rhs: `:<C-u>new gh://${schema.owner}/${schema.repo}/issues/new<CR>`,
         },
         {
-          defaultKey: "o",
+          defaultKey: "<C-o>",
           lhs: "<Plug>(gh-issue-view)",
           rhs: `:<C-u>call gh#_action("issues:view")<CR>`,
         },
         {
-          defaultKey: "y",
+          defaultKey: "ghy",
           lhs: "<Plug>(gh-issue-yank)",
           rhs: `:<C-u>call gh#_action("issues:yank")<CR>`,
         },
@@ -155,7 +155,7 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           rhs: `:<C-u>call gh#_select_toggle('-')<CR>`,
         },
         {
-          defaultKey: "s",
+          defaultKey: "ghs",
           lhs: "<Plug>(gh-issue-search)",
           rhs: `:<C-u>call gh#_action("issues:search")<CR>`,
         },

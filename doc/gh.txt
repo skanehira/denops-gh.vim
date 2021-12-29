@@ -209,13 +209,13 @@ default mappings
 
 {buffer}                {mode}     {lhs}     {rhs}
 --------------------------------------------------------------------
-|gh-buffer-issue-list|    normal     e         <Plug>(gh-issue-edit)
-                        normal     n         <Plug>(gh-issue-new)
-                        normal     o         <Plug>(gh-issue-view)
-                        normal     <C-j>     <Plug>(gh-issue-select-next)
-                        normal     <C-k>     <Plug>(gh-issue-select-prev)
-                        normal     y         <Plug>(gh-issue-yank)
-                        normal     s         <Plug>(gh-issue-search)
+|gh-buffer-issue-list|    normal     ghe         <Plug>(gh-issue-edit)
+                        normal     ghn         <Plug>(gh-issue-new)
+                        normal     <C-O>       <Plug>(gh-issue-view)
+                        normal     <C-J>       <Plug>(gh-issue-select-next)
+                        normal     <C-K>       <Plug>(gh-issue-select-prev)
+                        normal     ghy         <Plug>(gh-issue-yank)
+                        normal     ghs         <Plug>(gh-issue-search)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*
