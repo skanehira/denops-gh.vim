@@ -1,6 +1,7 @@
 import { Denops, vars } from "./deps.ts";
 import { BufferSchema, isSchema } from "./buffer.ts";
 import {
+  actionChangeIssueState,
   actionCreateIssue,
   actionEditIssue,
   actionListIssue,
@@ -12,6 +13,8 @@ import {
 import { IssueItem } from "./github/schema.ts";
 
 export type ActionType =
+  | "issues:close"
+  | "issues:open"
   | "issues:view"
   | "issues:new"
   | "issues:create"
@@ -77,5 +80,7 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:create", actionCreateIssue],
     ["issues:view", actionViewIssue],
     ["issues:search", actionSearchIssues],
+    ["issues:open", actionChangeIssueState],
+    ["issues:close", actionChangeIssueState],
   ],
 );

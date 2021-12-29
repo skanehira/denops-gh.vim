@@ -211,6 +211,8 @@ default mappings
 --------------------------------------------------------------------
 |gh-buffer-issue-list|    normal     ghe         <Plug>(gh-issue-edit)
                         normal     ghn         <Plug>(gh-issue-new)
+                        normal     gho         <Plug>(gh-issue-open)
+                        normal     ghc         <Plug>(gh-issue-close)
                         normal     <C-O>       <Plug>(gh-issue-view)
                         normal     <C-J>       <Plug>(gh-issue-select-next)
                         normal     <C-K>       <Plug>(gh-issue-select-prev)

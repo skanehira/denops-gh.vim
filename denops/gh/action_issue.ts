@@ -1,6 +1,7 @@
 import { autocmd, Denops } from "./deps.ts";
 import {
   ActionContext,
+  getActionCtx,
   isActionContext,
   isIssueListArgs,
   IssueListArg,
@@ -158,6 +159,16 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           defaultKey: "ghs",
           lhs: "<Plug>(gh-issue-search)",
           rhs: `:<C-u>call gh#_action("issues:search")<CR>`,
+        },
+        {
+          defaultKey: "ghc",
+          lhs: "<Plug>(gh-issue-close)",
+          rhs: `:<C-u>call gh#_action("issues:close")<CR>`,
+        },
+        {
+          defaultKey: "gho",
+          lhs: "<Plug>(gh-issue-open)",
+          rhs: `:<C-u>call gh#_action("issues:open")<CR>`,
         },
       ];
 
@@ -333,4 +344,44 @@ export async function actionSearchIssues(
   ctx: ActionContext,
 ): Promise<void> {
   await actionListIssue(denops, ctx);
+}
+
+export async function actionChangeIssueState(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  if (!isIssueListArgs(ctx.args)) {
+    console.error(`ctx.args type is not 'IssueListArg'`);
+    return;
+  }
+  if (!ctx.args.issues) {
+    return;
+  }
+
+  const issues = ctx.args.issues;
+
+  if (issues.length == 0) {
+    return;
+  }
+
+  const idxs = await denops.call("gh#_get_selected_idx") as number[];
+  if (!idxs.length) {
+    const idx = (await denops.call("line", ".") as number) - 1;
+    idxs.push(idx);
+  }
+
+  await inprogress(denops, async () => {
+    for (const idx of idxs) {
+      const issue = issues[idx];
+      const state = ctx.schema.actionType === "issues:open" ? "OPEN" : "CLOSED";
+      await updateIssue({
+        input: {
+          id: issue.id,
+          state: state,
+        },
+      });
+    }
+  });
+  await denops.call("gh#_clear_selected");
+  await actionSearchIssues(denops, await getActionCtx(denops));
 }
