@@ -1,4 +1,4 @@
-import { autocmd, Denops, isString } from "./deps.ts";
+import { autocmd, Denops, isString, vars } from "./deps.ts";
 import { getAssociatedPullRequest } from "./github/pull.ts";
 import { endpoint } from "./github/api.ts";
 import { buildSchema, initializeBuffer } from "./buffer.ts";
@@ -29,11 +29,21 @@ export async function main(denops: Denops): Promise<void> {
         throw new Error(`bufname is not string: ${bufname}`);
       }
       try {
-        const schema = buildSchema(bufname);
-        const ctx: ActionContext = { schema: schema };
-        if (schema.actionType === "issues:list") {
-          ctx.args = { filters: "state:open" };
-        }
+        const defaultCtx = (): ActionContext => {
+          const schema = buildSchema(bufname);
+          const ctx: ActionContext = { schema: schema };
+          if (schema.actionType === "issues:list") {
+            ctx.args = { filters: "state:open" };
+          }
+          return ctx;
+        };
+
+        const ctx = await vars.b.get(
+          denops,
+          "gh_action_ctx",
+          defaultCtx(),
+        );
+
         await setActionCtx(denops, ctx);
         await initializeBuffer(denops);
         await denops.dispatch(
