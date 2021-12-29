@@ -133,7 +133,7 @@ endfunction
 
 function! s:issue_search() abort
   let filters = getline(".")
-  bw!
+  q
   call win_gotoid(s:old_winid)
 
   " if doesn't changed filters, do nothing
@@ -145,18 +145,14 @@ function! s:issue_search() abort
   call denops#notify("gh", "doAction", [])
 endfunction
 
+augroup gh-issue-search
+  au!
+  au FileType issue-search inoremap <silent> <buffer> <CR> <Esc>:call <SID>issue_search()<CR>
+  au FileType issue-search inoremap <silent> <buffer> <C-c> <Esc>:q<CR>
+  au FileType issue-search nnoremap <silent> <buffer> q :q<CR>
+augroup END
+
 function! s:issue_search_buffer() abort
-  if !has_key(b:gh_action_ctx.args, "filters")
-    call gh#_error("ctx.args doesn't contains 'filters'")
-    return
-  endif
-
-  augroup gh-issue-search
-    au!
-    au FileType issue-search inoremap <silent> <buffer> <CR> <Esc>:call <SID>issue_search()<CR>
-    au FileType issue-search nnoremap <silent> <buffer> q :bw!<CR>
-  augroup END
-
   let s:old_winid = win_getid()
   let ctx = b:gh_action_ctx
   let filters = b:gh_action_ctx.args.filters
@@ -168,13 +164,14 @@ function! s:issue_search_buffer() abort
     exe "botright 1new" bufname
     call feedkeys("A")
     let b:gh_action_ctx = ctx
+    setlocal ft=issue-search noswapfile buftype=nofile
+    call setline(1, filters)
+
     doautocmd User gh_open_issues_search
   else
     call win_gotoid(winid)
+    call feedkeys("A")
   endif
-  
-  setlocal ft=issue-search noswapfile buftype=nofile
-  call setline(1, filters)
 endfunction
 
 function! gh#_action(type) abort
