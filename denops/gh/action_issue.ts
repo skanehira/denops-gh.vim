@@ -136,8 +136,8 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
         },
         {
           defaultKey: "o",
-          lhs: "<Plug>(gh-issue-open)",
-          rhs: `:<C-u>call gh#_action("issues:open")<CR>`,
+          lhs: "<Plug>(gh-issue-view)",
+          rhs: `:<C-u>call gh#_action("issues:view")<CR>`,
         },
         {
           defaultKey: "y",
@@ -305,7 +305,7 @@ export async function actionCreateIssue(
   });
 }
 
-export async function actionOpenIssue(
+export async function actionViewIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {

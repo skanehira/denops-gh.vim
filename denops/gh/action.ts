@@ -5,14 +5,14 @@ import {
   actionEditIssue,
   actionListIssue,
   actionNewIssue,
-  actionOpenIssue,
   actionSearchIssues,
   actionUpdateIssue,
+  actionViewIssue,
 } from "./action_issue.ts";
 import { IssueItem } from "./github/schema.ts";
 
 export type ActionType =
-  | "issues:open"
+  | "issues:view"
   | "issues:new"
   | "issues:create"
   | "issues:edit"
@@ -75,7 +75,7 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:list", actionListIssue],
     ["issues:new", actionNewIssue],
     ["issues:create", actionCreateIssue],
-    ["issues:open", actionOpenIssue],
+    ["issues:view", actionViewIssue],
     ["issues:search", actionSearchIssues],
   ],
 );
