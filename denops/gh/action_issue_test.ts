@@ -31,6 +31,7 @@ test({
     );
     await assertEqualTextFile(file, actual.join("\n") + "\n");
   },
+  timeout: 3000,
 });
 
 test({
@@ -48,6 +49,7 @@ test({
     ];
     assertEquals(actual, want);
   },
+  timeout: 3000,
 });
 
 test({
