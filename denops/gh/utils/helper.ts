@@ -132,10 +132,11 @@ export const vimRegister = Deno.build.os === "darwin" ? "*" : "+";
 
 export const inprogress = async <T>(
   denops: Denops,
+  text: string,
   f: () => Promise<void | T>,
 ) => {
   try {
-    console.log("loading...");
+    console.log(text);
     return await f();
   } finally {
     await denops.cmd("echo ''");

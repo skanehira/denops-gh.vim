@@ -44,7 +44,9 @@ export async function assertEqualTextFile(
   assertEquals(actual, expected);
 }
 
-export function newActionContext(bufname: string): ActionContext {
+export function newActionContext(
+  bufname: string,
+): ActionContext {
   const schema = buildSchema(bufname);
   const ctx: ActionContext = { schema: schema };
   if (schema.actionType == "issues:list") {

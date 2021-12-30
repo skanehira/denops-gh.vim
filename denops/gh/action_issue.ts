@@ -22,7 +22,7 @@ import {
 } from "./utils/helper.ts";
 
 export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
-  await inprogress(denops, async () => {
+  await inprogress(denops, "loading...", async () => {
     const schema = ctx.schema;
     if (!schema.issue) {
       throw new Error(`invalid schema: ${schema}`);
@@ -85,7 +85,7 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
     id: ctx.args.id,
     body: body.join("\r\n"),
   };
-  inprogress(denops, async () => {
+  inprogress(denops, "updating...", async () => {
     try {
       await updateIssue({ input });
       await denops.cmd("setlocal nomodified");
@@ -107,9 +107,9 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
   const args = ctx.args;
 
   const schema = ctx.schema;
-  denops.cmd("setlocal ft=gh-issues modifiable | silent %d_");
+  denops.cmd("setlocal ft=gh-issues modifiable");
 
-  await inprogress(denops, async () => {
+  await inprogress(denops, "loading...", async () => {
     try {
       const issues = await getIssues({
         cond: {
@@ -122,6 +122,7 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
       if (issues.nodes.length === 0) {
         throw new Error("not found any issues");
       }
+      await denops.cmd("silent %d_");
       await setIssueToBuffer(denops, ctx, issues.nodes);
 
       const keyMaps = [
@@ -224,16 +225,20 @@ export async function actionNewIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  const templates = await inprogress<IssueTemplate[]>(denops, async () => {
-    const templates = await getIssueTemplate({
-      repo: {
-        owner: ctx.schema.owner,
-        name: ctx.schema.repo,
-      },
-    });
-    templates.push({ name: "Blank", body: "" });
-    return templates;
-  });
+  const templates = await inprogress<IssueTemplate[]>(
+    denops,
+    "loading...",
+    async () => {
+      const templates = await getIssueTemplate({
+        repo: {
+          owner: ctx.schema.owner,
+          name: ctx.schema.repo,
+        },
+      });
+      templates.push({ name: "Blank", body: "" });
+      return templates;
+    },
+  );
 
   const templs = templates!.map((t) => t.name);
   await menu(denops, templs, async (arg: unknown) => {
@@ -370,10 +375,11 @@ export async function actionChangeIssueState(
     idxs.push(idx);
   }
 
-  await inprogress(denops, async () => {
+  const state = ctx.schema.actionType === "issues:open" ? "OPEN" : "CLOSED";
+  const text = state === "OPEN" ? "opening..." : "closing...";
+  await inprogress(denops, text, async () => {
     for (const idx of idxs) {
       const issue = issues[idx];
-      const state = ctx.schema.actionType === "issues:open" ? "OPEN" : "CLOSED";
       await updateIssue({
         input: {
           id: issue.id,
@@ -382,6 +388,6 @@ export async function actionChangeIssueState(
       });
     }
   });
-  await denops.call("gh#_clear_selected");
   await actionSearchIssues(denops, await getActionCtx(denops));
+  await denops.call("gh#_clear_selected");
 }
