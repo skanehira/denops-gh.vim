@@ -36,16 +36,20 @@ export const getCandidates = async (
       }
     }
 
-    const result = await inprogress<ResultIssue>(denops, async () => {
-      return await getIssues({
-        cond: {
-          first: 10,
-          name: action.schema.repo,
-          owner: action.schema.owner,
-          Filter: `state:open state:closed ${word.slice(1)} in:title`,
-        },
-      });
-    });
+    const result = await inprogress<ResultIssue>(
+      denops,
+      "fetching...",
+      async () => {
+        return await getIssues({
+          cond: {
+            first: 10,
+            name: action.schema.repo,
+            owner: action.schema.owner,
+            Filter: `state:open state:closed ${word.slice(1)} in:title`,
+          },
+        });
+      },
+    );
 
     const candidates = result!.nodes.map((issue) => {
       return {
@@ -72,7 +76,7 @@ export const getCandidates = async (
     }
   }
 
-  const result = await inprogress<User[]>(denops, async () => {
+  const result = await inprogress<User[]>(denops, "fetching...", async () => {
     return await getMentionableUsers({
       repo: {
         owner: action.schema.owner,

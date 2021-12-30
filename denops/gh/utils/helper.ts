@@ -155,3 +155,16 @@ export function trim(word: string, pat?: string): string {
   }
   return word;
 }
+
+export async function getSelectedIdxs(denops: Denops): Promise<number[]> {
+  const signInfo = await denops.eval(
+    `sign_getplaced(bufname(), {'group': 'gh'})`,
+  ) as [{ signs: [{ lnum: number }] }];
+
+  const idxs = signInfo[0].signs.length
+    ? signInfo.map((signs) => {
+      return signs.signs[0].lnum - 1;
+    })
+    : [(await denops.call("line", ".") as number) - 1];
+  return idxs;
+}

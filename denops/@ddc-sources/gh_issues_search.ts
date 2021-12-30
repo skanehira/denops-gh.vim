@@ -75,7 +75,7 @@ async function getUserList(
     }
   }
 
-  const result = await inprogress<User[]>(denops, async () => {
+  const result = await inprogress<User[]>(denops, "fetching...", async () => {
     return await getUserFn({
       repo: {
         owner: ctx.schema.owner,
@@ -120,7 +120,7 @@ async function getRepoLabels(
     }
   }
 
-  const result = await inprogress<Label[]>(denops, async () => {
+  const result = await inprogress<Label[]>(denops, "fetching...", async () => {
     return await getLabels({
       repo: {
         owner: ctx.schema.owner,
