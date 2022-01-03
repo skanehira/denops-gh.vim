@@ -58,6 +58,7 @@ export const buildSchema = (bufname: string): BufferSchema => {
   // ["new"]
   // ["4"]
   // ["4", "comments"]
+  // ["4", "assignees"]
   // ["4", "comments", "1211311112"],
   // ["4", "comments", "new"]
   const undecided = fields.splice(3);
@@ -85,11 +86,18 @@ export const buildSchema = (bufname: string): BufferSchema => {
 
   if (len > 1) {
     const v = undecided[1];
-    if (v !== "comments") {
-      throwErr();
+    switch (v) {
+      case "comments":
+        feature = "comments";
+        schema.actionType = `${feature}:list` as ActionType;
+        break;
+      case "assignees":
+        schema.actionType = `${feature}:assignees` as ActionType;
+        break;
+      default:
+        throwErr();
+        break;
     }
-    feature = "comments";
-    schema.actionType = `${feature}:list` as ActionType;
   }
 
   if (len > 2) {

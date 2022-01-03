@@ -1,7 +1,7 @@
 import { query } from "./api.ts";
-import { GetUsers, User } from "./schema.ts";
+import { GetUsers, SearchUsers, User } from "./schema.ts";
 
-export async function getUsers(args: {
+export async function searchUsers(args: {
   endpoint?: string;
   word: string;
 }): Promise<User[]> {
@@ -20,7 +20,7 @@ export async function getUsers(args: {
 }
 `;
 
-  const resp = await query<GetUsers>(
+  const resp = await query<SearchUsers>(
     {
       endpoint: args.endpoint,
       query: q,
@@ -28,4 +28,29 @@ export async function getUsers(args: {
   );
 
   return resp.data.search.nodes;
+}
+
+export async function getUsers(args: {
+  assignees: string[];
+}): Promise<GetUsers> {
+  const users = args.assignees.map((user, i) => {
+    return `user${i}: user(login: "${user}") {
+      ...UserFragment
+    }`;
+  });
+  const q = `
+query {
+  ${users.join("\n")}
+}
+
+fragment UserFragment on User {
+  id
+  login
+}
+  `;
+
+  const resp = await query<GetUsers>({
+    query: q,
+  });
+  return resp;
 }

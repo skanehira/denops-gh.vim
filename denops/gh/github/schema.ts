@@ -1,3 +1,10 @@
+export type Errors = [
+  {
+    type: string;
+    message: string;
+  },
+];
+
 export type Actor = {
   login: string;
   url: string;
@@ -27,7 +34,7 @@ export type User = {
   bio?: string;
 };
 
-export type GetUsers = {
+export type SearchUsers = {
   data: {
     search: UserConnection;
   };
@@ -62,6 +69,7 @@ export type GetLabels = {
 };
 
 export type Label = {
+  id: string;
   name: string;
   color: string;
   description: string;
@@ -148,6 +156,15 @@ export type GetIssueTemplates = {
   data: {
     repository: {
       issueTemplates: IssueTemplate[];
+    };
+  };
+};
+
+export type GetUsers = {
+  data: {
+    [key: string]: {
+      login: string;
+      id: string;
     };
   };
 };

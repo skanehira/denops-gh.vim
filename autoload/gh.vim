@@ -98,6 +98,15 @@ function! gh#_clear_selected() abort
   call sign_unplace('gh', {'buffer': bufname()})
 endfunction
 
+function! s:opencmd() abort
+  return gh#_chose_action([
+        \ {"text": "(e)dit", "value": "edit"},
+        \ {"text": "(n)ew", "value": "new"},
+        \ {"text": "(v)new", "value": "vnew"},
+        \ {"text": "(t)abnew", "value": "tabnew"},
+        \ ])
+endfunction
+
 function! s:issue_edit() abort
   if empty(b:gh_action_ctx.args.issues)
     echoerr("b:gh_action_ctx.args.issues is empty")
@@ -110,12 +119,7 @@ function! s:issue_edit() abort
 
   let schema = b:gh_action_ctx.schema
   let issue = b:gh_action_ctx.args.issues[line('.')-1]
-  let opencmd = gh#_chose_action([
-        \ {"text": "(e)dit", "value": "edit"},
-        \ {"text": "(n)ew", "value": "new"},
-        \ {"text": "(v)new", "value": "vnew"},
-        \ {"text": "(t)abnew", "value": "tabnew"},
-        \ ])
+  let opencmd = s:opencmd()
   if opencmd ==# ""
     return
   endif
@@ -174,6 +178,15 @@ function! s:issue_search_buffer() abort
   endif
 endfunction
 
+function! s:issue_assignees() abort
+  let open = s:opencmd()
+  if open ==# ""
+    return
+  endif
+  let schema = b:gh_action_ctx.schema
+  exe open printf("gh://%s/%s/issues/%s/assignees", schema.owner, schema.repo, schema.issue.number)
+endfunction
+
 function! gh#_action(type) abort
   let b:gh_action_ctx.schema.actionType = a:type
 
@@ -183,6 +196,8 @@ function! gh#_action(type) abort
     call s:issue_yank()
   elseif a:type ==# "issues:search"
     call s:issue_search_buffer()
+  elseif a:type ==# "issues:assignees"
+    call s:issue_assignees()
   else
     call denops#notify("gh", "doAction", [])
   endif

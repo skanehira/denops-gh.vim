@@ -8,6 +8,7 @@ import {
   setActionCtx,
 } from "./action.ts";
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
+import { getUsers } from "./github/user.ts";
 import { getIssueTemplate } from "./github/repository.ts";
 import { isIssueItem, IssueItem, IssueTemplate } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
@@ -40,7 +41,6 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
       await denops.call("setline", 1, issue.body.split("\n"));
       await denops.cmd("setlocal nomodified");
 
-      schema.actionType = "issues:update";
       ctx.args = issue;
       setActionCtx(denops, ctx);
 
@@ -57,6 +57,28 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
         },
       );
 
+      const keyMaps = [
+        {
+          defaultKey: "gha",
+          lhs: "<Plug>(gh-issue-assignees)",
+          rhs: `:<C-u>call gh#_action("issues:assignees")<CR>`,
+        },
+      ];
+
+      for (const m of keyMaps) {
+        await map(
+          denops,
+          m.defaultKey,
+          m.lhs,
+          m.rhs,
+          {
+            buffer: true,
+            silent: true,
+            mode: "n",
+            noremap: true,
+          },
+        );
+      }
       await denops.cmd("doautocmd User gh_open_issue");
     } catch (e) {
       console.error(e.message);
@@ -390,4 +412,84 @@ export async function actionChangeIssueState(
   });
   await actionSearchIssues(denops, await getActionCtx(denops));
   await denops.call("gh#_clear_selected");
+}
+
+export async function actionListAssignees(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  await inprogress(denops, "loading...", async () => {
+    const schema = ctx.schema;
+    if (!schema.issue) {
+      throw new Error(`invalid schema: ${schema}`);
+    }
+
+    try {
+      const issue = await getIssue({
+        cond: {
+          owner: schema.owner,
+          repo: schema.repo,
+          number: schema.issue.number,
+        },
+      });
+      await denops.cmd("set ft=markdown buftype=acwrite");
+      const users = issue.assignees.nodes.map((user) => user.login);
+      await denops.call("setline", 1, users);
+      await denops.cmd("setlocal nomodified");
+
+      ctx.args = issue;
+      setActionCtx(denops, ctx);
+
+      await autocmd.group(
+        denops,
+        `gh_issue_assignees_${schema.issue.number}`,
+        (helper) => {
+          helper.remove("*", "<buffer>");
+          helper.define(
+            "BufWriteCmd",
+            "<buffer>",
+            `call gh#_action("issues:assignees:update")`,
+          );
+        },
+      );
+
+      await denops.cmd("doautocmd User gh_open_issue_assignees");
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
+}
+
+export async function actionUpdateAssignees(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  if (!await denops.eval("&modified")) {
+    // if issue body doesn't changed, do nothing
+    return;
+  }
+  const lines = (await denops.call("getline", 1, "$") as string[]).filter((l) =>
+    l !== ""
+  );
+  let assignees: string[] = [];
+
+  if (lines.length > 0) {
+    const users = await getUsers({
+      assignees: lines,
+    });
+
+    assignees = Object.values(users.data).map(
+      (user) => user.id,
+    );
+  }
+
+  await inprogress(denops, "updating...", async () => {
+    await updateIssue({
+      input: {
+        id: (ctx.args as IssueItem).id,
+        assignees: assignees,
+      },
+    });
+    await denops.cmd("bw!");
+  });
 }

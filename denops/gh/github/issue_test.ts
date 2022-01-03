@@ -1,6 +1,7 @@
 import { getIssues, updateIssue } from "./issue.ts";
 import { path } from "../deps.ts";
 import { assertEqualFile } from "../utils/test.ts";
+import { assertEquals } from "../deps.ts";
 
 Deno.test({
   name: "get issues",
@@ -52,6 +53,39 @@ Deno.test({
           state: "CLOSED",
         },
       });
+    }
+  },
+});
+
+Deno.test({
+  name: "update issue assignees",
+  fn: async () => {
+    try {
+      const actual = await updateIssue({
+        input: {
+          id: "MDU6SXNzdWU3MzAwMDI3MjE=",
+          assignees: ["MDQ6VXNlcjc4ODg1OTE="],
+        },
+      });
+
+      const expect = {
+        nodes: [{
+          id: "MDQ6VXNlcjc4ODg1OTE=",
+          login: "skanehira",
+          name: "skanehira",
+          bio: "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author.",
+        }],
+      };
+
+      assertEquals(actual.assignees, expect);
+    } finally {
+      const actual = await updateIssue({
+        input: {
+          id: "MDU6SXNzdWU3MzAwMDI3MjE=",
+          assignees: [],
+        },
+      });
+      assertEquals(actual.assignees, { nodes: [] });
     }
   },
 });

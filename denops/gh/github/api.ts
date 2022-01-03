@@ -1,4 +1,5 @@
 import { getConfig } from "../config.ts";
+import { Errors } from "./schema.ts";
 
 export const endpoint = "https://api.github.com/graphql";
 
@@ -46,8 +47,13 @@ export async function post<T>(req: {
   });
 
   const respBody = await resp.json();
-  if ("errors" in respBody) {
-    throw new Error(respBody.error);
+  if (isError(respBody)) {
+    const msg = respBody.errors.map((e) => e.message).join("\n");
+    throw new Error(msg);
   }
   return respBody as T;
+}
+
+function isError(arg: unknown): arg is { errors: Errors } {
+  return "errors" in (arg as Record<string, unknown>);
 }
