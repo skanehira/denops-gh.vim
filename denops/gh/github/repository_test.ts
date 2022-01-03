@@ -1,5 +1,5 @@
 import { path } from "../deps.ts";
-import { getMentionableUsers } from "./repository.ts";
+import { getLabels, getMentionableUsers } from "./repository.ts";
 import { assertEqualFile } from "../utils/test.ts";
 
 Deno.test({
@@ -21,6 +21,28 @@ Deno.test({
       "github",
       "testdata",
       "want_user_list.json",
+    );
+    await assertEqualFile(file, actual);
+  },
+});
+
+Deno.test({
+  name: "get labels",
+  fn: async () => {
+    const actual = await getLabels({
+      repo: {
+        owner: "skanehira",
+        name: "test",
+      },
+      labels: ["bug", "good first issue"],
+    });
+
+    const file = path.join(
+      "denops",
+      "gh",
+      "github",
+      "testdata",
+      "want_get_label_list.json",
     );
     await assertEqualFile(file, actual);
   },

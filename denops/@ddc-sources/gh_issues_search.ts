@@ -8,8 +8,8 @@ import {
 import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
 import {
   getAssignableUsers,
-  getLabels,
   getMentionableUsers,
+  searchLabels,
 } from "../gh/github/repository.ts";
 import { searchUsers } from "../gh/github/user.ts";
 import { IssueItem, Label, User } from "../gh/github/schema.ts";
@@ -100,7 +100,7 @@ export async function getUserList(
   return candidates;
 }
 
-async function getRepoLabels(
+export async function getRepoLabels(
   denops: Denops,
   ctx: ActionContext,
   word: string,
@@ -121,7 +121,7 @@ async function getRepoLabels(
   }
 
   const result = await inprogress<Label[]>(denops, "fetching...", async () => {
-    return await getLabels({
+    return await searchLabels({
       repo: {
         owner: ctx.schema.owner,
         name: ctx.schema.repo,

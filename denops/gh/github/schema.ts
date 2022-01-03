@@ -62,6 +62,17 @@ export type UserConnection = {
 
 export type GetLabels = {
   data: {
+    [key: string]: {
+      label: {
+        id: string;
+        name: string;
+      };
+    };
+  };
+};
+
+export type SearchLabels = {
+  data: {
     repository: {
       labels: LabelConnection;
     };

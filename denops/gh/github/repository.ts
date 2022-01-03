@@ -6,6 +6,7 @@ import {
   GetMentionableUsers,
   IssueTemplate,
   Label,
+  SearchLabels,
   User,
 } from "./schema.ts";
 
@@ -102,7 +103,7 @@ export async function getAssignableUsers(args: {
   return resp.data.repository.assignableUsers.nodes;
 }
 
-export async function getLabels(args: {
+export async function searchLabels(args: {
   endpoint?: string;
   repo: {
     owner: string;
@@ -124,7 +125,7 @@ export async function getLabels(args: {
 }
   `;
 
-  const resp = await query<GetLabels>(
+  const resp = await query<SearchLabels>(
     {
       endpoint: args.endpoint,
       query: q,
@@ -132,4 +133,36 @@ export async function getLabels(args: {
   );
 
   return resp.data.repository.labels.nodes;
+}
+
+export async function getLabels(args: {
+  endpoint?: string;
+  repo: {
+    owner: string;
+    name: string;
+  };
+  labels: string[];
+}): Promise<GetLabels> {
+  const labels = args.labels.map((label, i) => {
+    return `label${i}: repository(owner:"${args.repo.owner}", name:"${args.repo.name}") {
+    label(name: "${label}"){
+      ...LabelFragment
+    }
+  }`;
+  });
+  const q = `
+query {
+  ${labels.join("\n")}
+}
+
+fragment LabelFragment on Label{
+  id
+  name
+}
+  `;
+
+  const resp = await query<GetLabels>({
+    query: q,
+  });
+  return resp;
 }

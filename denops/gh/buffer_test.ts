@@ -34,6 +34,17 @@ import { buildSchema, isSchema } from "./buffer.ts";
       },
     },
     {
+      bufname: "gh://skanehira/gh.vim/issues/4/labels",
+      want: {
+        owner: "skanehira",
+        repo: "gh.vim",
+        actionType: "issues:labels",
+        issue: {
+          number: 4,
+        },
+      },
+    },
+    {
       bufname: "gh://skanehira/gh.vim/issues/new",
       want: {
         owner: "skanehira",

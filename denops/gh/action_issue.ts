@@ -9,7 +9,7 @@ import {
 } from "./action.ts";
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
 import { getUsers } from "./github/user.ts";
-import { getIssueTemplate } from "./github/repository.ts";
+import { getIssueTemplate, getLabels } from "./github/repository.ts";
 import { isIssueItem, IssueItem, IssueTemplate } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
 import { map } from "./mapping.ts";
@@ -62,6 +62,11 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
           defaultKey: "gha",
           lhs: "<Plug>(gh-issue-assignees)",
           rhs: `:<C-u>call gh#_action("issues:assignees")<CR>`,
+        },
+        {
+          defaultKey: "ghl",
+          lhs: "<Plug>(gh-issue-labels)",
+          rhs: `:<C-u>call gh#_action("issues:labels")<CR>`,
         },
       ];
 
@@ -473,26 +478,110 @@ export async function actionUpdateAssignees(
   );
   let assignees: string[] = [];
 
-  if (lines.length > 0) {
-    if (lines.length > 10) {
-      throw new Error("cannot assign more than 10 users");
-    }
-    const users = await getUsers({
-      assignees: lines,
-    });
-
-    assignees = Object.values(users.data).map(
-      (user) => user.id,
-    );
-  }
-
   await inprogress(denops, "updating...", async () => {
+    if (lines.length > 0) {
+      if (lines.length > 10) {
+        throw new Error("cannot assign more than 10 users");
+      }
+      const users = await getUsers({
+        assignees: lines,
+      });
+
+      assignees = Object.values(users.data).map(
+        (user) => user.id,
+      );
+    }
+
     await updateIssue({
       input: {
         id: (ctx.args as IssueItem).id,
         assignees: assignees,
       },
     });
-    await denops.cmd("bw!");
+    await denops.cmd("setlocal nomodified");
+  });
+}
+
+export async function actionListLabels(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  await inprogress(denops, "loading...", async () => {
+    const schema = ctx.schema;
+    if (!schema.issue) {
+      throw new Error(`invalid schema: ${schema}`);
+    }
+
+    try {
+      const issue = await getIssue({
+        cond: {
+          owner: schema.owner,
+          repo: schema.repo,
+          number: schema.issue.number,
+        },
+      });
+      await denops.cmd("set ft=markdown buftype=acwrite");
+      const labels = issue.labels.nodes.map((label) => label.name);
+      await denops.call("setline", 1, labels);
+      await denops.cmd("setlocal nomodified");
+
+      ctx.args = issue;
+      setActionCtx(denops, ctx);
+
+      await autocmd.group(
+        denops,
+        `gh_issue_labels_${schema.issue.number}`,
+        (helper) => {
+          helper.remove("*", "<buffer>");
+          helper.define(
+            "BufWriteCmd",
+            "<buffer>",
+            `call gh#_action("issues:labels:update")`,
+          );
+        },
+      );
+
+      await denops.cmd("doautocmd User gh_open_issue_labels");
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
+}
+
+export async function actionUpdateLabels(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  if (!await denops.eval("&modified")) {
+    // if issue body doesn't changed, do nothing
+    return;
+  }
+  const lines = (await denops.call("getline", 1, "$") as string[]).filter((l) =>
+    l !== ""
+  );
+  let labels: string[] = [];
+
+  await inprogress(denops, "updating...", async () => {
+    if (lines.length > 0) {
+      const resp = await getLabels({
+        repo: {
+          owner: ctx.schema.owner,
+          name: ctx.schema.repo,
+        },
+        labels: lines,
+      });
+
+      labels = Object.values(resp.data).map(
+        (repo) => repo.label.id,
+      );
+    }
+
+    await updateIssue({
+      input: {
+        id: (ctx.args as IssueItem).id,
+        labels: labels,
+      },
+    });
+    await denops.cmd("setlocal nomodified");
   });
 }
