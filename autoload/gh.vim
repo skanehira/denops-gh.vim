@@ -137,7 +137,7 @@ endfunction
 
 function! s:issue_search() abort
   let filters = getline(".")
-  q
+  bw!
   call win_gotoid(s:old_winid)
 
   " if doesn't changed filters, do nothing
@@ -146,7 +146,7 @@ function! s:issue_search() abort
   endif
 
   let b:gh_action_ctx.args.filters = filters
-  call denops#notify("gh", "doAction", [])
+  call denops#notify("gh", "doAction", ["issues:search"])
 endfunction
 
 augroup gh-issue-search
@@ -197,8 +197,6 @@ function! s:issue_labels() abort
 endfunction
 
 function! gh#_action(type) abort
-  let b:gh_action_ctx.schema.actionType = a:type
-
   if a:type ==# "issues:edit"
     call s:issue_edit()
   elseif a:type ==# "issues:yank"
@@ -210,7 +208,7 @@ function! gh#_action(type) abort
   elseif a:type ==# "issues:labels"
     call s:issue_labels()
   else
-    call denops#notify("gh", "doAction", [])
+    call denops#notify("gh", "doAction", [a:type])
   endif
 endfunction
 
