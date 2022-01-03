@@ -136,6 +136,10 @@ gh://{owner}/{repo}/issues/{number}/labels
   When you type |:write|, then buffer's contents will be applied.
   If you want to clear all labels, just only make buffer empty.
 
+  NOTE: This buffer just get label until 20.
+        So if your issue has label more then 20,
+        please add removed labels with manual.
+
   NOTE:
     You can complements label's name if ddc source be added.
     Refer |gh-ddc-settings|.
