@@ -187,6 +187,15 @@ function! s:issue_assignees() abort
   exe open printf("gh://%s/%s/issues/%s/assignees", schema.owner, schema.repo, schema.issue.number)
 endfunction
 
+function! s:issue_labels() abort
+  let open = s:opencmd()
+  if open ==# ""
+    return
+  endif
+  let schema = b:gh_action_ctx.schema
+  exe open printf("gh://%s/%s/issues/%s/labels", schema.owner, schema.repo, schema.issue.number)
+endfunction
+
 function! gh#_action(type) abort
   let b:gh_action_ctx.schema.actionType = a:type
 
@@ -198,6 +207,8 @@ function! gh#_action(type) abort
     call s:issue_search_buffer()
   elseif a:type ==# "issues:assignees"
     call s:issue_assignees()
+  elseif a:type ==# "issues:labels"
+    call s:issue_labels()
   else
     call denops#notify("gh", "doAction", [])
   endif

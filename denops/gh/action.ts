@@ -6,10 +6,12 @@ import {
   actionEditIssue,
   actionListAssignees,
   actionListIssue,
+  actionListLabels,
   actionNewIssue,
   actionSearchIssues,
   actionUpdateAssignees,
   actionUpdateIssue,
+  actionUpdateLabels,
   actionViewIssue,
 } from "./action_issue.ts";
 import { IssueItem } from "./github/schema.ts";
@@ -26,6 +28,8 @@ export type ActionType =
   | "issues:search"
   | "issues:assignees"
   | "issues:assignees:update"
+  | "issues:labels"
+  | "issues:labels:update"
   | "pulls:new"
   | "pulls:list"
   | "pulls:edit"
@@ -88,5 +92,7 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:close", actionChangeIssueState],
     ["issues:assignees", actionListAssignees],
     ["issues:assignees:update", actionUpdateAssignees],
+    ["issues:labels", actionListLabels],
+    ["issues:labels:update", actionUpdateLabels],
   ],
 );

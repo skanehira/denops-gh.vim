@@ -94,6 +94,9 @@ export const buildSchema = (bufname: string): BufferSchema => {
       case "assignees":
         schema.actionType = `${feature}:assignees` as ActionType;
         break;
+      case "labels":
+        schema.actionType = `${feature}:labels` as ActionType;
+        break;
       default:
         throwErr();
         break;

@@ -44,7 +44,7 @@ const issueBodyQuery = `
     }
   }
   body
-  labels(first: 10) {
+  labels(first: 20) {
     nodes {
       name
       color
@@ -157,6 +157,11 @@ export async function updateIssue(
     ${
     args.input.assignees
       ? "assigneeIds:" + `${JSON.stringify(args.input.assignees)}`
+      : ""
+  }
+    ${
+    args.input.labels
+      ? "labelIds:" + `${JSON.stringify(args.input.labels)}`
       : ""
   }
   }) {

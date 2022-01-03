@@ -1,0 +1,16 @@
+{
+  "data": {
+    "label0": {
+      "label": {
+        "id": "MDU6TGFiZWwyMzgwMTEzMTk4",
+        "name": "bug"
+      }
+    },
+    "label1": {
+      "label": {
+        "id": "MDU6TGFiZWwyMzgwMTEzMjA3",
+        "name": "good first issue"
+      }
+    }
+  }
+}

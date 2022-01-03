@@ -99,6 +99,7 @@ gh://{owner}/{repo}/issues/{number}
 
     autocmd name: |gh_open_issue|
     source  name: |gh_issues|
+
                                           *gh-buffer-issue-new*
 gh://{owner}/{repo}/issues/new
   Create a new issue.
@@ -127,6 +128,20 @@ gh://{owner}/{repo}/issues/{number}/assignees
 
     autocmd name: |gh_open_issue_assignees|
     source  name: |gh_issues_assginees|
+
+                                          *gh-buffer-issue-label-list*
+gh://{owner}/{repo}/issues/{number}/labels
+  Add or remove issue's label.
+  You have to type label names.
+  When you type |:write|, then buffer's contents will be applied.
+  If you want to clear all labels, just only make buffer empty.
+
+  NOTE:
+    You can complements label's name if ddc source be added.
+    Refer |gh-ddc-settings|.
+
+    autocmd name: |gh_open_issue_labels|
+    source  name: |gh_issues_labels|
 
                                           *gh-buffer-issue-comment-list*
 gh://{owner}/{repo}/issues/:number/comments
@@ -197,6 +212,9 @@ KEY-MAPPINGS                              *gh-key-mappings*
 <Plug>(gh-issue-assignees)                *<Plug>(gh-issue-assignees)*
   Open buffer that for assign users to issue.
 
+<Plug>(gh-issue-labels)                   *<Plug>(gh-issue-labels)*
+  Open buffer that for add or remove label on the issue.
+
 DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
 
 {buffer}                {mode}     {lhs}     {rhs}
@@ -211,6 +229,7 @@ DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
                         normal     ghy         <Plug>(gh-issue-yank)
                         normal     ghs         <Plug>(gh-issue-search)
 |gh-buffer-issue-edit|    normal     gha         <Plug>(gh-issue-assignees)
+                        normal     ghl         <Plug>(gh-issue-labels)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*
@@ -269,6 +288,7 @@ autocmd name            | source name
 ------------------------+---------------------
 `gh_open_issue`           | |gh-ddc-issues|
 `gh_open_issue_assignees` | |gh_issues_assginees|
+`gh_open_issue_labels`    | |gh_issues_labels|
 `gh_open_issues_search`   | |gh_issues_search|
 
 GH-DDC-ISSUES                             *gh-ddc-issues*

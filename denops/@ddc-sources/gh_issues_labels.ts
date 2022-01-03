@@ -6,15 +6,15 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
 import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
-import { User } from "../gh/github/schema.ts";
+import { Label } from "../gh/github/schema.ts";
 import { getActionCtx } from "../gh/action.ts";
-import { getUserList } from "./gh_issues_search.ts";
+import { getRepoLabels } from "./gh_issues_search.ts";
 
 type Params = {
   maxSize: number;
 };
 
-export class Source extends BaseSource<Params, User> {
+export class Source extends BaseSource<Params, Label> {
   async gatherCandidates(args: {
     denops: Denops;
     context: Context;
@@ -22,7 +22,7 @@ export class Source extends BaseSource<Params, User> {
     sourceOptions: SourceOptions;
     sourceParams: Params;
     completeStr: string;
-  }): Promise<Candidate<User>[]> {
+  }): Promise<Candidate<Label>[]> {
     const pos = await args.denops.call("getcurpos") as number[];
     const col = pos[2];
     const word = args.context.input.substring(0, col).split(" ").at(-1);
@@ -32,8 +32,8 @@ export class Source extends BaseSource<Params, User> {
     }
 
     const ctx = await getActionCtx(args.denops);
-    const users = await getUserList(args.denops, ctx, "assignee", word);
-    return users;
+    const labels = await getRepoLabels(args.denops, ctx, word);
+    return labels;
   }
 
   params(): Params {
