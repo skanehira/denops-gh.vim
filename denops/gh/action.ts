@@ -4,9 +4,11 @@ import {
   actionChangeIssueState,
   actionCreateIssue,
   actionEditIssue,
+  actionListAssignees,
   actionListIssue,
   actionNewIssue,
   actionSearchIssues,
+  actionUpdateAssignees,
   actionUpdateIssue,
   actionViewIssue,
 } from "./action_issue.ts";
@@ -22,6 +24,8 @@ export type ActionType =
   | "issues:update"
   | "issues:list"
   | "issues:search"
+  | "issues:assignees"
+  | "issues:assignees:update"
   | "pulls:new"
   | "pulls:list"
   | "pulls:edit"
@@ -82,5 +86,7 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:search", actionSearchIssues],
     ["issues:open", actionChangeIssueState],
     ["issues:close", actionChangeIssueState],
+    ["issues:assignees", actionListAssignees],
+    ["issues:assignees:update", actionUpdateAssignees],
   ],
 );

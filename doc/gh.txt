@@ -31,6 +31,7 @@ INTERFACE                                 |gh-interface|
   BUFFER                                    |gh-buffers|
   KEY-MAPPINGS                              |gh-key-mappings|
   FUNCTIONS                                 |gh-functions|
+  DDC-SETTINGS                              |gh-ddc-settings|
 FAQ                                       |gh-faq|
 CHANGELOG                                 |gh-changelog|
 
@@ -50,8 +51,8 @@ USAGE                                     *gh-usage*
 SETUP
                                           *gh-setup*
 
-At first time, you have to install gh(https://github.com/cli/cli)
-and setup auth token. Please refer oficall documents.
+At first time, you have to install https://github.com/cli/cli
+and setup auth token. Please refer offical documents.
 
 ==============================================================================
 INTERFACE                                 *gh-interface*
@@ -66,96 +67,38 @@ BUFFER                                    *gh-buffer*
                                           *gh-buffer-issue-list*
 gh://{owner}/{repo}/issues
   Show {owner}/{repo} issues.
-  You can do some actions, like edit, open issue in browser and search.
+  You can do some actions that like edit, open issue in browser and search.
+  Please refer |gh-default-key-mappings|.
 
-  NOTE: About search action.
-    You can use search feature when typing 's' in issue list buffer.
-    Then you can use qualifiers to find specific issues in issue search buffer.
-    Exmaple, if you input 'state:closed label:bug', it would show issues
-    that state is closed and label is bug
-    Please refer bellow to know more qualifiers.
-      https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests
+                                          *gh-buffer-issue-search*
+issues-search
+  Search issues.
+  You can use some qualifiers to find specific issues.
+  For exmaple, if you type `state:closed label:bug` and Enter,
+  it will show issues that state is closed and label is bug.
+  Refer https://git.io/JSKd3 to check more qualifiers.
 
-    In issue search buffer, If you add bellow settings,
-    you can enable auto complements for some qualifiers.
->
-      " If matsui54/denops-popup-preview.vim are installed,
-      " you can preview issue body's info in popup window.
-      call popup_preview#enable()
+  NOTE: This buffer applies only to the buffer
+        that executed <Plug>(gh-issue-search).
 
-      " remove 'preview' from completeopt
-      " when you use  denops-popup-preview.vim
-      set completeopt-=preview
+  NOTE:
+    You can complements complements some qualifiers if ddc source be added.
+    Refer |gh-ddc-settings|.
 
-      augroup gh_autocmd
-        au!
-        au User gh_open_issues_search call EnableAutoCompletionForSearchIssue()
-      augroup END
-
-      function! EnableAutoCompletionForSearchIssue() abort
-        call ddc#custom#patch_buffer('sources', ['gh_issues_search'])
-        call ddc#custom#patch_buffer('specialBufferCompletion', v:true)
-        call ddc#custom#patch_buffer('sourceOptions', {
-              \ 'gh_issues_search': {
-                \  'minAutoCompleteLength': 1,
-              \ }})
-        " If you want to complements with japanese, you should add keywordPattern
-        call ddc#custom#patch_buffer({'keywordPattern':
-              \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
-      endfunction
-<
-    Current avalaible qualifiers is bellow.
-
-    | Qualifiers | Description                |
-    | ---------- | -------------------------- |
-    | mentions   | mentionable user name      |
-    | author     | issue created by user name |
-    | assignee   | assignable user name       |
-    | label      | label name                 |
+    autocmd name: |gh_open_issues_search|
+    source  name: |gh_issues_assginees|
 
                                           *gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
   Edit issue body.
   When you type |:write|, then issue body would be updated.
 
-  If you want to auto complements issue number and user name on buffer,
-  please install Shougo/ddc.vim and add settings like bellow to your vimrc.
+  NOTE:
+    You can complements user's name and issue's title if ddc source be added.
+    Refer |gh-ddc-settings|.
 
-  NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
-        issue's body in popup/float window
->
-  " If matsui54/denops-popup-preview.vim are installed,
-  " you can preview issue body's info in popup window.
-  call popup_preview#enable()
-
-  " remove 'preview' from completeopt
-  " when you use  denops-popup-preview.vim
-  set completeopt-=preview
-
-  augroup gh_autocmd
-    au!
-    autocmd User gh_open_issue call EnableAutoCompletion()
-  augroup END
-
-  function! EnableAutoCompletion() abort
-    " Enable source 'gh_issues' to current buffer.
-    call ddc#custom#patch_buffer('sources', ['gh_issues'])
-    call ddc#custom#patch_buffer('sourceOptions', {
-          \ 'gh_issues': {
-            \  'matcherKey': 'menu'
-            \  'minAutoCompleteLength': 1,
-          \ }})
-    call ddc#custom#patch_buffer('specialBufferCompletion', v:true)
-    " If you want to complements with japanese, you should add keywordPattern
-    call ddc#custom#patch_buffer({'keywordPattern':
-          \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
-  endfunction
-<
-
-  Then, you can auto complements issue titles and user names likes bellow.
-  '#Add' would complements issues that title is start with 'Add..'
-  '@sk' would complements user that name is start with 'sk...'
-
+    autocmd name: |gh_open_issue|
+    source  name: |gh_issues|
                                           *gh-buffer-issue-new*
 gh://{owner}/{repo}/issues/new
   Create a new issue.
@@ -163,6 +106,27 @@ gh://{owner}/{repo}/issues/new
   template body.
   When you type |:write|, then 'gh' would be executed in terminal, and
   you can chose any options(e.g add labels).
+
+  NOTE:
+    You can complements user's name and issue's title if ddc source be added.
+    Refer |gh-ddc-settings|.
+
+    autocmd name: |gh_open_issue|
+    source  name: |gh_issues|
+
+                                          *gh-buffer-issue-assignee-list*
+gh://{owner}/{repo}/issues/{number}/assignees
+  Add or remove issue's assignees.
+  You have to type login name of user in the buffer.
+  When you type |:write|, then buffer's contents will be applied.
+  If you want to clear all assignees, just only make buffer empty.
+
+  NOTE:
+    You can complements user's name if ddc source be added.
+    Refer |gh-ddc-settings|.
+
+    autocmd name: |gh_open_issue_assignees|
+    source  name: |gh_issues_assginees|
 
                                           *gh-buffer-issue-comment-list*
 gh://{owner}/{repo}/issues/:number/comments
@@ -203,9 +167,37 @@ gh://{owner}/gists/:id
 --------------------------------------------------------------------
 KEY-MAPPINGS                              *gh-key-mappings*
 
-TODO
+<Plug>(gh-issue-edit)                     *<Plug>(gh-issue-edit)*
+  Open editing buffer of issue.
 
-default mappings
+<Plug>(gh-issue-new)                      *<Plug>(gh-issue-new)*
+  Create new issue.
+
+<Plug>(gh-issue-open)                     *<Plug>(gh-issue-open)*
+  Open issue.
+
+<Plug>(gh-issue-close)                    *<Plug>(gh-issue-close)*
+  Close issue.
+
+<Plug>(gh-issue-view)                     *<Plug>(gh-issue-view)*
+  View issue in browser.
+
+<Plug>(gh-issue-select-next)              *<Plug>(gh-issue-select-next)*
+  Toggle selecting issue and move cursor down.
+
+<Plug>(gh-issue-select-prev)              *<Plug>(gh-issue-select-prev)*
+  Toggle selecting issue and move cursor up.
+
+<Plug>(gh-issue-yank)                     *<Plug>(gh-issue-yank)*
+  Yank issues url.
+
+<Plug>(gh-issue-search)                   *<Plug>(gh-issue-search)*
+  Open buffer that for searching issues.
+
+<Plug>(gh-issue-assignees)                *<Plug>(gh-issue-assignees)*
+  Open buffer that for assign users to issue.
+
+DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
 
 {buffer}                {mode}     {lhs}     {rhs}
 --------------------------------------------------------------------
@@ -218,10 +210,91 @@ default mappings
                         normal     <C-K>       <Plug>(gh-issue-select-prev)
                         normal     ghy         <Plug>(gh-issue-yank)
                         normal     ghs         <Plug>(gh-issue-search)
+|gh-buffer-issue-edit|    normal     gha         <Plug>(gh-issue-assignees)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*
 
+--------------------------------------------------------------------
+
+DDC-SETTINGS                              *gh-ddc-settings*
+
+gh.vim providing some |ddc|'s sources.
+For exmaple, you can auto complements mentionable users and
+issue numbers in the issue buffer.
+If you want do these, please add settings as bellow to your vimrc.
+
+NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
+      issue's body in popup/float window.
+>
+  " If matsui54/denops-popup-preview.vim are installed,
+  " you can preview issue body's in popup window.
+  call popup_preview#enable()
+
+  " remove 'preview' from completeopt
+  " when you use denops-popup-preview.vim
+  set completeopt-=preview
+
+  augroup gh_autocmd
+    au!
+    au User gh_open_issue call EnableAutoCompletionForGh('gh_issues')
+    au User gh_open_issue_assignees call EnableAutoCompletionForGh('gh_issues_assginees')
+  augroup END
+
+  function! EnableAutoCompletionForGh(kind) abort
+    call ddc#custom#patch_buffer('sources', [a:kind])
+    call ddc#custom#patch_buffer('specialBufferCompletion', v:true)
+
+    " If you want to complements with japanese, you should add keywordPattern
+    call ddc#custom#patch_buffer({'keywordPattern':
+          \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
+
+    if a:kind ==# 'gh_issues'
+      call ddc#custom#patch_buffer('sourceOptions', {
+            \ 'gh_issues': {
+              \  'matcherKey': 'menu',
+              \  'minAutoCompleteLength': 1,
+              \ }})
+    elseif a:kind ==# 'gh_issues_assginees'
+      call ddc#custom#patch_buffer('sourceOptions', {
+            \ 'gh_issues_assginees': {
+              \  'minAutoCompleteLength': 1,
+              \ }})
+    endif
+  endfunction
+<
+GH-DDC-SOURCE                             *gh-ddc-sources*
+
+autocmd name            | source name
+------------------------+---------------------
+`gh_open_issue`           | |gh-ddc-issues|
+`gh_open_issue_assignees` | |gh_issues_assginees|
+`gh_open_issues_search`   | |gh_issues_search|
+
+GH-DDC-ISSUES                             *gh-ddc-issues*
+
+Mentionable user's name and issue's title can be complemented like bellow.
+
+'#Add' can be complemented title that is start with 'Add..'
+'@sk' can be complemented user's name that is start with 'sk...'
+
+GH-DDC-ISSUES-ASSIGNEES                   *gh-ddc-issues-assignees*
+
+Assignable user name can be complemented like bellow.
+
+'sk' can be complemented user's name that is start with 'sk...'
+
+GH-DDC-ISSUES-SEARCH                      *gh-ddc-issues-search*
+
+Some qualifiers can be complemented.
+Currently, the qualifiers that can be complemented are bellow.
+
+| Qualifiers | Description                |
+| ---------- | -------------------------- |
+| mentions   | mentionable user name      |
+| author     | issue created by user name |
+| assignee   | assignable user name       |
+| label      | label name                 |
 
 ==============================================================================
 FAQ                                       *gh-faq*

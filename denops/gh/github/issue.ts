@@ -154,6 +154,11 @@ export async function updateIssue(
     ${args.input.title ? "title:" + args.input.title : ""}
     ${args.input.body ? "body:" + `"${args.input.body}"` : ""}
     ${args.input.state ? "state:" + args.input.state : ""}
+    ${
+    args.input.assignees
+      ? "assigneeIds:" + `${JSON.stringify(args.input.assignees)}`
+      : ""
+  }
   }) {
     issue {
       ${issueBodyQuery}

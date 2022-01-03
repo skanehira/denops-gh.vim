@@ -11,7 +11,7 @@ import {
   getLabels,
   getMentionableUsers,
 } from "../gh/github/repository.ts";
-import { getUsers } from "../gh/github/user.ts";
+import { searchUsers } from "../gh/github/user.ts";
 import { IssueItem, Label, User } from "../gh/github/schema.ts";
 import { ActionContext, getActionCtx } from "../gh/action.ts";
 import { inprogress, trim } from "../gh/utils/helper.ts";
@@ -25,7 +25,7 @@ export const mentionableUserCache = new Map<string, Candidate<User>>();
 export const assignableUserCache = new Map<string, Candidate<User>>();
 export const labelCache = new Map<string, Candidate<Label>>();
 
-async function getUserList(
+export async function getUserList(
   denops: Denops,
   ctx: ActionContext,
   kind: "assignee" | "mentions" | "author" | "label",
@@ -57,7 +57,7 @@ async function getUserList(
     case "author":
       {
         cache = authorCache;
-        getUserFn = getUsers;
+        getUserFn = searchUsers;
       }
       break;
     default:
