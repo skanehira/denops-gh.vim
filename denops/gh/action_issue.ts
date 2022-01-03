@@ -474,6 +474,9 @@ export async function actionUpdateAssignees(
   let assignees: string[] = [];
 
   if (lines.length > 0) {
+    if (lines.length > 10) {
+      throw new Error("cannot assign more than 10 users");
+    }
     const users = await getUsers({
       assignees: lines,
     });
