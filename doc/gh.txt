@@ -70,6 +70,23 @@ gh://{owner}/{repo}/issues
   You can do some actions that like edit, open issue in browser and search.
   Please refer |gh-default-key-mappings|.
 
+  The buffer show you some information of issues as bellow.
+>
+    ISSUES LIST
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #12 test1 OPEN   @man1 (bug, docs)  1
+    #25 test2 CLOSED @man2 (feature)    4
+    ...
+
+     │    │     │      │       │        │
+     │    │     │      │       │        └ Count of comments
+     │    │     │      │       └ labels (Max 3 labels will be shown)
+     │    │     │      └ Assigneed users (Max 2 users will be shown)
+     │    │     └ Status (OPEN or CLOSED)
+     │    └ Title (Max 100 character will be shown)
+     └ Number
+<
+
                                           *gh-buffer-issue-search*
 issues-search
   Search issues.

@@ -1,4 +1,4 @@
-import { autocmd, Denops } from "./deps.ts";
+import { autocmd, Denops, stringWidth } from "./deps.ts";
 import {
   ActionContext,
   getActionCtx,
@@ -228,13 +228,16 @@ export async function setIssueToBuffer(
   const objs = issues.map((issue) => {
     return {
       number: "#" + issue.number,
-      title: issue.title,
+      title: stringWidth(issue.title) >= 100
+        ? issue.title.slice(0, 100) + "..."
+        : issue.title,
       state: issue.state as string,
-      author: issue.author?.login ? "@" + issue.author.login : "",
       assignees: issue.assignees.nodes.slice(0, 2).map((user) => {
         return user?.login ? "@" + user.login : "";
       }).join(" "),
-      labels: `(${issue.labels.nodes.map((label) => label.name).join(", ")})`,
+      labels: `(${
+        issue.labels.nodes.slice(0, 3).map((label) => label.name).join(", ")
+      })`,
       comment: issue.comments.nodes.length
         ? `\uf41f ${issue.comments.nodes.length}`
         : "",
