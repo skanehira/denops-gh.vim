@@ -2,7 +2,7 @@ import { assertEquals, assertRejects } from "./deps.ts";
 import { yaml } from "./deps.ts";
 import { readConfig } from "./config.ts";
 
-Deno.test("get config without $HOME", async () => {
+Deno.test("get config without HOME", async () => {
   const oldHome = Deno.env.get("HOME") as string;
   await assertRejects(
     () => {
@@ -10,7 +10,7 @@ Deno.test("get config without $HOME", async () => {
       return readConfig();
     },
     Error,
-    "$HOME is empty",
+    "HOME is empty",
   );
   Deno.env.set("HOME", oldHome);
 });

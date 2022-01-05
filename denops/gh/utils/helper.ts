@@ -119,15 +119,6 @@ export async function runTerminal(
   }
 }
 
-// TODO support windows
-const opencmd = Deno.build.os === "darwin" ? "open" : "xdg-open";
-
-export function open(uri: string) {
-  Deno.run({
-    cmd: [opencmd, uri],
-  });
-}
-
 export const vimRegister = Deno.build.os === "darwin" ? "*" : "+";
 
 export const inprogress = async <T>(

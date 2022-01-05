@@ -8,18 +8,20 @@ export interface GitHubConfig {
   };
 }
 
-export async function readConfig(configPath?: string): Promise<GitHubConfig> {
-  // TODO support windows
-  if (Deno.build.os == "windows") {
-    throw new Error("Unspported windows");
-  }
+const isWindows = Deno.build.os === "windows";
 
+export async function readConfig(configPath?: string): Promise<GitHubConfig> {
   if (!configPath) {
-    const home = Deno.env.get("HOME");
+    const key = isWindows ? "APPDATA" : "HOME";
+    const home = Deno.env.get(key);
     if (!home) {
-      throw new Error("$HOME is empty");
+      throw new Error(`${key} is empty`);
     }
-    configPath = path.join(home, ".config", "gh", "hosts.yml");
+    if (isWindows) {
+      configPath = path.join(home, "GitHub CLI", "hosts.yml");
+    } else {
+      configPath = path.join(home, ".config", "gh", "hosts.yml");
+    }
   }
 
   const contents = await Deno.readTextFile(configPath);
