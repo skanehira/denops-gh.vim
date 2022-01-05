@@ -15,21 +15,13 @@ export async function readConfig(configPath?: string): Promise<GitHubConfig> {
     const key = isWindows ? "APPDATA" : "HOME";
     const home = Deno.env.get(key);
     if (!home) {
-      throw new Error("${key} is empty");
+      throw new Error(`${key} is empty`);
     }
     if (isWindows) {
       configPath = path.join(home, "GitHub CLI", "hosts.yml");
     } else {
       configPath = path.join(home, ".config", "gh", "hosts.yml");
     }
-  }
-
-  if (!configPath) {
-    const home = Deno.env.get("HOME");
-    if (!home) {
-      throw new Error("$HOME is empty");
-    }
-    configPath = path.join(home, ".config", "gh", "hosts.yml");
   }
 
   const contents = await Deno.readTextFile(configPath);
