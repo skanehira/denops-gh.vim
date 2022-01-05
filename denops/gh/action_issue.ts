@@ -1,4 +1,4 @@
-import { autocmd, Denops, stringWidth } from "./deps.ts";
+import { autocmd, Denops, open, stringWidth } from "./deps.ts";
 import {
   ActionContext,
   getActionCtx,
@@ -16,7 +16,6 @@ import { map } from "./mapping.ts";
 import {
   inprogress,
   menu,
-  open,
   runTerminal,
   textEncoder,
   vimRegister,
