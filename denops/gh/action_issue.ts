@@ -381,9 +381,24 @@ export async function actionSearchIssues(
   await actionListIssue(denops, ctx);
 }
 
-export async function actionChangeIssueState(
+export async function actionOpenIssue(
   denops: Denops,
   ctx: ActionContext,
+): Promise<void> {
+  await changeIssueState(denops, ctx, "OPEN");
+}
+
+export async function actionCloseIssue(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  await changeIssueState(denops, ctx, "CLOSED");
+}
+
+export async function changeIssueState(
+  denops: Denops,
+  ctx: ActionContext,
+  state: "OPEN" | "CLOSED",
 ): Promise<void> {
   if (!isIssueListArgs(ctx.args)) {
     console.error(`ctx.args type is not 'IssueListArg'`);
@@ -405,7 +420,6 @@ export async function actionChangeIssueState(
     idxs.push(idx);
   }
 
-  const state = ctx.schema.actionType === "issues:open" ? "OPEN" : "CLOSED";
   const text = state === "OPEN" ? "opening..." : "closing...";
   await inprogress(denops, text, async () => {
     for (const idx of idxs) {
