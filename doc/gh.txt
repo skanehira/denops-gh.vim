@@ -307,7 +307,7 @@ GH-DDC-SOURCE                             *gh-ddc-sources*
 
 autocmd name            | source name
 ------------------------+---------------------
-`gh_open_issue`           | |gh-ddc-issues|
+`gh_open_issue`           | |gh_issues|
 `gh_open_issue_assignees` | |gh_issues_assginees|
 `gh_open_issue_labels`    | |gh_issues_labels|
 `gh_open_issues_search`   | |gh_issues_search|
