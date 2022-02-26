@@ -17,7 +17,7 @@ export const menu = async (
   list: string[],
   callback: (arg: unknown) => Promise<void>,
 ) => {
-  if (await denops.call("has", "nvim")) {
+  if (denops.meta.host === "nvim") {
     await nvimMenu(denops, list);
   } else {
     await vimMenu(denops, list);
@@ -84,7 +84,7 @@ export async function runTerminal(
   callback?: (denops: Denops, exitCode: number) => Promise<void>,
 ): Promise<void> {
   let jobid = -1;
-  if (await denops.call("has", "nvim")) {
+  if (denops.meta.host === "nvim") {
     await denops.cmd("new");
     const args = [cmd.join(" ")] as unknown[];
     if (callback) {
