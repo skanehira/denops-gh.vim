@@ -1,11 +1,11 @@
 [
   {
     "login": "skanehira",
-    "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author."
+    "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author."
   },
   {
     "login": "biosugar0",
-    "bio": "Backend Engineer & SRE"
+    "bio": " SRE"
   },
   {
     "login": "Matts966",
@@ -20,3 +20,4 @@
     "bio": ""
   }
 ]
+
