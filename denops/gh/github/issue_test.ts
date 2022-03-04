@@ -73,7 +73,7 @@ Deno.test({
           id: "MDQ6VXNlcjc4ODg1OTE=",
           login: "skanehira",
           name: "skanehira",
-          bio: "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugin author.",
+          bio: "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author.",
         }],
       };
 
