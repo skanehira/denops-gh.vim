@@ -13,3 +13,4 @@ export * from "https://deno.land/x/denops_std@v2.2.0/test/mod.ts";
 export * from "https://deno.land/x/denops_std@v2.2.0/helper/mod.ts";
 export * as fs from "https://deno.land/std@0.119.0/fs/mod.ts";
 export { open } from "https://deno.land/x/open@v0.0.2/index.ts";
+export * as safe_string from "https://deno.land/x/safe_string_literal@v1.0.4/index.js";

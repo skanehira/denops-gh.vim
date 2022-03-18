@@ -1,5 +1,6 @@
 import { IssueItem, ResultIssue, UpdateIssueInput } from "./schema.ts";
 import { mutation, query } from "./api.ts";
+import { safe_string } from "../deps.ts";
 
 export type GetIssuesResult = {
   data: {
@@ -152,7 +153,11 @@ export async function updateIssue(
   updateIssue(input: {
     id: "${args.input.id}"
     ${args.input.title ? "title:" + args.input.title : ""}
-    ${args.input.body ? "body:" + `"${args.input.body}"` : ""}
+    ${
+    args.input.body
+      ? "body:" + `"${safe_string.escape(args.input.body, "`")}"`
+      : ""
+  }
     ${args.input.state ? "state:" + args.input.state : ""}
     ${
     args.input.assignees
