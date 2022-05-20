@@ -36,9 +36,8 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
           number: schema.issue.number,
         },
       });
-      await denops.cmd("set ft=markdown buftype=acwrite");
       await denops.call("setline", 1, issue.body.split("\n"));
-      await denops.cmd("setlocal nomodified");
+      await denops.cmd("setlocal ft=markdown buftype=acwrite nomodified");
 
       ctx.args = issue;
       setActionCtx(denops, ctx);
@@ -453,10 +452,9 @@ export async function actionListAssignees(
           number: schema.issue.number,
         },
       });
-      await denops.cmd("set ft=markdown buftype=acwrite");
       const users = issue.assignees.nodes.map((user) => user.login);
       await denops.call("setline", 1, users);
-      await denops.cmd("setlocal nomodified");
+      await denops.cmd("setlocal buftype=acwrite nomodified");
 
       ctx.args = issue;
       setActionCtx(denops, ctx);
@@ -536,10 +534,9 @@ export async function actionListLabels(
           number: schema.issue.number,
         },
       });
-      await denops.cmd("set ft=markdown buftype=acwrite");
       const labels = issue.labels.nodes.map((label) => label.name);
       await denops.call("setline", 1, labels);
-      await denops.cmd("setlocal nomodified");
+      await denops.cmd("setlocal buftype=acwrite nomodified");
 
       ctx.args = issue;
       setActionCtx(denops, ctx);
