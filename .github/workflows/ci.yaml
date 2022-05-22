@@ -28,7 +28,7 @@ jobs:
         with:
           deno-version: ${{ matrix.version }}
       - name: run lint
-        run: deno lint
+        run: deno lint --ignore=denops/gh/github/graphql/
   test:
     strategy:
       matrix:
