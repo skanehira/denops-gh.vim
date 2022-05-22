@@ -20,7 +20,10 @@ test({
   fn: async (denops: Denops) => {
     const bufname = "gh://skanehira/test/issues";
     const schema = buildSchema(bufname);
-    const ctx = { schema: schema, args: { filters: "state:open" } };
+    const ctx = {
+      schema: schema,
+      args: { filters: "state:open state:closed" },
+    };
     await actionListIssue(denops, ctx);
     const actual = await denops.eval(`getline(1, "$")`) as string[];
     const file = path.join(
@@ -42,7 +45,7 @@ test({
     const schema = buildSchema(bufname);
     const ctx = { schema: schema };
     await actionEditIssue(denops, ctx);
-    const actual = await denops.eval(`getline(1, "$")`) as string[];
+    const actual = await denops.call("getline", 1, "$") as string[];
     const want = [
       "# this is test",
       "test issue",
@@ -77,7 +80,7 @@ test({
   name: "action search issue",
   fn: async (denops: Denops) => {
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.args = { filters: "state:closed label:wontfix" };
+    ctx.args = { filters: "state:closed label:bug" };
     await actionSearchIssues(denops, ctx);
     const actual = await getActionCtx(denops);
     const file = path.join(

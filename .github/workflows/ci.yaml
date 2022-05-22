@@ -90,7 +90,7 @@ jobs:
           mkdir -p $HOME/.config/gh
           cat <<EOF > $HOME/.config/gh/hosts.yml
           github.com:
-            oauth_token: $GH_TOKEN
+            oauth_token: "xxxxx"
             user: skanehira
           EOF
           make test
@@ -98,5 +98,4 @@ jobs:
           DENOPS_TEST_VIM: ${{ steps.vim.outputs.executable }}
           DENOPS_TEST_NVIM: ${{ steps.nvim.outputs.executable }}
           DENOPS_PATH: ${{ steps.denops.outputs.path }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         timeout-minutes: 5

@@ -69,7 +69,7 @@ export const getCandidates = async (
 
   if (userCache.size >= 1) {
     const result = Array.from(userCache.values()).filter((candidate) =>
-      candidate.user_data!.login.startsWith(word.slice(1))
+      candidate.user_data!.login.includes(word.slice(1))
     );
     if (result.length) {
       return result;

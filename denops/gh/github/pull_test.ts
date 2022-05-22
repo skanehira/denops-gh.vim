@@ -2,6 +2,7 @@ import { assertEquals, assertRejects } from "../deps.ts";
 import { getAssociatedPullRequest } from "./pull.ts";
 
 Deno.test({
+  ignore: true,
   name: "get pr wit commit hash",
   fn: async () => {
     const got = await getAssociatedPullRequest(
@@ -20,6 +21,7 @@ Deno.test({
 });
 
 Deno.test({
+  ignore: true,
   name: "not found pr with commit hash",
   fn: async () => {
     await assertRejects(
