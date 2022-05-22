@@ -1,2 +1,2 @@
-#27 test2  OPEN            ()                  
-#26 テスト OPEN @skanehira (bug, duplicate)  1
+#27 test2  OPEN              ()                  
+#26 テスト CLOSED @skanehira (bug, duplicate)  1

@@ -1,7 +1,9 @@
 import { getConfig } from "../config.ts";
 import { Errors } from "./schema.ts";
 
-export const endpoint = "https://api.github.com/graphql";
+export const testEndpoint = "http://localhost:8080";
+export const endpoint = Deno.env.get("GITHUB_ENDPOINT") ??
+  "https://api.github.com/graphql";
 
 export async function query<T>(
   req: { endpoint?: string; query: string },

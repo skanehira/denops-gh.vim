@@ -20,9 +20,15 @@
       }
     ]
   },
-  "body": "# this is test\r\ntest issue",
+  "body": "# this is test\ntest issue",
   "labels": {
-    "nodes": []
+    "nodes": [
+      {
+        "name": "documentation",
+        "color": "0075ca",
+        "description": "Improvements or additions to documentation"
+      }
+    ]
   },
   "closed": false,
   "number": 1,
@@ -30,7 +36,7 @@
     "name": "test"
   },
   "url": "https://github.com/skanehira/test/issues/1",
-  "state": "OPEN",
+  "state": "CLOSED",
   "comments": {
     "nodes": []
   }

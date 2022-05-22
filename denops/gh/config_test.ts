@@ -39,7 +39,7 @@ Deno.test("get config with not exists dir", async () => {
       await readConfig("tmp");
     },
     Error,
-    "No such file or directory (os error 2), open 'tmp'",
+    "No such file or directory (os error 2)",
   );
 });
 

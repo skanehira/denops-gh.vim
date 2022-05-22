@@ -1,0 +1,15 @@
+schema: schema.docs.graphql
+generates:
+  # TODO: use this when refactor client's implementation 
+  #operations.ts:
+  #  documents: operation.graphql
+  #  plugins:
+  #    - typescript-operations
+  #  config:
+  #    skipTypename: true
+  #  preset: import-types
+  #  presetConfig:
+  #    typesPath: types.ts
+  types.ts:
+    plugins:
+      - typescript

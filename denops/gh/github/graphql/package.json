@@ -1,0 +1,28 @@
+{
+  "name": "denops-gh.vim",
+  "version": "0.0.1",
+  "description": "Vim/Neovim plugin for GitHub",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gen": "graphql-codegen"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skanehira/denops-gh.vim.git"
+  },
+  "author": "skanehira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/skanehira/denops-gh.vim/issues"
+  },
+  "homepage": "https://github.com/skanehira/denops-gh.vim#readme",
+  "dependencies": {
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/import-types-preset": "^2.1.18",
+    "@graphql-codegen/typescript": "^2.4.11",
+    "@graphql-codegen/typescript-operations": "^2.4.0",
+    "@graphql-codegen/typescript-resolvers": "^2.6.4",
+    "graphql": "^15.8.0"
+  }
+}

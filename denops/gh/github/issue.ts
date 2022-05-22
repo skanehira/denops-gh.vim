@@ -152,7 +152,7 @@ export async function updateIssue(
   const q = `
   updateIssue(input: {
     id: "${args.input.id}"
-    ${args.input.title ? "title:" + args.input.title : ""}
+    ${args.input.title ? "title:" + `"${args.input.title}"` : ""}
     ${
     args.input.body
       ? "body:" + `"${safe_string.escape(args.input.body, "`")}"`
