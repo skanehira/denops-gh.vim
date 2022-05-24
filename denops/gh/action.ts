@@ -16,6 +16,7 @@ import {
   actionViewIssue,
 } from "./action_issue.ts";
 import { IssueItem } from "./github/schema.ts";
+import { IssueBodyFragment } from "./github/graphql/operations.ts";
 
 export type ActionType =
   | "issues:close"
@@ -72,7 +73,7 @@ export const isActionContext = (arg: unknown): arg is ActionContext => {
 };
 
 export type IssueListArg = {
-  issues?: IssueItem[];
+  issues?: IssueBodyFragment[];
   filters: string;
 };
 

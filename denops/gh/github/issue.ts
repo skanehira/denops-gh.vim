@@ -1,6 +1,78 @@
 import { IssueItem, ResultIssue, UpdateIssueInput } from "./schema.ts";
-import { mutation, query } from "./api.ts";
+import { endpoint, mutation, query, request } from "./api.ts";
 import { safe_string } from "../deps.ts";
+import { gql } from "https://deno.land/x/graphql_request@v4.1.0/mod.ts";
+import {
+  GetIssueQuery,
+  GetIssueQueryVariables,
+  GetIssuesQuery,
+  GetIssuesQueryVariables,
+  IssueBodyFragment,
+} from "./graphql/operations.ts";
+
+const fragmentIssueBody = gql`
+fragment issueBody on Issue {
+  id
+  title
+  author {
+    login
+  }
+  assignees(first: 10) {
+    nodes {
+      id
+      login
+      name
+      bio
+    }
+  }
+  body
+  labels(first: 20) {
+    nodes {
+      name
+      color
+      description
+    }
+  }
+  closed
+  number
+  repository {
+    name
+  }
+  url
+  state
+  comments(first: 10) {
+    nodes{
+      id
+    }
+  }
+}
+`;
+
+const queryGetIssue = gql`
+${fragmentIssueBody}
+
+query getIssue($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    issue(number: $number) {
+      ...issueBody
+    }
+  }
+}
+`;
+
+const queryGetIssues = gql`
+${fragmentIssueBody}
+
+query getIssues($first: Int!, $query: String!) {
+  search(first: $first, type: ISSUE, query: $query) {
+    nodes {
+      ... on Issue {
+        ...issueBody
+      }
+    }
+  }
+}
+`;
 
 export type GetIssuesResult = {
   data: {
@@ -10,7 +82,6 @@ export type GetIssuesResult = {
 
 export type GetIssuesCondition = {
   first?: number;
-  after?: string;
   owner: string;
   name: string;
   Filter?: string;
@@ -71,46 +142,36 @@ export async function getIssues(
     endpoint?: string;
     cond: GetIssuesCondition;
   },
-): Promise<ResultIssue> {
-  // default query
+): Promise<IssueBodyFragment[]> {
   const filter: string[] = [
     `repo:${args.cond.owner}/${args.cond.name}`,
     `type:issue`,
   ];
 
-  const first = `first: ${args.cond.first ? args.cond.first : 10}`;
+  const first = args.cond.first ?? 10;
+  filter.push(args.cond.Filter ?? "state:open");
 
-  if (args.cond.Filter) {
-    filter.push(args.cond.Filter.replaceAll('"', '\\"'));
-  } else {
-    filter.push("state:open");
+  const resp = await request<GetIssuesQuery, GetIssuesQueryVariables>(
+    args.endpoint ?? endpoint,
+    queryGetIssues,
+    {
+      first: first,
+      query: filter.join(" "),
+    },
+  );
+
+  if (!resp.search.nodes) {
+    return [];
   }
 
-  const q = `
-  {
-    search(${first}, type: ISSUE, query: "${filter.join(" ")}") {
-      nodes {
-        ... on Issue {
-          ${issueBodyQuery}
-        }
-      },
-      pageInfo{
-        hasNextPage,
-        startCursor,
-        endCursor
-      }
-    }
-  }`;
-
-  const json = await query<GetIssuesResult>({
-    endpoint: args.endpoint,
-    query: q,
-  });
-  json.data.search.nodes = json.data.search.nodes.map((issue) => {
+  const issues = resp.search.nodes.filter((issue): issue is IssueBodyFragment =>
+    issue !== null && issue !== undefined && Object.keys(issue).length > 0
+  ).map((issue) => {
     issue.body = issue.body.replaceAll("\r\n", "\n");
     return issue;
   });
-  return json.data.search;
+
+  return issues;
 }
 
 export async function getIssue(
@@ -118,28 +179,26 @@ export async function getIssue(
     endpoint?: string;
     cond: GetIssueCondition;
   },
-): Promise<IssueItem> {
-  const q = `
-  {
-    repository(owner: "${args.cond.owner}", name: "${args.cond.repo}") {
-      issue(number: ${args.cond.number}) {
-        ${issueBodyQuery}
-      }
-    }
-  }
-  `;
-  const json = await query<GetIssueResult>({
-    endpoint: args.endpoint,
-    query: q,
-  });
-  if (!json.data.repository.issue) {
+): Promise<IssueBodyFragment> {
+  const resp = await request<GetIssueQuery, GetIssueQueryVariables>(
+    args.endpoint ?? endpoint,
+    queryGetIssue,
+    {
+      repo: args.cond.repo,
+      owner: args.cond.owner,
+      number: args.cond.number,
+    },
+  );
+
+  if (!resp.repository?.issue) {
     throw new Error(`not found issue number: ${args.cond.number}`);
   }
-  json.data.repository.issue.body = json.data.repository.issue.body.replaceAll(
+
+  resp.repository.issue.body = resp.repository.issue.body.replaceAll(
     "\r\n",
     "\n",
   );
-  return json.data.repository.issue;
+  return resp.repository.issue;
 }
 
 export async function updateIssue(

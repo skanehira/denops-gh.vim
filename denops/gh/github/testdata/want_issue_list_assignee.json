@@ -1,55 +1,48 @@
-{
-  "nodes": [
-    {
-      "id": "MDU6SXNzdWU4MTI4NzYzMjI=",
-      "title": "テスト",
-      "author": {
-        "login": "skanehira"
-      },
-      "assignees": {
-        "nodes": [
-          {
-            "id": "MDQ6VXNlcjc4ODg1OTE=",
-            "login": "skanehira",
-            "name": "skanehira",
-            "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author."
-          }
-        ]
-      },
-      "body": "## 🐛 Summary\nバグ\n\n## 👀 Steps\n(バグの再現手順)\n\n1. Do action\n2. Do another action\n3. Wrong Behavior !!\n\n## 🆗 Expected\n(本来あるべき姿)\n\n## 🚑 Actual\n(Issueを作成した時点の動作)\n\n## 📎 Images or log(optional)\n(バグ発生時の画像もしくはログ)\n",
-      "labels": {
-        "nodes": [
-          {
-            "name": "bug",
-            "color": "d73a4a",
-            "description": "Something isn't working"
-          },
-          {
-            "name": "duplicate",
-            "color": "cfd3d7",
-            "description": "This issue or pull request already exists"
-          }
-        ]
-      },
-      "closed": true,
-      "number": 26,
-      "repository": {
-        "name": "test"
-      },
-      "url": "https://github.com/skanehira/test/issues/26",
-      "state": "CLOSED",
-      "comments": {
-        "nodes": [
-          {
-            "id": "IC_kwDOEdLNec460eDd"
-          }
-        ]
-      }
+[
+  {
+    "id": "MDU6SXNzdWU4MTI4NzYzMjI=",
+    "title": "テスト",
+    "author": {
+      "login": "skanehira"
+    },
+    "assignees": {
+      "nodes": [
+        {
+          "id": "MDQ6VXNlcjc4ODg1OTE=",
+          "login": "skanehira",
+          "name": "skanehira",
+          "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author."
+        }
+      ]
+    },
+    "body": "## 🐛 Summary\nバグ\n\n## 👀 Steps\n(バグの再現手順)\n\n1. Do action\n2. Do another action\n3. Wrong Behavior !!\n\n## 🆗 Expected\n(本来あるべき姿)\n\n## 🚑 Actual\n(Issueを作成した時点の動作)\n\n## 📎 Images or log(optional)\n(バグ発生時の画像もしくはログ)\n",
+    "labels": {
+      "nodes": [
+        {
+          "name": "bug",
+          "color": "d73a4a",
+          "description": "Something isn't working"
+        },
+        {
+          "name": "duplicate",
+          "color": "cfd3d7",
+          "description": "This issue or pull request already exists"
+        }
+      ]
+    },
+    "closed": true,
+    "number": 26,
+    "repository": {
+      "name": "test"
+    },
+    "url": "https://github.com/skanehira/test/issues/26",
+    "state": "CLOSED",
+    "comments": {
+      "nodes": [
+        {
+          "id": "IC_kwDOEdLNec460eDd"
+        }
+      ]
     }
-  ],
-  "pageInfo": {
-    "hasNextPage": false,
-    "startCursor": "Y3Vyc29yOjE=",
-    "endCursor": "Y3Vyc29yOjI="
   }
-}
+]

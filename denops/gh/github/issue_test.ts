@@ -62,15 +62,7 @@ Deno.test({
       },
     );
 
-    const expect = {
-      nodes: [],
-      pageInfo: {
-        endCursor: "Y3Vyc29yOjI=",
-        hasNextPage: false,
-        startCursor: "Y3Vyc29yOjE=",
-      },
-    };
-    assertEquals(actual, expect);
+    assertEquals(actual, []);
   },
 });
 

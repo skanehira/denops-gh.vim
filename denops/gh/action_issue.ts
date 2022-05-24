@@ -20,6 +20,7 @@ import {
   textEncoder,
   vimRegister,
 } from "./utils/helper.ts";
+import { IssueBodyFragment } from "./github/graphql/operations.ts";
 
 export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
   await inprogress(denops, "loading...", async () => {
@@ -144,11 +145,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           Filter: args.filters,
         },
       });
-      if (issues.nodes.length === 0) {
+      if (issues.length === 0) {
         throw new Error("not found any issues");
       }
       await denops.cmd("silent %d_");
-      await setIssueToBuffer(denops, ctx, issues.nodes);
+      await setIssueToBuffer(denops, ctx, issues);
 
       const keyMaps = [
         {
@@ -221,7 +222,7 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
 export async function setIssueToBuffer(
   denops: Denops,
   ctx: ActionContext,
-  issues: IssueItem[],
+  issues: IssueBodyFragment[],
 ): Promise<void> {
   const objs = issues.map((issue) => {
     return {
@@ -230,13 +231,18 @@ export async function setIssueToBuffer(
         ? issue.title.slice(0, 100) + "..."
         : issue.title,
       state: issue.state as string,
-      assignees: issue.assignees.nodes.slice(0, 2).map((user) => {
-        return user?.login ? "@" + user.login : "";
-      }).join(" "),
+      assignees: issue.assignees.nodes
+        ? issue.assignees.nodes.slice(0, 2).map((user) => {
+          return user?.login ? "@" + user.login : "";
+        }).join(" ")
+        : "",
       labels: `(${
-        issue.labels.nodes.slice(0, 3).map((label) => label.name).join(", ")
+        issue.labels?.nodes
+          ? issue.labels.nodes.slice(0, 3)
+            .map((label) => label?.name ?? "").join(", ")
+          : ""
       })`,
-      comment: issue.comments.nodes.length
+      comment: issue.comments.nodes?.length
         ? `\uf41f ${issue.comments.nodes.length}`
         : "",
     };
@@ -452,7 +458,11 @@ export async function actionListAssignees(
           number: schema.issue.number,
         },
       });
-      const users = issue.assignees.nodes.map((user) => user.login);
+      if (!issue.assignees?.nodes) {
+        console.error("not found assignable user");
+        return;
+      }
+      const users = issue.assignees.nodes.map((user) => user?.login ?? "");
       await denops.call("setline", 1, users);
       await denops.cmd("setlocal buftype=acwrite nomodified");
 
@@ -534,7 +544,11 @@ export async function actionListLabels(
           number: schema.issue.number,
         },
       });
-      const labels = issue.labels.nodes.map((label) => label.name);
+      if (!issue.labels?.nodes) {
+        console.error("not found labels");
+        return;
+      }
+      const labels = issue.labels.nodes.map((label) => label?.name ?? "");
       await denops.call("setline", 1, labels);
       await denops.cmd("setlocal buftype=acwrite nomodified");
 
