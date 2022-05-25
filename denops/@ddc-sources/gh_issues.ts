@@ -8,7 +8,7 @@ import {
 import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
 import { getIssues } from "../gh/github/issue.ts";
 import { getMentionableUsers } from "../gh/github/repository.ts";
-import { IssueItem, ResultIssue, User } from "../gh/github/schema.ts";
+import { User } from "../gh/github/schema.ts";
 import { getActionCtx } from "../gh/action.ts";
 import { inprogress } from "../gh/utils/helper.ts";
 import { IssueBodyFragment } from "../gh/github/graphql/operations.ts";

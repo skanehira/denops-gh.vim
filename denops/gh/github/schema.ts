@@ -1,3 +1,4 @@
+import * as Types from "./graphql/types.ts";
 export type Errors = [
   {
     type: string;
@@ -152,7 +153,7 @@ export type PullRequestConnection = {
 export type UpdateIssueInput = {
   id: string;
   title?: string;
-  state?: "OPEN" | "CLOSED";
+  state?: Types.IssueState;
   body?: string;
   labels?: string[];
   assignees?: string[];

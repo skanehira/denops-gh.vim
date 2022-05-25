@@ -15,7 +15,6 @@ import {
   actionUpdateLabels,
   actionViewIssue,
 } from "./action_issue.ts";
-import { IssueItem } from "./github/schema.ts";
 import { IssueBodyFragment } from "./github/graphql/operations.ts";
 
 export type ActionType =

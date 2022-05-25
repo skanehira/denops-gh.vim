@@ -21,6 +21,7 @@ import {
   vimRegister,
 } from "./utils/helper.ts";
 import { IssueBodyFragment } from "./github/graphql/operations.ts";
+import * as Types from "./github/graphql/types.ts";
 
 export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
   await inprogress(denops, "loading...", async () => {
@@ -389,20 +390,20 @@ export async function actionOpenIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  await changeIssueState(denops, ctx, "OPEN");
+  await changeIssueState(denops, ctx, Types.IssueState.Open);
 }
 
 export async function actionCloseIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  await changeIssueState(denops, ctx, "CLOSED");
+  await changeIssueState(denops, ctx, Types.IssueState.Closed);
 }
 
 export async function changeIssueState(
   denops: Denops,
   ctx: ActionContext,
-  state: "OPEN" | "CLOSED",
+  state: Types.IssueState,
 ): Promise<void> {
   if (!isIssueListArgs(ctx.args)) {
     console.error(`ctx.args type is not 'IssueListArg'`);

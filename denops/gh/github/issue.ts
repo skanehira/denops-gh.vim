@@ -1,6 +1,5 @@
 import { IssueItem, ResultIssue, UpdateIssueInput } from "./schema.ts";
-import { endpoint, mutation, query, request } from "./api.ts";
-import { safe_string } from "../deps.ts";
+import { endpoint, request } from "./api.ts";
 import { gql } from "https://deno.land/x/graphql_request@v4.1.0/mod.ts";
 import {
   GetIssueQuery,
@@ -8,6 +7,8 @@ import {
   GetIssuesQuery,
   GetIssuesQueryVariables,
   IssueBodyFragment,
+  UpdateIssueMutation,
+  UpdateIssueMutationVariables,
 } from "./graphql/operations.ts";
 
 const fragmentIssueBody = gql`
@@ -101,42 +102,6 @@ export type GetIssueCondition = {
   number: number;
 };
 
-const issueBodyQuery = `
-  id
-  title
-  author {
-    login
-  }
-  assignees(first: 10) {
-    nodes {
-      id
-      login
-      name
-      bio
-    }
-  }
-  body
-  labels(first: 20) {
-    nodes {
-      name
-      color
-      description
-    }
-  }
-  closed
-  number
-  repository {
-    name
-  }
-  url
-  state
-  comments(first: 10) {
-    nodes{
-      id
-    }
-  }
-`;
-
 export async function getIssues(
   args: {
     endpoint?: string;
@@ -201,42 +166,47 @@ export async function getIssue(
   return resp.repository.issue;
 }
 
+const updateIssueMutation = gql`
+${fragmentIssueBody}
+
+mutation UpdateIssue($id: ID!, $title: String, $state: IssueState, $body: String, $labelIds: [ID!], $assigneeIds: [ID!]){
+  updateIssue(input: {
+    id: $id,
+    title: $title,
+    state: $state,
+    body: $body,
+    labelIds: $labelIds,
+    assigneeIds: $assigneeIds
+  }) {
+    issue {
+      ...issueBody
+    }
+  }
+}
+`;
+
 export async function updateIssue(
   args: {
     endpoint?: string;
     input: UpdateIssueInput;
   },
-): Promise<IssueItem> {
-  // TODO update others fields
-  const q = `
-  updateIssue(input: {
-    id: "${args.input.id}"
-    ${args.input.title ? "title:" + `"${args.input.title}"` : ""}
-    ${
-    args.input.body
-      ? "body:" + `"${safe_string.escape(args.input.body, "`")}"`
-      : ""
-  }
-    ${args.input.state ? "state:" + args.input.state : ""}
-    ${
-    args.input.assignees
-      ? "assigneeIds:" + `${JSON.stringify(args.input.assignees)}`
-      : ""
-  }
-    ${
-    args.input.labels
-      ? "labelIds:" + `${JSON.stringify(args.input.labels)}`
-      : ""
-  }
-  }) {
-    issue {
-      ${issueBodyQuery}
-    }
-  }`;
+): Promise<IssueBodyFragment> {
+  const resp = await request<UpdateIssueMutation, UpdateIssueMutationVariables>(
+    args.endpoint ?? endpoint,
+    updateIssueMutation,
+    {
+      id: args.input.id,
+      title: args.input.title,
+      assigneeIds: args.input.assignees,
+      labelIds: args.input.labels,
+      body: args.input.body,
+      state: args.input.state,
+    },
+  );
 
-  const json = await mutation<{ data: { updateIssue: { issue: IssueItem } } }>({
-    endpoint: args.endpoint,
-    input: q,
-  });
-  return json.data.updateIssue.issue;
+  if (!resp.updateIssue?.issue) {
+    throw new Error(`not found issue: ${args.input.id}`);
+  }
+
+  return resp.updateIssue.issue;
 }

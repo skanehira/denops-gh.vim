@@ -18,3 +18,15 @@ export type GetIssuesQueryVariables = Types.Exact<{
 
 
 export type GetIssuesQuery = { search: { nodes?: Array<{ id: string, title: string, body: string, closed: boolean, number: number, url: any, state: Types.IssueState, author?: { login: string } | { login: string } | { login: string } | { login: string } | { login: string } | null, assignees: { nodes?: Array<{ id: string, login: string, name?: string | null, bio?: string | null } | null> | null }, labels?: { nodes?: Array<{ name: string, color: string, description?: string | null } | null> | null } | null, repository: { name: string }, comments: { nodes?: Array<{ id: string } | null> | null } } | {} | null> | null } };
+
+export type UpdateIssueMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID'];
+  title?: Types.InputMaybe<Types.Scalars['String']>;
+  state?: Types.InputMaybe<Types.IssueState>;
+  body?: Types.InputMaybe<Types.Scalars['String']>;
+  labelIds?: Types.InputMaybe<Array<Types.Scalars['ID']> | Types.Scalars['ID']>;
+  assigneeIds?: Types.InputMaybe<Array<Types.Scalars['ID']> | Types.Scalars['ID']>;
+}>;
+
+
+export type UpdateIssueMutation = { updateIssue?: { issue?: { id: string, title: string, body: string, closed: boolean, number: number, url: any, state: Types.IssueState, author?: { login: string } | { login: string } | { login: string } | { login: string } | { login: string } | null, assignees: { nodes?: Array<{ id: string, login: string, name?: string | null, bio?: string | null } | null> | null }, labels?: { nodes?: Array<{ name: string, color: string, description?: string | null } | null> | null } | null, repository: { name: string }, comments: { nodes?: Array<{ id: string } | null> | null } } | null } | null };

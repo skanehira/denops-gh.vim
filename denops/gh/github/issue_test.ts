@@ -3,6 +3,7 @@ import { path } from "../deps.ts";
 import { testEndpoint } from "./api.ts";
 import { assertEqualFile } from "../utils/test.ts";
 import { assertEquals, assertRejects } from "../deps.ts";
+import * as Types from "./graphql/types.ts";
 
 {
   const tests = [
@@ -120,7 +121,7 @@ Deno.test({
       endpoint: testEndpoint,
       input: {
         id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        state: "OPEN",
+        state: Types.IssueState.Open,
       },
     });
 
