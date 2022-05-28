@@ -1,52 +1,57 @@
 [
   {
+    "word": "skanehira",
     "info": "Like Vim, Go.\nMany CLI/TUI Tools, Vim plugins author.",
     "kind": "[User]",
     "menu": "skanehira",
     "user_data": {
       "login": "skanehira",
+      "name": "skanehira",
       "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author."
-    },
-    "word": "skanehira"
+    }
   },
   {
+    "word": "biosugar0",
     "info": " SRE",
     "kind": "[User]",
     "menu": "biosugar0",
     "user_data": {
-      "bio": " SRE",
-      "login": "biosugar0"
-    },
-    "word": "biosugar0"
+      "login": "biosugar0",
+      "name": "biosugar0",
+      "bio": " SRE"
+    }
   },
   {
+    "word": "Matts966",
     "info": "",
     "kind": "[User]",
     "menu": "Matts966",
     "user_data": {
-      "bio": "",
-      "login": "Matts966"
-    },
-    "word": "Matts966"
+      "login": "Matts966",
+      "name": "Matts966",
+      "bio": ""
+    }
   },
   {
+    "word": "yoshio15",
     "info": "Japanese software developer.",
     "kind": "[User]",
     "menu": "yoshio15",
     "user_data": {
-      "bio": "Japanese software developer.",
-      "login": "yoshio15"
-    },
-    "word": "yoshio15"
+      "login": "yoshio15",
+      "name": "yoshio15",
+      "bio": "Japanese software developer."
+    }
   },
   {
+    "word": "hashue",
     "info": "",
     "kind": "[User]",
     "menu": "hashue",
     "user_data": {
-      "bio": "",
-      "login": "hashue"
-    },
-    "word": "hashue"
+      "login": "hashue",
+      "name": "hashue",
+      "bio": ""
+    }
   }
 ]

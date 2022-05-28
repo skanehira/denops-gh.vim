@@ -3,7 +3,10 @@ import { getCandidates, issueCache, userCache } from "./gh_issues.ts";
 import { Denops, path, test } from "../gh/deps.ts";
 import { setActionCtx } from "../gh/action.ts";
 import { assertEqualFile, parseJSON } from "../gh/utils/test.ts";
-import { IssueItem, User } from "../gh/github/schema.ts";
+import {
+  IssueBodyFragment,
+  MentionableUserFragment,
+} from "../gh/github/graphql/operations.ts";
 
 test({
   mode: "all",
@@ -35,14 +38,16 @@ test({
   name: "autocomplete issue from cache",
   fn: async (denops: Denops) => {
     try {
-      const cacheFile = path.join(
+      const cache = path.join(
         "denops",
         "@ddc-sources",
         "testdata",
         "want_candidate_issue_list.json",
       );
 
-      const candidates = await parseJSON<Candidate<IssueItem>[]>(cacheFile);
+      const candidates = await parseJSON<Candidate<IssueBodyFragment>[]>(
+        cache,
+      );
       for (const c of candidates) {
         issueCache.set(c.word, c);
       }
@@ -52,14 +57,7 @@ test({
       });
       const actual = await getCandidates(denops, "#テスト");
 
-      const file = path.join(
-        "denops",
-        "@ddc-sources",
-        "testdata",
-        "want_candidate_issue_list.json",
-      );
-
-      await assertEqualFile(file, actual);
+      await assertEqualFile(cache, actual);
     } finally {
       issueCache.clear();
     }
@@ -97,14 +95,16 @@ test({
   name: "autocomplete user from cache",
   fn: async (denops: Denops) => {
     try {
-      const cacheFile = path.join(
+      const cache = path.join(
         "denops",
         "@ddc-sources",
         "testdata",
         "want_candidate_user_list.json",
       );
 
-      const candidates = await parseJSON<Candidate<User>[]>(cacheFile);
+      const candidates = await parseJSON<Candidate<MentionableUserFragment>[]>(
+        cache,
+      );
       for (const c of candidates) {
         userCache.set(c.word, c);
       }
@@ -114,14 +114,7 @@ test({
       });
       const actual = await getCandidates(denops, "@s");
 
-      const file = path.join(
-        "denops",
-        "@ddc-sources",
-        "testdata",
-        "want_candidate_user_list.json",
-      );
-
-      await assertEqualFile(file, actual);
+      await assertEqualFile(cache, actual);
     } finally {
       userCache.clear();
     }

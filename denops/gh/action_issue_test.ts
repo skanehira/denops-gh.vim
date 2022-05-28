@@ -1,18 +1,25 @@
-import { assertEquals, Denops, load, path, test } from "./deps.ts";
+import { assertEquals, Denops, path, test } from "./deps.ts";
 import {
+  actionCloseIssue,
   actionEditIssue,
+  actionListAssignees,
   actionListIssue,
+  actionListLabels,
+  actionOpenIssue,
   actionSearchIssues,
+  actionUpdateAssignees,
+  actionUpdateIssue,
+  actionUpdateLabels,
 } from "./action_issue.ts";
 import { buildSchema } from "./buffer.ts";
 import {
   assertEqualFile,
   assertEqualTextFile,
-  autoloadDir,
+  loadAutoload,
   newActionContext,
 } from "./utils/test.ts";
 import { vimRegister } from "./utils/helper.ts";
-import { getActionCtx } from "./action.ts";
+import { getIssue } from "./github/issue.ts";
 
 test({
   mode: "all",
@@ -39,18 +46,37 @@ test({
 
 test({
   mode: "all",
-  name: "action open edit issue buffer",
+  name: "action edit and update issue buffer",
   fn: async (denops: Denops) => {
     const bufname = "gh://skanehira/test/issues/1";
     const schema = buildSchema(bufname);
     const ctx = { schema: schema };
     await actionEditIssue(denops, ctx);
     const actual = await denops.call("getline", 1, "$") as string[];
-    const want = [
+    const issueBody = [
       "# this is test",
       "test issue",
     ];
-    assertEquals(actual, want);
+    assertEquals(actual, issueBody);
+
+    try {
+      const newIssueBody = ["hello", "world"];
+      await denops.call("setline", 1, newIssueBody);
+      await actionUpdateIssue(denops, ctx);
+
+      const newIssue = await getIssue({
+        cond: {
+          owner: schema.owner,
+          repo: schema.repo,
+          number: 1,
+        },
+      });
+
+      assertEquals(newIssue.body.split("\n"), newIssueBody);
+    } finally {
+      await denops.call("setline", 1, issueBody);
+      await actionUpdateIssue(denops, ctx);
+    }
   },
   timeout: 3000,
 });
@@ -59,11 +85,7 @@ test({
   mode: "all",
   name: "action yank issue urls",
   fn: async (denops: Denops) => {
-    for await (const entry of Deno.readDir(autoloadDir)) {
-      if (entry.isFile) {
-        await load(denops, path.toFileUrl(path.join(autoloadDir, entry.name)));
-      }
-    }
+    await loadAutoload(denops);
 
     const ctx = newActionContext("gh://skanehira/test/issues");
     await actionListIssue(denops, ctx);
@@ -82,7 +104,7 @@ test({
     const ctx = newActionContext("gh://skanehira/test/issues");
     ctx.args = { filters: "state:closed label:bug" };
     await actionSearchIssues(denops, ctx);
-    const actual = await getActionCtx(denops);
+    const actual = await denops.call("getline", 1, "$");
     const file = path.join(
       "denops",
       "gh",
@@ -92,4 +114,92 @@ test({
     await assertEqualFile(file, actual);
   },
   timeout: 5000,
+});
+
+test({
+  mode: "all",
+  name: "change issue state",
+  fn: async (denops: Denops) => {
+    const ctx = newActionContext("gh://skanehira/test/issues");
+    ctx.args = { filters: "" };
+
+    await loadAutoload(denops);
+    await actionSearchIssues(denops, ctx);
+    const current = await denops.call("getline", 1);
+    assertEquals(
+      current,
+      "#27 test2  OPEN              ()                  ",
+    );
+
+    await actionCloseIssue(denops, ctx);
+    const actual = await denops.call("getline", 1, "$");
+
+    const dir = path.join(
+      "denops",
+      "gh",
+      "testdata",
+    );
+    await assertEqualFile(
+      path.join(
+        dir,
+        "want_issue_state_open.json",
+      ),
+      actual,
+    );
+
+    await actionOpenIssue(denops, ctx);
+
+    await assertEqualFile(
+      path.join(
+        dir,
+        "want_issue_state_close.json",
+      ),
+      actual,
+    );
+  },
+});
+
+test({
+  mode: "all",
+  name: "update assignees",
+  fn: async (denops: Denops) => {
+    const ctx = newActionContext("gh://skanehira/test/issues/1");
+    try {
+      await actionListAssignees(denops, ctx);
+      await denops.cmd("%d_");
+      await denops.call("setline", 1, ["skanehira"]);
+      await actionUpdateAssignees(denops, ctx);
+
+      await denops.cmd("bw!");
+
+      await actionListAssignees(denops, ctx);
+      assertEquals(await denops.call("getline", 1, "$"), ["skanehira"]);
+    } finally {
+      await denops.cmd("%d_");
+      await denops.call("setline", 1, ["skanehira", "gorilla"]);
+      await actionUpdateAssignees(denops, ctx);
+    }
+  },
+});
+
+test({
+  mode: "all",
+  name: "update label",
+  fn: async (denops: Denops) => {
+    const ctx = newActionContext("gh://skanehira/test/issues/1");
+    try {
+      await actionListLabels(denops, ctx);
+      await denops.cmd("%d_");
+      await denops.call("setline", 1, ["bug"]);
+      await actionUpdateLabels(denops, ctx);
+
+      await denops.cmd("bw!");
+      await actionListLabels(denops, ctx);
+      assertEquals(await denops.call("getline", 1, "$"), ["bug"]);
+    } finally {
+      await denops.cmd("%d_");
+      await denops.call("setline", 1, ["documentation"]);
+      await actionUpdateLabels(denops, ctx);
+    }
+  },
 });

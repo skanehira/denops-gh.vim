@@ -48,13 +48,7 @@ export const issue = {
   "body": "# this is test\r\ntest issue",
   "labels": {
     "nodes": [
-      {
-        __typename: "Label",
-        "id": "MDU6TGFiZWwyMzgwMTEzMTk5",
-        "name": "documentation",
-        "color": "0075ca",
-        "description": "Improvements or additions to documentation",
-      },
+      labels["MDU6TGFiZWwyMzgwMTEzMTk5"],
     ],
   },
   "closed": false,

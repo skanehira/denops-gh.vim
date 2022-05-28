@@ -1,6 +1,5 @@
-import { IssueItem, ResultIssue, UpdateIssueInput } from "./schema.ts";
 import { endpoint, request } from "./api.ts";
-import { gql } from "https://deno.land/x/graphql_request@v4.1.0/mod.ts";
+import { gql } from "../deps.ts";
 import {
   GetIssueQuery,
   GetIssueQueryVariables,
@@ -10,6 +9,12 @@ import {
   UpdateIssueMutation,
   UpdateIssueMutationVariables,
 } from "./graphql/operations.ts";
+
+function ensureNonEmptyIssue(
+  issue: Record<never, never>,
+): issue is IssueBodyFragment {
+  return Object.keys(issue).length > 0;
+}
 
 const fragmentIssueBody = gql`
 fragment issueBody on Issue {
@@ -75,31 +80,11 @@ query getIssues($first: Int!, $query: String!) {
 }
 `;
 
-export type GetIssuesResult = {
-  data: {
-    search: ResultIssue;
-  };
-};
-
 export type GetIssuesCondition = {
   first?: number;
   owner: string;
   name: string;
   Filter?: string;
-};
-
-export type GetIssueResult = {
-  data: {
-    repository: {
-      issue: IssueItem;
-    };
-  };
-};
-
-export type GetIssueCondition = {
-  owner: string;
-  repo: string;
-  number: number;
 };
 
 export async function getIssues(
@@ -129,9 +114,7 @@ export async function getIssues(
     return [];
   }
 
-  const issues = resp.search.nodes.filter((issue): issue is IssueBodyFragment =>
-    issue !== null && issue !== undefined && Object.keys(issue).length > 0
-  ).map((issue) => {
+  const issues = resp.search.nodes.filter(ensureNonEmptyIssue).map((issue) => {
     issue.body = issue.body.replaceAll("\r\n", "\n");
     return issue;
   });
@@ -142,7 +125,7 @@ export async function getIssues(
 export async function getIssue(
   args: {
     endpoint?: string;
-    cond: GetIssueCondition;
+    cond: GetIssueQueryVariables;
   },
 ): Promise<IssueBodyFragment> {
   const resp = await request<GetIssueQuery, GetIssueQueryVariables>(
@@ -188,7 +171,7 @@ mutation UpdateIssue($id: ID!, $title: String, $state: IssueState, $body: String
 export async function updateIssue(
   args: {
     endpoint?: string;
-    input: UpdateIssueInput;
+    input: UpdateIssueMutationVariables;
   },
 ): Promise<IssueBodyFragment> {
   const resp = await request<UpdateIssueMutation, UpdateIssueMutationVariables>(
@@ -197,8 +180,8 @@ export async function updateIssue(
     {
       id: args.input.id,
       title: args.input.title,
-      assigneeIds: args.input.assignees,
-      labelIds: args.input.labels,
+      assigneeIds: args.input.assigneeIds,
+      labelIds: args.input.labelIds,
       body: args.input.body,
       state: args.input.state,
     },

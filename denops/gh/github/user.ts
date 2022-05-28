@@ -1,33 +1,52 @@
 import { query } from "./api.ts";
-import { GetUsers, SearchUsers, User } from "./schema.ts";
+import { GetUsers } from "./schema.ts";
+import { gql } from "../deps.ts";
+import { endpoint, request } from "./api.ts";
+import {
+  SearchUserBodyFragment,
+  SearchUsersQuery,
+  SearchUsersQueryVariables,
+} from "./graphql/operations.ts";
 
-export async function searchUsers(args: {
-  endpoint?: string;
-  word: string;
-}): Promise<User[]> {
-  const q = `
-{
-  search(type: USER, query: "${args.word}", first: 10) {
+const fragmentSearchUser = gql`
+fragment searchUserBody on User {
+  id
+  login
+  name
+  bio
+}
+`;
+
+const querySearchUsers = gql`
+${fragmentSearchUser}
+
+query searchUsers($query: String!) {
+  search(type: USER, query: $query, first: 10) {
     nodes{
       ... on User{
-        id
-        login
-        name
-        bio
+        ... searchUserBody
       }
     }
   }
 }
 `;
 
-  const resp = await query<SearchUsers>(
+export async function searchUsers(args: {
+  endpoint?: string;
+  word: string;
+}): Promise<SearchUserBodyFragment[]> {
+  const resp = await request<SearchUsersQuery, SearchUsersQueryVariables>(
+    args.endpoint ?? endpoint,
+    querySearchUsers,
     {
-      endpoint: args.endpoint,
-      query: q,
+      query: args.word,
     },
   );
 
-  return resp.data.search.nodes;
+  if (!resp.search.nodes) {
+    return [];
+  }
+  return resp.search.nodes;
 }
 
 export async function getUsers(args: {

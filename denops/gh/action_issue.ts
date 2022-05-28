@@ -10,7 +10,7 @@ import {
 import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
 import { getUsers } from "./github/user.ts";
 import { getIssueTemplate, getLabels } from "./github/repository.ts";
-import { isIssueItem, IssueItem, IssueTemplate } from "./github/schema.ts";
+import { isIssueItem } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
 import { map } from "./mapping.ts";
 import {
@@ -20,7 +20,10 @@ import {
   textEncoder,
   vimRegister,
 } from "./utils/helper.ts";
-import { IssueBodyFragment } from "./github/graphql/operations.ts";
+import {
+  IssueBodyFragment,
+  IssueTemplateBodyFragment,
+} from "./github/graphql/operations.ts";
 import * as Types from "./github/graphql/types.ts";
 
 export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
@@ -112,7 +115,7 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
     id: ctx.args.id,
     body: body.join("\r\n"),
   };
-  inprogress(denops, "updating...", async () => {
+  await inprogress(denops, "updating...", async () => {
     try {
       await updateIssue({ input });
       await denops.cmd("setlocal nomodified");
@@ -260,7 +263,7 @@ export async function actionNewIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  const templates = await inprogress<IssueTemplate[]>(
+  const templates = await inprogress<Required<IssueTemplateBodyFragment>[]>(
     denops,
     "loading...",
     async () => {
@@ -519,8 +522,8 @@ export async function actionUpdateAssignees(
 
     await updateIssue({
       input: {
-        id: (ctx.args as IssueItem).id,
-        assignees: assignees,
+        id: (ctx.args as IssueBodyFragment).id,
+        assigneeIds: assignees,
       },
     });
     await denops.cmd("setlocal nomodified");
@@ -606,8 +609,8 @@ export async function actionUpdateLabels(
 
     await updateIssue({
       input: {
-        id: (ctx.args as IssueItem).id,
-        labels: labels,
+        id: (ctx.args as IssueBodyFragment).id,
+        labelIds: labels,
       },
     });
     await denops.cmd("setlocal nomodified");

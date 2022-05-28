@@ -34,4 +34,11 @@ export const mentionAndAssigneUsers = [
     "name": "hashue",
     "bio": "",
   },
+  {
+    __typename: "User",
+    "id": "MDQ6VXNlcjU3NTc5MTIz",
+    "name": "gorilla",
+    "bio": "This is test user",
+    "login": "gorilla",
+  },
 ];

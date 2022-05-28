@@ -168,7 +168,11 @@ const resolvers = {
     return ret;
   },
   repository: (args: QueryRepositoryArgs) => {
-    if (
+    if (args.name === "emptyIssuTemplate") {
+      return {
+        issueTemplates: [],
+      };
+    } else if (
       `${args.owner}/${args.name}` === `${repository.owner}/${repository.name}`
     ) {
       return {
@@ -198,7 +202,7 @@ const resolvers = {
     }
   },
   updateIssue: (args: MutationUpdateIssueArgs) => {
-    const issue = { ...testIssue };
+    const issue = testIssue;
     if (args.input.id === issue.id) {
       if (args.input.state) {
         issue.state = args.input.state;

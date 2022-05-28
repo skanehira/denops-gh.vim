@@ -1,0 +1,12 @@
+[
+  {
+    "word": "bug",
+    "info": "Something isn't working",
+    "kind": "[Label]",
+    "user_data": {
+      "name": "bug",
+      "color": "d73a4a",
+      "description": "Something isn't working"
+    }
+  }
+]

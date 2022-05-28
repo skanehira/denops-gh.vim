@@ -1,21 +1,39 @@
 import { getUsers, searchUsers } from "./user.ts";
 import { assertEquals } from "../deps.ts";
+import { testEndpoint } from "./api.ts";
 
 Deno.test({
   name: "search user",
-  fn: async () => {
-    const actual = await searchUsers({
-      word: "sk",
-    });
+  fn: async (t) => {
+    const get = (word: string) => {
+      return searchUsers({
+        endpoint: testEndpoint,
+        word: word,
+      });
+    };
 
-    assertEquals(actual, [
+    const tests = [
       {
-        bio: "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author.",
-        id: "MDQ6VXNlcjc4ODg1OTE=",
-        login: "skanehira",
-        name: "skanehira",
+        name: "found user",
+        word: "sk",
+        expect: [
+          {
+            bio: "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author.",
+            id: "MDQ6VXNlcjc4ODg1OTE=",
+            login: "skanehira",
+            name: "skanehira",
+          },
+        ],
       },
-    ]);
+      { name: "not found user", word: "notfound", expect: [] },
+    ];
+
+    for (const test of tests) {
+      await t.step(test.name, async () => {
+        const actual = await get(test.word);
+        assertEquals(actual, test.expect);
+      });
+    }
   },
 });
 

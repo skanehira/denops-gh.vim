@@ -1,4 +1,4 @@
-import { assertEquals, fs } from "../deps.ts";
+import { assertEquals, Denops, fs, load } from "../deps.ts";
 import { textDecoder, textEncoder } from "./helper.ts";
 import { buildSchema } from "../buffer.ts";
 import { ActionContext } from "../action.ts";
@@ -10,6 +10,14 @@ export const autoloadDir = path.join(
   ),
   "autoload",
 );
+
+export async function loadAutoload(denops: Denops) {
+  for await (const entry of Deno.readDir(autoloadDir)) {
+    if (entry.isFile) {
+      await load(denops, path.toFileUrl(path.join(autoloadDir, entry.name)));
+    }
+  }
+}
 
 export async function parseJSON<T>(file: string): Promise<T> {
   const contents = await Deno.readFile(file);

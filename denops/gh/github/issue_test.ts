@@ -117,142 +117,187 @@ Deno.test({
 Deno.test({
   name: "update issue state",
   fn: async () => {
-    const actual = await updateIssue({
-      endpoint: testEndpoint,
-      input: {
-        id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        state: Types.IssueState.Open,
-      },
-    });
-
-    assertEquals(actual.state, "OPEN");
+    const update = (state: Types.IssueState) => {
+      return updateIssue({
+        endpoint: testEndpoint,
+        input: {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          state: state,
+        },
+      });
+    };
+    try {
+      const actual = await update(Types.IssueState.Open);
+      assertEquals(actual.state, "OPEN");
+    } finally {
+      await update(Types.IssueState.Closed);
+    }
   },
 });
 
 Deno.test({
   name: "update issue title",
   fn: async () => {
-    const actual = await updateIssue({
-      endpoint: testEndpoint,
-      input: {
-        id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        title: "hogehoge",
-      },
-    });
-
-    assertEquals(actual.title, "hogehoge");
+    const update = (title: string) => {
+      return updateIssue({
+        endpoint: testEndpoint,
+        input: {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          title: title,
+        },
+      });
+    };
+    try {
+      const actual = await update("hogehoge");
+      assertEquals(actual.title, "hogehoge");
+    } finally {
+      await update("test1");
+    }
   },
 });
 
 Deno.test({
   name: "update issue body",
   fn: async () => {
-    const actual = await updateIssue({
-      endpoint: testEndpoint,
-      input: {
-        id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        body: "please give me a banana",
-      },
-    });
+    const update = (body: string) => {
+      return updateIssue({
+        endpoint: testEndpoint,
+        input: {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          body: body,
+        },
+      });
+    };
 
-    assertEquals(actual.body, "please give me a banana");
+    try {
+      const actual = await update("please give me a banana");
+      assertEquals(actual.body, "please give me a banana");
+    } finally {
+      await update("# this is test\r\ntest issue");
+    }
   },
 });
 
 Deno.test({
   name: "update issue assignees",
   fn: async () => {
-    const actual = await updateIssue({
-      endpoint: testEndpoint,
-      input: {
-        id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        assignees: [
-          "MDQ6VXNlcjc4ODg1OTE=",
-        ],
-      },
-    });
-
-    const expect = {
-      nodes: [
-        {
-          id: "MDQ6VXNlcjc4ODg1OTE=",
-          name: "skanehira",
-          bio: "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author.",
-          login: "skanehira",
+    const update = (assignees: string[]) => {
+      return updateIssue({
+        endpoint: testEndpoint,
+        input: {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          assigneeIds: assignees,
         },
-      ],
+      });
     };
-    assertEquals(actual.assignees, expect);
+
+    try {
+      const actual = await update(["MDQ6VXNlcjc4ODg1OTE="]);
+      const expect = {
+        nodes: [
+          {
+            id: "MDQ6VXNlcjc4ODg1OTE=",
+            name: "skanehira",
+            bio: "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author.",
+            login: "skanehira",
+          },
+        ],
+      };
+      assertEquals(actual.assignees, expect);
+    } finally {
+      await update(["MDQ6VXNlcjc4ODg1OTE=", "MDQ6VXNlcjU3NTc5MTIz"]);
+    }
   },
 });
 
 Deno.test({
   name: "remove issue assignees",
   fn: async () => {
-    const actual = await updateIssue({
-      endpoint: testEndpoint,
-      input: {
-        id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        assignees: [],
-      },
-    });
-
-    const expect = {
-      nodes: [],
+    const update = (assignees: string[]) => {
+      return updateIssue({
+        endpoint: testEndpoint,
+        input: {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          assigneeIds: assignees,
+        },
+      });
     };
 
-    assertEquals(actual.assignees, expect);
+    try {
+      const actual = await update([]);
+      const expect = {
+        nodes: [],
+      };
+      assertEquals(actual.assignees, expect);
+    } finally {
+      await update(["MDQ6VXNlcjU3NTc5MTIz", "MDQ6VXNlcjc4ODg1OTE="]);
+    }
   },
 });
 
 Deno.test({
   name: "update issue labels",
   fn: async () => {
-    const actual = await updateIssue({
-      endpoint: testEndpoint,
-      input: {
-        id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        labels: [
-          "MDU6TGFiZWwyMzgwMTEzMTk4",
-          "MDU6TGFiZWwyMzgwMTEzMTk5",
-        ],
-      },
-    });
-
-    const expect = {
-      nodes: [
-        {
-          "name": "bug",
-          "color": "d73a4a",
-          "description": "Something isn't working",
+    const update = (labels: string[]) => {
+      return updateIssue({
+        endpoint: testEndpoint,
+        input: {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          labelIds: labels,
         },
-        {
-          "name": "documentation",
-          "color": "0075ca",
-          "description": "Improvements or additions to documentation",
-        },
-      ],
+      });
     };
 
-    assertEquals(actual.labels, expect);
+    try {
+      const actual = await update([
+        "MDU6TGFiZWwyMzgwMTEzMTk4",
+        "MDU6TGFiZWwyMzgwMTEzMTk5",
+      ]);
+
+      const expect = {
+        nodes: [
+          {
+            "name": "bug",
+            "color": "d73a4a",
+            "description": "Something isn't working",
+          },
+          {
+            "name": "documentation",
+            "color": "0075ca",
+            "description": "Improvements or additions to documentation",
+          },
+        ],
+      };
+
+      assertEquals(actual.labels, expect);
+    } finally {
+      await update(["MDU6TGFiZWwyMzgwMTEzMTk5"]);
+    }
   },
 });
 
 Deno.test({
   name: "remove issue labels",
   fn: async () => {
-    const actual = await updateIssue({
-      endpoint: testEndpoint,
-      input: {
-        id: "MDU6SXNzdWU3MDk3MzE0NTA=",
-        labels: [],
-      },
-    });
-
-    const expect = {
-      nodes: [],
+    const update = (labels: string[]) => {
+      return updateIssue({
+        endpoint: testEndpoint,
+        input: {
+          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          labelIds: labels,
+        },
+      });
     };
 
-    assertEquals(actual.labels, expect);
+    try {
+      const actual = await update([]);
+      const expect = {
+        nodes: [],
+      };
+
+      assertEquals(actual.labels, expect);
+    } finally {
+      await update(["MDU6TGFiZWwyMzgwMTEzMTk5"]);
+    }
   },
 });
