@@ -6,9 +6,8 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
 import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
-import { User } from "../gh/github/schema.ts";
 import { getActionCtx } from "../gh/action.ts";
-import { getUserList } from "./gh_issues_search.ts";
+import { getUserList, User } from "./gh_users.ts";
 
 type Params = {
   maxSize: number;

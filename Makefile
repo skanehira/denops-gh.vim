@@ -1,4 +1,4 @@
-ARG = denops/gh
+ARG = denops
 
 .PHONY: start_graphql_server
 start_graphql_server:
@@ -16,6 +16,10 @@ test-local: start_graphql_server
 		DENOPS_TEST_VIM=$$(which vim) \
 		GITHUB_ENDPOINT=http://localhost:8080 \
 		deno test -A --unstable --ignore=denops/gh/github/graphql ${ARG}; make stop_graphql_server
+
+.PHONY: gen
+gen:
+	@cd denops/gh/github/graphql && npm run gen
 
 .PHONY: test
 test: start_graphql_server

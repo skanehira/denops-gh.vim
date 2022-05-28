@@ -8,21 +8,27 @@ import {
 import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
 import { getIssues } from "../gh/github/issue.ts";
 import { getMentionableUsers } from "../gh/github/repository.ts";
-import { IssueItem, ResultIssue, User } from "../gh/github/schema.ts";
 import { getActionCtx } from "../gh/action.ts";
 import { inprogress } from "../gh/utils/helper.ts";
+import {
+  IssueBodyFragment,
+  MentionableUserFragment,
+} from "../gh/github/graphql/operations.ts";
 
 type Params = {
   maxSize: number;
 };
 
-export const issueCache = new Map<string, Candidate<IssueItem>>();
-export const userCache = new Map<string, Candidate<User>>();
+export const issueCache = new Map<string, Candidate<IssueBodyFragment>>();
+export const userCache = new Map<
+  string,
+  Candidate<MentionableUserFragment>
+>();
 
 export const getCandidates = async (
   denops: Denops,
   word: string,
-): Promise<Candidate<IssueItem | User>[]> => {
+): Promise<Candidate<IssueBodyFragment | MentionableUserFragment>[]> => {
   const completeIssue = word?.at(0) === "#";
   const action = await getActionCtx(denops);
 
@@ -36,7 +42,7 @@ export const getCandidates = async (
       }
     }
 
-    const result = await inprogress<ResultIssue>(
+    const result = await inprogress<IssueBodyFragment[]>(
       denops,
       "fetching...",
       async () => {
@@ -51,7 +57,7 @@ export const getCandidates = async (
       },
     );
 
-    const candidates = result!.nodes.map((issue) => {
+    const candidates = result!.map((issue) => {
       return {
         word: String(issue.number),
         info: issue.body.replaceAll("\r\n", "\n"),
@@ -76,15 +82,19 @@ export const getCandidates = async (
     }
   }
 
-  const result = await inprogress<User[]>(denops, "fetching...", async () => {
-    return await getMentionableUsers({
-      repo: {
-        owner: action.schema.owner,
-        name: action.schema.repo,
-      },
-      word: word.slice(1),
-    });
-  });
+  const result = await inprogress<MentionableUserFragment[]>(
+    denops,
+    "fetching...",
+    async () => {
+      return await getMentionableUsers({
+        repo: {
+          owner: action.schema.owner,
+          name: action.schema.repo,
+        },
+        word: word.slice(1),
+      });
+    },
+  );
 
   const candidates = result!.map((user) => {
     return {
@@ -101,7 +111,8 @@ export const getCandidates = async (
   return candidates;
 };
 
-export class Source extends BaseSource<Params, IssueItem | User> {
+export class Source
+  extends BaseSource<Params, IssueBodyFragment | MentionableUserFragment> {
   async gatherCandidates(args: {
     denops: Denops;
     context: Context;
@@ -109,7 +120,7 @@ export class Source extends BaseSource<Params, IssueItem | User> {
     sourceOptions: SourceOptions;
     sourceParams: Params;
     completeStr: string;
-  }): Promise<Candidate<IssueItem | User>[]> {
+  }): Promise<Candidate<IssueBodyFragment | MentionableUserFragment>[]> {
     try {
       const pos = await args.denops.call("getcurpos") as number[];
       const col = pos[2];

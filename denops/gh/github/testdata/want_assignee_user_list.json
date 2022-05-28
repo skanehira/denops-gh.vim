@@ -1,23 +1,27 @@
 [
   {
     "login": "skanehira",
-    "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author."
+    "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author.",
+    "name": "skanehira"
   },
   {
     "login": "biosugar0",
-    "bio": " SRE"
+    "bio": " SRE",
+    "name": "biosugar0"
   },
   {
     "login": "Matts966",
-    "bio": ""
+    "bio": "",
+    "name": "Matts966"
   },
   {
     "login": "yoshio15",
-    "bio": "Japanese software developer."
+    "bio": "Japanese software developer.",
+    "name": "yoshio15"
   },
   {
     "login": "hashue",
-    "bio": ""
+    "bio": "",
+    "name": "hashue"
   }
 ]
-

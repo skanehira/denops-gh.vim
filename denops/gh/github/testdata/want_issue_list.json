@@ -1,33 +1,26 @@
-{
-  "nodes": [
-    {
-      "id": "MDU6SXNzdWU4MTI4NzY0MDg=",
-      "title": "test2",
-      "author": {
-        "login": "skanehira"
-      },
-      "assignees": {
-        "nodes": []
-      },
-      "body": "## 💪 タスク\ntest3\n\n### 🔖 関連issue\ntest3\n\n### 📄 資料\n(参考資料、サイトなどあれば書く )\n\n### ✅ 作業\n(どんな作業があるのか、大まかに書く)\n\n### 🚀 ゴール\n(タスクのゴールを書く)\n",
-      "labels": {
-        "nodes": []
-      },
-      "closed": false,
-      "number": 27,
-      "repository": {
-        "name": "test"
-      },
-      "url": "https://github.com/skanehira/test/issues/27",
-      "state": "OPEN",
-      "comments": {
-        "nodes": []
-      }
+[
+  {
+    "id": "MDU6SXNzdWU4MTI4NzY0MDg=",
+    "title": "test2",
+    "author": {
+      "login": "skanehira"
+    },
+    "assignees": {
+      "nodes": []
+    },
+    "body": "## 💪 タスク\ntest3\n\n### 🔖 関連issue\ntest3\n\n### 📄 資料\n(参考資料、サイトなどあれば書く )\n\n### ✅ 作業\n(どんな作業があるのか、大まかに書く)\n\n### 🚀 ゴール\n(タスクのゴールを書く)\n",
+    "labels": {
+      "nodes": []
+    },
+    "closed": false,
+    "number": 27,
+    "repository": {
+      "name": "test"
+    },
+    "url": "https://github.com/skanehira/test/issues/27",
+    "state": "OPEN",
+    "comments": {
+      "nodes": []
     }
-  ],
-  "pageInfo": {
-    "hasNextPage": false,
-    "startCursor": "Y3Vyc29yOjE=",
-    "endCursor": "Y3Vyc29yOjI="
   }
-}
+]

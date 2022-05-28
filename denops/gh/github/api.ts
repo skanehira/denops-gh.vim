@@ -1,5 +1,12 @@
 import { getConfig } from "../config.ts";
 import { Errors } from "./schema.ts";
+import {
+  request as graphql_request,
+} from "https://deno.land/x/graphql_request@v4.1.0/mod.ts";
+import {
+  RequestDocument,
+  Variables,
+} from "https://deno.land/x/graphql_request@v4.1.0/src/types.ts";
 
 export const testEndpoint = "http://localhost:8080";
 export const endpoint = Deno.env.get("GITHUB_ENDPOINT") ??
@@ -23,6 +30,23 @@ export async function mutation<T>(
   }
   `;
   return await post<T>({ endpoint: req.endpoint, body: body });
+}
+
+// deno-lint-ignore no-explicit-any
+export async function request<T = any, V = Variables>(
+  url: string,
+  query: RequestDocument,
+  variables?: V,
+): Promise<T> {
+  const config = await getConfig();
+  const token = config["github.com"].oauth_token;
+
+  if (!url) {
+    url = endpoint;
+  }
+  return await graphql_request<T, V>(url, query, variables, {
+    Authorization: `Bearer ${token}`,
+  });
 }
 
 export async function post<T>(req: {

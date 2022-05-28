@@ -1,0 +1,12 @@
+[
+  {
+    "word": "documentation",
+    "info": "Improvements or additions to documentation",
+    "kind": "[Label]",
+    "user_data": {
+      "name": "documentation",
+      "color": "0075ca",
+      "description": "Improvements or additions to documentation"
+    }
+  }
+]

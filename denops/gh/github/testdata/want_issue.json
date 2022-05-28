@@ -8,15 +8,15 @@
     "nodes": [
       {
         "id": "MDQ6VXNlcjc4ODg1OTE=",
+        "login": "skanehira",
         "name": "skanehira",
-        "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author.",
-        "login": "skanehira"
+        "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author."
       },
       {
         "id": "MDQ6VXNlcjU3NTc5MTIz",
+        "login": "gorilla",
         "name": "gorilla",
-        "bio": "This is test user",
-        "login": "gorilla"
+        "bio": "This is test user"
       }
     ]
   },

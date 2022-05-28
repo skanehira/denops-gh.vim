@@ -6,15 +6,66 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
 import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
-import { Label } from "../gh/github/schema.ts";
-import { getActionCtx } from "../gh/action.ts";
-import { getRepoLabels } from "./gh_issues_search.ts";
+import { LabelBodyFragment } from "../gh/github/graphql/operations.ts";
+import { searchLabels } from "../gh/github/repository.ts";
+import { ActionContext, getActionCtx } from "../gh/action.ts";
+import { inprogress, trim } from "../gh/utils/helper.ts";
+
+export const labelCache = new Map<string, Candidate<LabelBodyFragment>>();
+
+export async function getRepoLabels(
+  denops: Denops,
+  ctx: ActionContext,
+  word: string,
+): Promise<Candidate<LabelBodyFragment>[]> {
+  // if label has white space, query must be sourround by `"`,
+  // so, if user typed query contains `"` both ends, isn't be used seraching label.
+  word = trim(word, `"`);
+
+  if (labelCache.size >= 1) {
+    const result = Array.from(labelCache.values()).filter(
+      (candidate) => {
+        return candidate.user_data!.name.startsWith(word);
+      },
+    );
+    if (result.length) {
+      return result;
+    }
+  }
+
+  const result = await inprogress<LabelBodyFragment[]>(
+    denops,
+    "fetching...",
+    async () => {
+      return await searchLabels({
+        repo: {
+          owner: ctx.schema.owner,
+          name: ctx.schema.repo,
+        },
+        word: word,
+      });
+    },
+  );
+
+  const candidates = result!.map((label) => {
+    return {
+      word: label.name,
+      info: label.description,
+      kind: "[Label]",
+      user_data: label,
+    };
+  });
+  for (const can of candidates) {
+    labelCache.set(can.word, can);
+  }
+  return candidates;
+}
 
 type Params = {
   maxSize: number;
 };
 
-export class Source extends BaseSource<Params, Label> {
+export class Source extends BaseSource<Params, LabelBodyFragment> {
   async gatherCandidates(args: {
     denops: Denops;
     context: Context;
@@ -22,7 +73,7 @@ export class Source extends BaseSource<Params, Label> {
     sourceOptions: SourceOptions;
     sourceParams: Params;
     completeStr: string;
-  }): Promise<Candidate<Label>[]> {
+  }): Promise<Candidate<LabelBodyFragment>[]> {
     const pos = await args.denops.call("getcurpos") as number[];
     const col = pos[2];
     const word = args.context.input.substring(0, col).split(" ").at(-1);

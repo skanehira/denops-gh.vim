@@ -129,6 +129,8 @@ export const inprogress = async <T>(
   try {
     console.log(text);
     return await f();
+  } catch (e) {
+    throw e;
   } finally {
     await denops.cmd("echo ''");
   }
