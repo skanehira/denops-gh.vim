@@ -1,4 +1,4 @@
-import { getIssue, getIssues, updateIssue } from "./issue.ts";
+import { getIssue, getIssueComment, getIssues, updateIssue } from "./issue.ts";
 import { path } from "../deps.ts";
 import { assertEqualFile } from "../utils/test.ts";
 import { assertEquals, assertRejects } from "../deps.ts";
@@ -98,13 +98,13 @@ Deno.test({
             cond: {
               owner: "skanehira",
               repo: "test",
-              number: 2,
+              number: 3,
             },
           },
         );
       },
       Error,
-      "not found issue number: 2",
+      "not found issue number: 3",
     );
   },
 });
@@ -287,5 +287,26 @@ Deno.test({
     } finally {
       await update(["MDU6TGFiZWwyMzgwMTEzMTk5"]);
     }
+  },
+});
+
+Deno.test({
+  name: "get comment",
+  fn: async () => {
+    const actual = await getIssueComment({
+      owner: "skanehira",
+      repo: "test",
+      id: 707713426,
+    });
+
+    const file = path.join(
+      "denops",
+      "gh",
+      "github",
+      "testdata",
+      "want_issue_comment.json",
+    );
+
+    await assertEqualFile(file, actual);
   },
 });

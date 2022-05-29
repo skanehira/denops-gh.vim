@@ -2,6 +2,7 @@ import { assertEquals, delay, Denops, path, test } from "./deps.ts";
 import {
   actionCloseIssue,
   actionEditIssue,
+  actionEditIssueComment,
   actionListAssignees,
   actionListIssue,
   actionListLabels,
@@ -9,6 +10,7 @@ import {
   actionSearchIssues,
   actionUpdateAssignees,
   actionUpdateIssue,
+  actionUpdateIssueComment,
   actionUpdateLabels,
 } from "./action_issue.ts";
 import { buildSchema } from "./buffer.ts";
@@ -21,6 +23,8 @@ import {
 import { vimRegister } from "./utils/helper.ts";
 import { getIssue } from "./github/issue.ts";
 import { main } from "./main.ts";
+
+const ignore = Deno.env.get("TEST_LOCAL") !== "true";
 
 test({
   mode: "all",
@@ -205,10 +209,9 @@ test({
   },
 });
 
-// ignore because test fails in github action
 test({
   mode: "nvim",
-  ignore: true,
+  ignore: ignore,
   name: "open assignee buffer from issue list",
   fn: async (denops: Denops) => {
     await main(denops);
@@ -225,7 +228,7 @@ test({
 
 test({
   mode: "nvim",
-  ignore: true,
+  ignore: ignore,
   name: "open label buffer from issue list",
   fn: async (denops: Denops) => {
     await main(denops);
@@ -236,6 +239,51 @@ test({
     await denops.call("feedkeys", "ghln");
     await delay(300);
     assertEquals(await denops.call("getline", 1, "$"), ["bug", "duplicate"]);
+  },
+  timeout: 5000,
+});
+
+test({
+  mode: "all",
+  name: "update comment",
+  fn: async (denops: Denops) => {
+    const ctx = newActionContext(
+      "gh://skanehira/test/issues/1/comments/707713426",
+    );
+
+    const body = ["テスト4", "テスト5"];
+    try {
+      await actionEditIssueComment(denops, ctx);
+      assertEquals(await denops.call("getline", 1, "$"), body);
+
+      await denops.cmd("%d_");
+      await denops.call("setline", 1, ["do something"]);
+      await actionUpdateIssueComment(denops, ctx);
+
+      await denops.cmd("bw!");
+      await actionEditIssueComment(denops, ctx);
+      assertEquals(await denops.call("getline", 1, "$"), ["do something"]);
+    } finally {
+      await denops.cmd("%d_");
+      await denops.call("setline", 1, body);
+      await actionUpdateIssueComment(denops, ctx);
+    }
+  },
+});
+
+test({
+  mode: "nvim",
+  ignore: ignore,
+  name: "open comments buffer from issue list",
+  fn: async (denops: Denops) => {
+    await main(denops);
+    await loadAutoload(denops);
+    const ctx = newActionContext("gh://skanehira/test/issues");
+    ctx.args = { filters: "state:closed" };
+    await actionListIssue(denops, ctx);
+    await denops.call("feedkeys", "ghmn");
+    await delay(300);
+    assertEquals(await denops.call("getline", 1, "$"), ["@skanehira test"]);
   },
   timeout: 5000,
 });

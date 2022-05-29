@@ -164,17 +164,26 @@ gh://{owner}/{repo}/issues/{number}/labels
     autocmd name: |gh_open_issue_labels|
     source  name: |gh_issues_labels|
 
-                                          *gh-buffer-issue-comment-list*
-gh://{owner}/{repo}/issues/:number/comments
-  TODO
-
                                           *gh-buffer-issue-comment-new*
 gh://{owner}/{repo}/issues/:number/comments/new
   TODO
 
+                                          *gh-buffer-issue-comment-list*
+gh://{owner}/{repo}/issues/{number}/comments
+  Show issue's comments.
+>
+    ISSUES COMMENT LIST
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @man1 something body
+    ...
+     │    │
+     │    └ Comment body (Just show first line of body)
+     └ Author
+<
                                           *gh-buffer-issue-comment-edit*
-gh://{owner}/{repo}/issues/:number/comments/:id
-  TODO
+gh://{owner}/{repo}/issues/{number}/comments/{id}
+  Edit comment body.
+  When you type |:write|, then buffer's contents will be applied.
 
                                           *gh-buffer-pull-list*
 gh://{owner}/{repo}/pulls
