@@ -236,16 +236,22 @@ const resolvers = {
 };
 
 serve(async (req: Request) => {
+  const url = new URL(req.url);
   const text = await req.text();
-  const body = JSON.parse(text);
-  // Deno.write(1, new TextEncoder().encode(body.query));
-  const resp = await graphql({
-    schema,
-    source: body.query,
-    variableValues: body.variables,
-    rootValue: resolvers,
-  });
-  return new Response(JSON.stringify(resp), {
+  if (url.pathname === "/graphql") {
+    const body = JSON.parse(text);
+    const resp = await graphql({
+      schema,
+      source: body.query,
+      variableValues: body.variables,
+      rootValue: resolvers,
+    });
+    return new Response(JSON.stringify(resp), {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  return new Response("{}", {
     headers: { "Content-Type": "application/json" },
   });
 }, { port: 8080 });

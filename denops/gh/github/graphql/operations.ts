@@ -13,7 +13,7 @@ export type GetIssueQuery = { repository?: { issue?: IssueBodyFragment } };
 
 export type GetIssuesQueryVariables = Types.Exact<{
   first: Types.Scalars['Int'];
-  query: Types.Scalars['String'];
+  filter: Types.Scalars['String'];
 }>;
 
 
@@ -77,7 +77,7 @@ export type SearchLabelsQuery = { repository?: { labels?: { nodes?: Array<LabelB
 export type SearchUserBodyFragment = { id: string, login: string, name?: string, bio?: string };
 
 export type SearchUsersQueryVariables = Types.Exact<{
-  query: Types.Scalars['String'];
+  user: Types.Scalars['String'];
 }>;
 
 

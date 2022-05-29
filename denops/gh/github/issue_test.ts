@@ -1,6 +1,5 @@
 import { getIssue, getIssues, updateIssue } from "./issue.ts";
 import { path } from "../deps.ts";
-import { testEndpoint } from "./api.ts";
 import { assertEqualFile } from "../utils/test.ts";
 import { assertEquals, assertRejects } from "../deps.ts";
 import * as Types from "./graphql/types.ts";
@@ -27,7 +26,6 @@ import * as Types from "./graphql/types.ts";
       fn: async () => {
         const actual = await getIssues(
           {
-            endpoint: testEndpoint,
             cond: {
               owner: "skanehira",
               name: "test",
@@ -54,7 +52,6 @@ Deno.test({
   fn: async () => {
     const actual = await getIssues(
       {
-        endpoint: testEndpoint,
         cond: {
           owner: "skanehira",
           name: "test",
@@ -72,7 +69,6 @@ Deno.test({
   fn: async () => {
     const actual = await getIssue(
       {
-        endpoint: testEndpoint,
         cond: {
           owner: "skanehira",
           repo: "test",
@@ -99,7 +95,6 @@ Deno.test({
       () => {
         return getIssue(
           {
-            endpoint: testEndpoint,
             cond: {
               owner: "skanehira",
               repo: "test",
@@ -119,7 +114,6 @@ Deno.test({
   fn: async () => {
     const update = (state: Types.IssueState) => {
       return updateIssue({
-        endpoint: testEndpoint,
         input: {
           id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           state: state,
@@ -140,7 +134,6 @@ Deno.test({
   fn: async () => {
     const update = (title: string) => {
       return updateIssue({
-        endpoint: testEndpoint,
         input: {
           id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           title: title,
@@ -161,7 +154,6 @@ Deno.test({
   fn: async () => {
     const update = (body: string) => {
       return updateIssue({
-        endpoint: testEndpoint,
         input: {
           id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           body: body,
@@ -183,7 +175,6 @@ Deno.test({
   fn: async () => {
     const update = (assignees: string[]) => {
       return updateIssue({
-        endpoint: testEndpoint,
         input: {
           id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           assigneeIds: assignees,
@@ -215,7 +206,6 @@ Deno.test({
   fn: async () => {
     const update = (assignees: string[]) => {
       return updateIssue({
-        endpoint: testEndpoint,
         input: {
           id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           assigneeIds: assignees,
@@ -240,7 +230,6 @@ Deno.test({
   fn: async () => {
     const update = (labels: string[]) => {
       return updateIssue({
-        endpoint: testEndpoint,
         input: {
           id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           labelIds: labels,
@@ -281,7 +270,6 @@ Deno.test({
   fn: async () => {
     const update = (labels: string[]) => {
       return updateIssue({
-        endpoint: testEndpoint,
         input: {
           id: "MDU6SXNzdWU3MDk3MzE0NTA=",
           labelIds: labels,

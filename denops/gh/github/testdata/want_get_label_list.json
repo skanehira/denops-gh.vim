@@ -1,16 +1,14 @@
 {
-  "data": {
-    "label0": {
-      "label": {
-        "id": "MDU6TGFiZWwyMzgwMTEzMTk4",
-        "name": "bug"
-      }
-    },
-    "label1": {
-      "label": {
-        "id": "MDU6TGFiZWwyMzgwMTEzMTk5",
-        "name": "documentation"
-      }
+  "label0": {
+    "label": {
+      "id": "MDU6TGFiZWwyMzgwMTEzMTk4",
+      "name": "bug"
+    }
+  },
+  "label1": {
+    "label": {
+      "id": "MDU6TGFiZWwyMzgwMTEzMTk5",
+      "name": "documentation"
     }
   }
 }

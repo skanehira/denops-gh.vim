@@ -1,13 +1,11 @@
 import { getUsers, searchUsers } from "./user.ts";
 import { assertEquals } from "../deps.ts";
-import { testEndpoint } from "./api.ts";
 
 Deno.test({
   name: "search user",
   fn: async (t) => {
     const get = (word: string) => {
       return searchUsers({
-        endpoint: testEndpoint,
         word: word,
       });
     };
@@ -48,15 +46,13 @@ Deno.test({
     });
 
     const expect = {
-      data: {
-        user0: {
-          id: "MDQ6VXNlcjc4ODg1OTE=",
-          login: "skanehira",
-        },
-        user1: {
-          id: "MDQ6VXNlcjE4NzM3ODE5",
-          login: "biosugar0",
-        },
+      user0: {
+        id: "MDQ6VXNlcjc4ODg1OTE=",
+        login: "skanehira",
+      },
+      user1: {
+        id: "MDQ6VXNlcjE4NzM3ODE5",
+        login: "biosugar0",
       },
     };
     assertEquals(actual, expect);

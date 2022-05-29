@@ -15,7 +15,7 @@ test-local: start_graphql_server
 		DENOPS_TEST_NVIM=$$(which nvim) \
 		DENOPS_TEST_VIM=$$(which vim) \
 		GITHUB_ENDPOINT=http://localhost:8080 \
-		deno test -A --unstable --ignore=denops/gh/github/graphql ${ARG}; make stop_graphql_server
+		deno test -A --unstable --ignore=denops/gh/github/graphql ${ARG} && make stop_graphql_server
 
 .PHONY: gen
 gen:
@@ -24,7 +24,7 @@ gen:
 .PHONY: test
 test: start_graphql_server
 	@GITHUB_ENDPOINT=http://localhost:8080 \
-		deno test -A --unstable --ignore=denops/gh/github/graphql --coverage=cov denops/; make stop_graphql_server
+		deno test -A --unstable --ignore=denops/gh/github/graphql --coverage=cov denops/ && make stop_graphql_server
 
 .PHONY: update-deps
 update-deps:
