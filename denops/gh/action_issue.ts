@@ -7,10 +7,17 @@ import {
   IssueListArg,
   setActionCtx,
 } from "./action.ts";
-import { getIssue, getIssues, updateIssue } from "./github/issue.ts";
+import {
+  getIssue,
+  getIssueComment,
+  getIssueComments,
+  getIssues,
+  updateIssue,
+  updateIssueComment,
+} from "./github/issue.ts";
 import { getUsers } from "./github/user.ts";
 import { getIssueTemplate, getLabels } from "./github/repository.ts";
-import { isIssueItem } from "./github/schema.ts";
+import { isIssueBody, isIssueComment } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
 import { map } from "./mapping.ts";
 import {
@@ -22,6 +29,7 @@ import {
 } from "./utils/helper.ts";
 import {
   IssueBodyFragment,
+  IssueCommentFragment,
   IssueTemplateBodyFragment,
 } from "./github/graphql/operations.ts";
 import * as Types from "./github/graphql/types.ts";
@@ -62,6 +70,11 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
 
       const keyMaps = [
         {
+          defaultKey: "ghm",
+          lhs: "<Plug>(gh-issue-comments)",
+          rhs: `:<C-u>call gh#_action("comments:list")<CR>`,
+        },
+        {
           defaultKey: "gha",
           lhs: "<Plug>(gh-issue-assignees)",
           rhs: `:<C-u>call gh#_action("issues:assignees")<CR>`,
@@ -100,7 +113,7 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
     return;
   }
 
-  if (!isIssueItem(ctx.args)) {
+  if (!isIssueBody(ctx.args)) {
     console.error(`ctx.args is not IssutItem: ${Deno.inspect(ctx.args)}`);
     return;
   }
@@ -156,6 +169,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
       await setIssueToBuffer(denops, ctx, issues);
 
       const keyMaps = [
+        {
+          defaultKey: "ghm",
+          lhs: "<Plug>(gh-issue-comments)",
+          rhs: `:<C-u>call gh#_action("comments:list")<CR>`,
+        },
         {
           defaultKey: "gha",
           lhs: "<Plug>(gh-issue-assignees)",
@@ -266,6 +284,26 @@ export async function setIssueToBuffer(
   await denops.cmd("setlocal nomodifiable");
 
   (ctx.args as IssueListArg).issues = issues;
+  await setActionCtx(denops, ctx);
+}
+
+export async function setIssueCommentsToBuffer(
+  denops: Denops,
+  ctx: ActionContext,
+  comments: Required<IssueCommentFragment>,
+): Promise<void> {
+  comments.nodes;
+  const objts = comments.nodes.map((comment) => {
+    return {
+      author: comment.author?.login ? "@" + comment.author.login : "",
+      comment: comment.body ? comment.body.split(/\r?\n/)[0] : "",
+    };
+  });
+  const rows = obj2array(objts);
+  await denops.call("setline", 1, rows);
+  await denops.cmd("setlocal nomodifiable");
+
+  (ctx.args as Required<IssueCommentFragment>) = comments;
   await setActionCtx(denops, ctx);
 }
 
@@ -622,5 +660,152 @@ export async function actionUpdateLabels(
       },
     });
     await denops.cmd("setlocal nomodified");
+  });
+}
+
+export async function actionEditIssueComment(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  await inprogress(denops, "loading...", async () => {
+    const schema = ctx.schema;
+    if (!schema.comment?.id) {
+      throw new Error(`invalid schema: ${schema}`);
+    }
+
+    try {
+      const comment = await getIssueComment({
+        owner: schema.owner,
+        repo: schema.repo,
+        id: schema.comment.id,
+      });
+
+      await denops.call("setline", 1, comment.body.split(/\r?\n/));
+      await denops.cmd("setlocal ft=markdown buftype=acwrite nomodified");
+
+      ctx.args = comment;
+      setActionCtx(denops, ctx);
+
+      await autocmd.group(
+        denops,
+        `gh_issue_comment_${schema.comment.id}`,
+        (helper) => {
+          helper.remove("*", "<buffer>");
+          helper.define(
+            "BufWriteCmd",
+            "<buffer>",
+            `call gh#_action("comments:update")`,
+          );
+        },
+      );
+
+      await denops.cmd("doautocmd User gh_open_issue_comment");
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
+}
+
+export async function actionUpdateIssueComment(
+  denops: Denops,
+  ctx: ActionContext,
+) {
+  if (!await denops.eval("&modified")) {
+    // if issue body doesn't changed, do nothing
+    return;
+  }
+
+  if (!ctx.schema.comment?.id) {
+    throw new Error(`ctx.schema is not comment: ${ctx.schema}`);
+  }
+
+  if (!isIssueComment(ctx.args)) {
+    throw new Error(`ctx.args is not comment: ${ctx.args}`);
+  }
+
+  const body = await denops.eval(`getline(1, "$")`) as string[];
+  if (body.length === 1 && body[0] === "") {
+    console.error("comment body cannot be empty");
+    return;
+  }
+
+  const input = {
+    owner: ctx.schema.owner,
+    repo: ctx.schema.repo,
+    id: ctx.schema.comment.id,
+    body: body.join("\r\n"),
+  };
+  await inprogress(denops, "updating...", async () => {
+    try {
+      await updateIssueComment(input);
+      await denops.cmd("setlocal nomodified");
+    } catch (e) {
+      console.error(e.message);
+    }
+  });
+}
+
+export async function actionListIssueComment(
+  denops: Denops,
+  ctx: ActionContext,
+) {
+  if (!isActionContext(ctx)) {
+    console.error(`ctx is not action context: ${Deno.inspect(ctx)}`);
+    return;
+  }
+
+  const schema = ctx.schema;
+  if (!schema.issue?.number) {
+    throw new Error(`invalid schema: ${JSON.stringify(schema)}`);
+  }
+  const number = schema.issue.number;
+
+  denops.cmd("setlocal ft=gh-issues-comments modifiable");
+
+  await inprogress(denops, "loading...", async () => {
+    try {
+      const comments = await getIssueComments({
+        owner: schema.owner,
+        name: schema.repo,
+        number: number,
+      });
+
+      if (!comments.nodes || comments.nodes.length === 0) {
+        throw new Error("not found any issues");
+      }
+
+      await denops.cmd("silent %d_");
+
+      await setIssueCommentsToBuffer(
+        denops,
+        ctx,
+        comments as Required<IssueCommentFragment>,
+      );
+
+      const keyMaps = [
+        {
+          defaultKey: "ghe",
+          lhs: "<Plug>(gh-issue-comment-edit)",
+          rhs: `:<C-u>call gh#_action("comments:edit")<CR>`,
+        },
+      ];
+
+      for (const m of keyMaps) {
+        await map(
+          denops,
+          m.defaultKey,
+          m.lhs,
+          m.rhs,
+          {
+            buffer: true,
+            silent: true,
+            mode: "n",
+            noremap: true,
+          },
+        );
+      }
+    } catch (e) {
+      console.error(e.message);
+    }
   });
 }

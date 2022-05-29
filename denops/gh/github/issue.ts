@@ -1,6 +1,8 @@
-import { request } from "./api.ts";
+import { octokit, request } from "./api.ts";
 import { gql } from "../deps.ts";
 import {
+  GetIssueCommentsQuery,
+  GetIssueCommentsQueryVariables,
   GetIssueQuery,
   GetIssueQueryVariables,
   GetIssuesQuery,
@@ -186,4 +188,92 @@ export async function updateIssue(
   }
 
   return resp.updateIssue.issue;
+}
+
+export async function getIssueComment(args: {
+  owner: string;
+  repo: string;
+  id: number;
+}) {
+  const resp = await octokit.rest.issues.getComment({
+    owner: args.owner,
+    repo: args.repo,
+    comment_id: args.id,
+  });
+  if (resp.status >= 300) {
+    throw new Error(resp.message);
+  }
+  return resp.data;
+}
+
+export async function updateIssueComment(args: {
+  owner: string;
+  repo: string;
+  id: number;
+  body: string;
+}) {
+  const resp = await octokit.rest.issues.updateComment({
+    owner: args.owner,
+    repo: args.repo,
+    comment_id: args.id,
+    body: args.body,
+  });
+  if (resp.status >= 300) {
+    throw new Error(resp.message);
+  }
+  return resp;
+}
+
+const fragmentIssueComment = gql`
+fragment issueComment on IssueCommentConnection {
+  nodes {
+    databaseId
+    author {
+      login
+    }
+    body
+  }
+  pageInfo {
+    startCursor
+    endCursor
+  }
+}
+`;
+
+const queryGetIssueComments = gql`
+${fragmentIssueComment}
+
+query getIssueComments($owner: String!, $name: String!, $number: Int!) {
+  repository(owner: $owner, name: $name) {
+    issue(number: $number) {
+      comments(first:100) {
+        ... issueComment
+      }
+    }
+  }
+}
+`;
+
+export async function getIssueComments(args: {
+  owner: string;
+  name: string;
+  number: number;
+}) {
+  const resp = await request<
+    GetIssueCommentsQuery,
+    GetIssueCommentsQueryVariables
+  >(queryGetIssueComments, {
+    owner: args.owner,
+    name: args.name,
+    number: args.number,
+  });
+
+  if (!resp.repository?.issue?.comments) {
+    return {
+      nodes: [],
+      pageInfo: null,
+    };
+  }
+
+  return resp.repository.issue.comments;
 }

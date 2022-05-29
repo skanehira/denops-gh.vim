@@ -13,12 +13,14 @@ import { serve } from "https://deno.land/std@0.139.0/http/server.ts";
 import {
   issue as testIssue,
   issues,
+  issueWithComments,
   labels,
   repository,
   users as userTest,
 } from "./testdata/issues.ts";
 import { mentionAndAssigneUsers } from "./testdata/users.ts";
 import { issueTemplates } from "./testdata/templates.ts";
+import { issueComment } from "./testdata/issues_comment.ts";
 
 const schema = buildSchema(await Deno.readTextFile("./schema.docs.graphql"));
 
@@ -177,8 +179,11 @@ const resolvers = {
     ) {
       return {
         issue: (args: RepositoryIssueArgs) => {
-          if (args.number === repository.issue.number) {
+          if (args.number === testIssue.number) {
             return testIssue;
+          }
+          if (args.number === issueWithComments.number) {
+            return issueWithComments;
           }
           return issues.find((issue) => issue.number === args.number);
         },
@@ -235,6 +240,11 @@ const resolvers = {
   },
 };
 
+const issueCommentRegexp = /repos\/\w+\/\w+\/issues\/comments\/\d+/;
+const isIssueComment = (pathname: string): boolean => {
+  return issueCommentRegexp.test(pathname);
+};
+
 serve(async (req: Request) => {
   const url = new URL(req.url);
   const text = await req.text();
@@ -251,7 +261,25 @@ serve(async (req: Request) => {
     });
   }
 
-  return new Response("{}", {
+  let resp = "{}";
+
+  switch (req.method) {
+    case "GET":
+      if (isIssueComment(url.pathname)) {
+        resp = JSON.stringify(issueComment);
+      }
+      break;
+    case "PATCH":
+      if (isIssueComment(url.pathname)) {
+        issueComment.body = JSON.parse(text).body;
+        resp = JSON.stringify(issueComment);
+      }
+      break;
+    case "POST":
+      break;
+  }
+
+  return new Response(resp, {
     headers: { "Content-Type": "application/json" },
   });
 }, { port: 8080 });

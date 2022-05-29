@@ -127,6 +127,28 @@ function! s:issue_edit() abort
   call execute(printf("%s gh://%s/%s/issues/%d", opencmd, schema.owner, schema.repo, issue.number))
 endfunction
 
+function s:issue_comment_edit() abort
+  if empty(b:gh_action_ctx.args.nodes)
+    call gh#_error("b:gh_action_ctx.args.nodes is empty")
+    return
+  endif
+
+  if len(gh#_get_selected_idx()) > 0
+    call gh#_error("gh.vim doesn't support edit multiple issue comment at same moment")
+    return
+  endif
+  
+  let schema = b:gh_action_ctx.schema
+  let comment = b:gh_action_ctx.args.nodes[line('.')-1]
+  let opencmd = s:opencmd()
+  if opencmd ==# ""
+    return
+  endif
+
+  call execute(printf("%s gh://%s/%s/issues/%d/comments/%d", opencmd, schema.owner, schema.repo, 
+        \ schema.issue.number, comment.databaseId))
+endfunction
+
 function! s:issue_yank() abort
   let issues = gh#_get_selected_issue()
   let urls = map(issues, { _, issue -> issue.url })
@@ -206,9 +228,27 @@ function! s:issue_labels() abort
   exe open printf("gh://%s/%s/issues/%s/labels", schema.owner, schema.repo, number)
 endfunction
 
+function! s:issue_comments() abort
+  let open = s:opencmd()
+  if open ==# ""
+    return
+  endif
+  if &ft ==# 'gh-issues'
+    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+  else
+    let number = b:gh_action_ctx.schema.issue.number
+  endif
+  let schema = b:gh_action_ctx.schema
+  exe open printf("gh://%s/%s/issues/%s/comments", schema.owner, schema.repo, number)
+endfunction
+
 function! gh#_action(type) abort
   if a:type ==# "issues:edit"
     call s:issue_edit()
+  elseif a:type ==# "comments:edit"
+    call s:issue_comment_edit()
+  elseif a:type ==# "comments:list"
+    call s:issue_comments()
   elseif a:type ==# "issues:yank"
     call s:issue_yank()
   elseif a:type ==# "issues:search"

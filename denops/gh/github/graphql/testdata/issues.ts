@@ -34,6 +34,59 @@ export const users = {
   },
 };
 
+export const comments = [
+  {
+    __typename: "Comment",
+    "databaseId": 707713426,
+    "author": {
+      __typename: "User",
+      "login": "skanehira",
+    },
+    "body": "テスト4\r\nテスト5",
+  },
+  {
+    __typename: "Comment",
+    "databaseId": 707714271,
+    "author": {
+      __typename: "User",
+      "login": "skanehira",
+    },
+    "body": "## これはテスト5\n",
+  },
+  {
+    __typename: "Comment",
+    "databaseId": 707714566,
+    "author": {
+      __typename: "User",
+      "login": "skanehira",
+    },
+    "body": "test6",
+  },
+  {
+    __typename: "Comment",
+    "databaseId": 707729573,
+    "author": {
+      __typename: "User",
+      "login": "skanehira",
+    },
+    "body": "test7",
+  },
+];
+
+export const issueWithComments = {
+  __typename: "Issue",
+  "number": 2,
+  "comments": (input: { first: number }) => {
+    return {
+      nodes: comments.slice(0, input.first),
+      "pageInfo": {
+        "startCursor": "Y3Vyc29yOnYyOpHOKi7Zkg==",
+        "endCursor": "Y3Vyc29yOnYyOpHOKi8YpQ==",
+      },
+    };
+  },
+};
+
 export const issue = {
   __typename: "Issue",
   "id": "MDU6SXNzdWU3MDk3MzE0NTA=",
@@ -146,9 +199,20 @@ export const issues = [
     comments: {
       nodes: [
         {
-          id: "IC_kwDOEdLNec460eDd",
+          __typename: "Comment",
+          "databaseId": 707714566,
+          "id": "IC_kwDOEdLNec460eDd",
+          "author": {
+            __typename: "User",
+            "login": "skanehira",
+          },
+          "body": "test",
         },
       ],
+      pageInfo: {
+        "startCursor": "Y3Vyc29yOnYyOpHOKi7Zkg==",
+        "endCursor": "Y3Vyc29yOnYyOpHOKi8YpQ==",
+      },
     },
   },
 ];

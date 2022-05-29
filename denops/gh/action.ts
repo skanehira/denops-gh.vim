@@ -4,14 +4,17 @@ import {
   actionCloseIssue,
   actionCreateIssue,
   actionEditIssue,
+  actionEditIssueComment,
   actionListAssignees,
   actionListIssue,
+  actionListIssueComment,
   actionListLabels,
   actionNewIssue,
   actionOpenIssue,
   actionSearchIssues,
   actionUpdateAssignees,
   actionUpdateIssue,
+  actionUpdateIssueComment,
   actionUpdateLabels,
   actionViewIssue,
 } from "./action_issue.ts";
@@ -36,7 +39,8 @@ export type ActionType =
   | "pulls:edit"
   | "comments:list"
   | "comments:edit"
-  | "comments:new";
+  | "comments:new"
+  | "comments:update";
 
 export type ActionContext = {
   schema: BufferSchema;
@@ -95,5 +99,8 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:assignees:update", actionUpdateAssignees],
     ["issues:labels", actionListLabels],
     ["issues:labels:update", actionUpdateLabels],
+    ["comments:list", actionListIssueComment],
+    ["comments:edit", actionEditIssueComment],
+    ["comments:update", actionUpdateIssueComment],
   ],
 );

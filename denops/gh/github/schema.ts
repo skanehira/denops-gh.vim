@@ -16,10 +16,18 @@ export type GetLabels = {
   };
 };
 
-export const isIssueItem = (arg: unknown): arg is IssueBodyFragment => {
+export const isIssueBody = (arg: unknown): arg is IssueBodyFragment => {
   return ["id", "title", "author", "number", "closed"].some((v) =>
     v in (arg as Record<string, unknown>)
   );
+};
+
+export type IssueComment = {
+  body: string;
+};
+
+export const isIssueComment = (arg: unknown): arg is IssueComment => {
+  return "body" in (arg as Record<string, string>);
 };
 
 export type PullRequest = {
