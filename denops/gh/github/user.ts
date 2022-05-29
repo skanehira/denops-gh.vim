@@ -1,7 +1,6 @@
-import { query } from "./api.ts";
 import { GetUsers } from "./schema.ts";
 import { gql } from "../deps.ts";
-import { endpoint, request } from "./api.ts";
+import { request } from "./api.ts";
 import {
   SearchUserBodyFragment,
   SearchUsersQuery,
@@ -20,8 +19,8 @@ fragment searchUserBody on User {
 const querySearchUsers = gql`
 ${fragmentSearchUser}
 
-query searchUsers($query: String!) {
-  search(type: USER, query: $query, first: 10) {
+query searchUsers($user: String!) {
+  search(type: USER, query: $user, first: 10) {
     nodes{
       ... on User{
         ... searchUserBody
@@ -32,14 +31,12 @@ query searchUsers($query: String!) {
 `;
 
 export async function searchUsers(args: {
-  endpoint?: string;
   word: string;
 }): Promise<SearchUserBodyFragment[]> {
   const resp = await request<SearchUsersQuery, SearchUsersQueryVariables>(
-    args.endpoint ?? endpoint,
     querySearchUsers,
     {
-      query: args.word,
+      user: args.word,
     },
   );
 
@@ -57,7 +54,7 @@ export async function getUsers(args: {
       ...UserFragment
     }`;
   });
-  const q = `
+  const query = `
 query {
   ${users.join("\n")}
 }
@@ -68,8 +65,6 @@ fragment UserFragment on User {
 }
   `;
 
-  const resp = await query<GetUsers>({
-    query: q,
-  });
+  const resp = await request<GetUsers>(query);
   return resp;
 }

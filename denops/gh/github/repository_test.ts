@@ -7,7 +7,6 @@ import {
   searchLabels,
 } from "./repository.ts";
 import { assertEqualFile, parseJSON } from "../utils/test.ts";
-import { testEndpoint } from "./api.ts";
 
 Deno.test({
   name: "get mentionable users",
@@ -54,7 +53,6 @@ Deno.test({
       await t.step(test.name, async () => {
         const actual = await getMentionableUsers(
           {
-            endpoint: testEndpoint,
             repo: {
               owner: test.args.owner,
               name: test.args.name,
@@ -110,7 +108,6 @@ Deno.test({
     for (const test of tests) {
       await t.step(test.name, async () => {
         const actual = await getIssueTemplate({
-          endpoint: testEndpoint,
           repo: {
             owner: test.args.owner,
             name: test.args.name,
@@ -127,7 +124,6 @@ Deno.test({
   fn: async (t) => {
     const get = (word: string) => {
       return getAssignableUsers({
-        endpoint: testEndpoint,
         repo: {
           owner: "skanehira",
           name: "test",
@@ -171,7 +167,6 @@ Deno.test({
   fn: async (t) => {
     const get = (word: string) => {
       return searchLabels({
-        endpoint: testEndpoint,
         repo: {
           owner: "skanehira",
           name: "test",
@@ -214,7 +209,6 @@ Deno.test({
   name: "get labels",
   fn: async () => {
     const actual = await getLabels({
-      endpoint: testEndpoint,
       repo: {
         owner: "skanehira",
         name: "test",

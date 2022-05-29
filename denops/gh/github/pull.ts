@@ -1,5 +1,5 @@
 import { getRepo } from "../utils/git.ts";
-import { query } from "./api.ts";
+import { request } from "./api.ts";
 import { PullRequestConnection } from "./schema.ts";
 
 type AssociatedPullRequests = {
@@ -47,10 +47,7 @@ query {
 }
 `;
 
-  const resp = await query<AssociatedPullRequests>({
-    endpoint: args.endpoint,
-    query: q,
-  });
+  const resp = await request<AssociatedPullRequests>(q);
 
   if (!resp.data.repository.object) {
     throw new Error("not found pull request");

@@ -1,4 +1,4 @@
-import { endpoint, request } from "./api.ts";
+import { request } from "./api.ts";
 import { gql } from "../deps.ts";
 import {
   GetIssueQuery,
@@ -69,8 +69,8 @@ query getIssue($owner: String!, $repo: String!, $number: Int!) {
 const queryGetIssues = gql`
 ${fragmentIssueBody}
 
-query getIssues($first: Int!, $query: String!) {
-  search(first: $first, type: ISSUE, query: $query) {
+query getIssues($first: Int!, $filter: String!) {
+  search(first: $first, type: ISSUE, query: $filter) {
     nodes {
       ... on Issue {
         ...issueBody
@@ -89,7 +89,6 @@ export type GetIssuesCondition = {
 
 export async function getIssues(
   args: {
-    endpoint?: string;
     cond: GetIssuesCondition;
   },
 ): Promise<IssueBodyFragment[]> {
@@ -102,11 +101,10 @@ export async function getIssues(
   filter.push(args.cond.Filter ?? "state:open");
 
   const resp = await request<GetIssuesQuery, GetIssuesQueryVariables>(
-    args.endpoint ?? endpoint,
     queryGetIssues,
     {
       first: first,
-      query: filter.join(" "),
+      filter: filter.join(" "),
     },
   );
 
@@ -124,12 +122,10 @@ export async function getIssues(
 
 export async function getIssue(
   args: {
-    endpoint?: string;
     cond: GetIssueQueryVariables;
   },
 ): Promise<IssueBodyFragment> {
   const resp = await request<GetIssueQuery, GetIssueQueryVariables>(
-    args.endpoint ?? endpoint,
     queryGetIssue,
     {
       repo: args.cond.repo,
@@ -170,12 +166,10 @@ mutation UpdateIssue($id: ID!, $title: String, $state: IssueState, $body: String
 
 export async function updateIssue(
   args: {
-    endpoint?: string;
     input: UpdateIssueMutationVariables;
   },
 ): Promise<IssueBodyFragment> {
   const resp = await request<UpdateIssueMutation, UpdateIssueMutationVariables>(
-    args.endpoint ?? endpoint,
     updateIssueMutation,
     {
       id: args.input.id,

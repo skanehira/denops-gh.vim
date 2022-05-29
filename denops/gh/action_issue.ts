@@ -525,7 +525,7 @@ export async function actionUpdateAssignees(
         assignees: lines,
       });
 
-      assignees = Object.values(users.data).map(
+      assignees = Object.values(users).map(
         (user) => user.id,
       );
     }
@@ -610,7 +610,7 @@ export async function actionUpdateLabels(
         labels: lines,
       });
 
-      labels = Object.values(resp.data).map(
+      labels = Object.values(resp).map(
         (repo) => repo.label.id,
       );
     }

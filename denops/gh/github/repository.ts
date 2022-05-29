@@ -1,4 +1,4 @@
-import { endpoint, query, request } from "./api.ts";
+import { request } from "./api.ts";
 import { GetLabels } from "./schema.ts";
 import { gql } from "../deps.ts";
 import {
@@ -36,7 +36,6 @@ query getIssueTemplates($owner: String!, $name: String!) {
 `;
 
 export async function getIssueTemplate(args: {
-  endpoint?: string;
   repo: {
     owner: string;
     name: string;
@@ -46,7 +45,6 @@ export async function getIssueTemplate(args: {
     GetIssueTemplatesQuery,
     GetIssueTemplatesQueryVariables
   >(
-    args.endpoint ?? endpoint,
     queryGetIssueTemplates,
     args.repo,
   );
@@ -92,7 +90,6 @@ query getMentionableUsers($owner: String!, $name: String!, $word: String!) {
 `;
 
 export async function getMentionableUsers(args: {
-  endpoint?: string;
   repo: {
     owner: string;
     name: string;
@@ -102,7 +99,7 @@ export async function getMentionableUsers(args: {
   const resp = await request<
     GetMentionableUsersQuery,
     GetMentionableUsersQueryVariables
-  >(args.endpoint ?? endpoint, queryGetMentionableUsers, {
+  >(queryGetMentionableUsers, {
     owner: args.repo.owner,
     name: args.repo.name,
     word: args.word,
@@ -138,7 +135,6 @@ query getAssignableUsers($owner: String!, $name: String!, $word: String!) {
 `;
 
 export async function getAssignableUsers(args: {
-  endpoint?: string;
   repo: {
     owner: string;
     name: string;
@@ -148,7 +144,7 @@ export async function getAssignableUsers(args: {
   const resp = await request<
     GetAssignableUsersQuery,
     GetAssignableUsersQueryVariables
-  >(args.endpoint ?? endpoint, queryGetAssignableUsers, {
+  >(queryGetAssignableUsers, {
     owner: args.repo.owner,
     name: args.repo.name,
     word: args.word,
@@ -184,7 +180,6 @@ query searchLabels($owner: String!, $name: String!, $word: String!) {
 `;
 
 export async function searchLabels(args: {
-  endpoint?: string;
   repo: {
     owner: string;
     name: string;
@@ -192,7 +187,6 @@ export async function searchLabels(args: {
   word: string;
 }): Promise<LabelBodyFragment[]> {
   const resp = await request<SearchLabelsQuery, SearchLabelsQueryVariables>(
-    args.endpoint ?? endpoint,
     querySearchLabels,
     {
       owner: args.repo.owner,
@@ -209,7 +203,6 @@ export async function searchLabels(args: {
 }
 
 export async function getLabels(args: {
-  endpoint?: string;
   repo: {
     owner: string;
     name: string;
@@ -223,7 +216,7 @@ export async function getLabels(args: {
     }
   }`;
   });
-  const q = `
+  const query = `
 query {
   ${labels.join("\n")}
 }
@@ -234,8 +227,6 @@ fragment LabelFragment on Label{
 }
   `;
 
-  const resp = await query<GetLabels>({
-    query: q,
-  });
+  const resp = await request<GetLabels>(query);
   return resp;
 }

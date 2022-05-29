@@ -8,12 +8,10 @@ export type Errors = [
 ];
 
 export type GetLabels = {
-  data: {
-    [key: string]: {
-      label: {
-        id: string;
-        name: string;
-      };
+  [key: string]: {
+    label: {
+      id: string;
+      name: string;
     };
   };
 };
@@ -34,10 +32,8 @@ export type PullRequestConnection = {
 };
 
 export type GetUsers = {
-  data: {
-    [key: string]: {
-      login: string;
-      id: string;
-    };
+  [key: string]: {
+    login: string;
+    id: string;
   };
 };
