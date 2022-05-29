@@ -244,6 +244,8 @@ DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
                         normal     ghn         <Plug>(gh-issue-new)
                         normal     gho         <Plug>(gh-issue-open)
                         normal     ghc         <Plug>(gh-issue-close)
+                        normal     gha         <Plug>(gh-issue-assignees)
+                        normal     ghl         <Plug>(gh-issue-labels)
                         normal     <C-O>       <Plug>(gh-issue-view)
                         normal     <C-J>       <Plug>(gh-issue-select-next)
                         normal     <C-K>       <Plug>(gh-issue-select-prev)
