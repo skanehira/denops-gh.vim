@@ -157,6 +157,16 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
 
       const keyMaps = [
         {
+          defaultKey: "gha",
+          lhs: "<Plug>(gh-issue-assignees)",
+          rhs: `:<C-u>call gh#_action("issues:assignees")<CR>`,
+        },
+        {
+          defaultKey: "ghl",
+          lhs: "<Plug>(gh-issue-labels)",
+          rhs: `:<C-u>call gh#_action("issues:labels")<CR>`,
+        },
+        {
           defaultKey: "ghe",
           lhs: "<Plug>(gh-issue-edit)",
           rhs: `:<C-u>call gh#_action("issues:edit")<CR>`,
@@ -462,13 +472,13 @@ export async function actionListAssignees(
           number: schema.issue.number,
         },
       });
-      if (!issue.assignees?.nodes) {
-        console.error("not found assignable user");
-        return;
+      if (issue.assignees?.nodes) {
+        const users = issue.assignees.nodes.map((user) => user?.login ?? "");
+        await denops.call("setline", 1, users);
       }
-      const users = issue.assignees.nodes.map((user) => user?.login ?? "");
-      await denops.call("setline", 1, users);
-      await denops.cmd("setlocal buftype=acwrite nomodified");
+      await denops.cmd(
+        "setlocal ft=gh-issues-assignees buftype=acwrite nomodified",
+      );
 
       ctx.args = issue;
       setActionCtx(denops, ctx);
@@ -548,12 +558,10 @@ export async function actionListLabels(
           number: schema.issue.number,
         },
       });
-      if (!issue.labels?.nodes) {
-        console.error("not found labels");
-        return;
+      if (issue.labels?.nodes) {
+        const labels = issue.labels.nodes.map((label) => label?.name ?? "");
+        await denops.call("setline", 1, labels);
       }
-      const labels = issue.labels.nodes.map((label) => label?.name ?? "");
-      await denops.call("setline", 1, labels);
       await denops.cmd("setlocal buftype=acwrite nomodified");
 
       ctx.args = issue;

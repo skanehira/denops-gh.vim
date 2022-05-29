@@ -178,8 +178,9 @@ const resolvers = {
       return {
         issue: (args: RepositoryIssueArgs) => {
           if (args.number === repository.issue.number) {
-            return repository.issue;
+            return testIssue;
           }
+          return issues.find((issue) => issue.number === args.number);
         },
         mentionableUsers: getMentionAndAssigneUsers,
         assignableUsers: getMentionAndAssigneUsers,

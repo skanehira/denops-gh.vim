@@ -183,8 +183,13 @@ function! s:issue_assignees() abort
   if open ==# ""
     return
   endif
+  if &ft ==# 'gh-issues'
+    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+  else
+    let number = b:gh_action_ctx.schema.issue.number
+  endif
   let schema = b:gh_action_ctx.schema
-  exe open printf("gh://%s/%s/issues/%s/assignees", schema.owner, schema.repo, schema.issue.number)
+  exe open printf("gh://%s/%s/issues/%s/assignees", schema.owner, schema.repo, number)
 endfunction
 
 function! s:issue_labels() abort
@@ -192,8 +197,13 @@ function! s:issue_labels() abort
   if open ==# ""
     return
   endif
+  if &ft ==# 'gh-issues'
+    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+  else
+    let number = b:gh_action_ctx.schema.issue.number
+  endif
   let schema = b:gh_action_ctx.schema
-  exe open printf("gh://%s/%s/issues/%s/labels", schema.owner, schema.repo, schema.issue.number)
+  exe open printf("gh://%s/%s/issues/%s/labels", schema.owner, schema.repo, number)
 endfunction
 
 function! gh#_action(type) abort
