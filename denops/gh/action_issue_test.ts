@@ -1,4 +1,4 @@
-import { assertEquals, Denops, path, test } from "./deps.ts";
+import { assertEquals, delay, Denops, path, test } from "./deps.ts";
 import {
   actionCloseIssue,
   actionEditIssue,
@@ -20,6 +20,7 @@ import {
 } from "./utils/test.ts";
 import { vimRegister } from "./utils/helper.ts";
 import { getIssue } from "./github/issue.ts";
+import { main } from "./main.ts";
 
 test({
   mode: "all",
@@ -202,4 +203,36 @@ test({
       await actionUpdateLabels(denops, ctx);
     }
   },
+});
+
+test({
+  mode: "nvim",
+  name: "open assignee buffer from issue list",
+  fn: async (denops: Denops) => {
+    await main(denops);
+    await loadAutoload(denops);
+    const ctx = newActionContext("gh://skanehira/test/issues");
+    ctx.args = { filters: "state:closed" };
+    await actionListIssue(denops, ctx);
+    await denops.call("feedkeys", "ghan");
+    await delay(300);
+    assertEquals(await denops.call("getline", 1, "$"), ["skanehira"]);
+  },
+  timeout: 5000,
+});
+
+test({
+  mode: "nvim",
+  name: "open label buffer from issue list",
+  fn: async (denops: Denops) => {
+    await main(denops);
+    await loadAutoload(denops);
+    const ctx = newActionContext("gh://skanehira/test/issues");
+    ctx.args = { filters: "state:closed" };
+    await actionListIssue(denops, ctx);
+    await denops.call("feedkeys", "ghln");
+    await delay(300);
+    assertEquals(await denops.call("getline", 1, "$"), ["bug", "duplicate"]);
+  },
+  timeout: 5000,
 });

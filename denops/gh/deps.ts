@@ -15,3 +15,4 @@ export * as fs from "https://deno.land/std@0.119.0/fs/mod.ts";
 export { open } from "https://deno.land/x/open@v0.0.2/index.ts";
 export * as safe_string from "https://deno.land/x/safe_string_literal@v1.0.4/index.js";
 export { gql } from "https://deno.land/x/graphql_request@v4.1.0/mod.ts";
+export { delay } from "https://deno.land/std@0.141.0/async/mod.ts";
