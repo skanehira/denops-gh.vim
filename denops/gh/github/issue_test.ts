@@ -1,4 +1,10 @@
-import { getIssue, getIssueComment, getIssues, updateIssue } from "./issue.ts";
+import {
+  addIssueComment,
+  getIssue,
+  getIssueComment,
+  getIssues,
+  updateIssue,
+} from "./issue.ts";
 import { path } from "../deps.ts";
 import { assertEqualFile } from "../utils/test.ts";
 import { assertEquals, assertRejects } from "../deps.ts";
@@ -291,7 +297,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "get comment",
+  name: "get issue comment",
   fn: async () => {
     const actual = await getIssueComment({
       owner: "skanehira",
@@ -308,5 +314,17 @@ Deno.test({
     );
 
     await assertEqualFile(file, actual);
+  },
+});
+
+Deno.test({
+  name: "add issue comment",
+  fn: async () => {
+    await addIssueComment({
+      owner: "skanehira",
+      repo: "test",
+      issueNumber: 1,
+      body: "this is it",
+    });
   },
 });

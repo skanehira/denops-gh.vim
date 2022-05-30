@@ -90,3 +90,23 @@ export type GetUsers = {
     id: string;
   };
 };
+
+export type AddCommentInput = {
+  owner: string;
+  repo: string;
+  issueNumber: number;
+  body: string;
+};
+
+export type AddCommentResponse = {
+  id: number;
+  node_id: string;
+  url: string;
+  html_url: string;
+  body: string;
+  user: User;
+  created_at: string;
+  updated_at: string;
+  issue_url: string;
+  author_association: string;
+};

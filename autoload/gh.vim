@@ -127,6 +127,20 @@ function! s:issue_edit() abort
   call execute(printf("%s gh://%s/%s/issues/%d", opencmd, schema.owner, schema.repo, issue.number))
 endfunction
 
+function s:issue_comment_new() abort
+  let open = s:opencmd()
+  if open ==# ""
+    return
+  endif
+  if &ft ==# 'gh-issues'
+    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+  else
+    let number = b:gh_action_ctx.schema.issue.number
+  endif
+  let schema = b:gh_action_ctx.schema
+  exe open printf("gh://%s/%s/issues/%s/comments/new", schema.owner, schema.repo, number)
+endfunction
+
 function s:issue_comment_edit() abort
   if empty(b:gh_action_ctx.args.nodes)
     call gh#_error("b:gh_action_ctx.args.nodes is empty")
@@ -249,6 +263,8 @@ function! gh#_action(type) abort
     call s:issue_comment_edit()
   elseif a:type ==# "comments:list"
     call s:issue_comments()
+  elseif a:type ==# "comments:new"
+    call s:issue_comment_new()
   elseif a:type ==# "issues:yank"
     call s:issue_yank()
   elseif a:type ==# "issues:search"

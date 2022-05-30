@@ -1,4 +1,4 @@
-import { IssueState } from "../types.ts";
+import { Comment, IssueState } from "../types.ts";
 
 export const labels = {
   "MDU6TGFiZWwyMzgwMTEzMTk4": {
@@ -36,7 +36,6 @@ export const users = {
 
 export const comments = [
   {
-    __typename: "Comment",
     "databaseId": 707713426,
     "author": {
       __typename: "User",
@@ -45,7 +44,6 @@ export const comments = [
     "body": "テスト4\r\nテスト5",
   },
   {
-    __typename: "Comment",
     "databaseId": 707714271,
     "author": {
       __typename: "User",
@@ -54,7 +52,6 @@ export const comments = [
     "body": "## これはテスト5\n",
   },
   {
-    __typename: "Comment",
     "databaseId": 707714566,
     "author": {
       __typename: "User",
@@ -63,7 +60,6 @@ export const comments = [
     "body": "test6",
   },
   {
-    __typename: "Comment",
     "databaseId": 707729573,
     "author": {
       __typename: "User",
@@ -127,6 +123,10 @@ export const issue = {
   "state": IssueState.Closed,
   "comments": {
     "nodes": [],
+    "pageInfo": {
+      hasNextPage: false,
+      hasPreviousPage: false,
+    },
   },
 };
 
@@ -211,7 +211,6 @@ export const issues = [
     comments: {
       nodes: [
         {
-          __typename: "Comment",
           "databaseId": 707714566,
           "id": "IC_kwDOEdLNec460eDd",
           "author": {

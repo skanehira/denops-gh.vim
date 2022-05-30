@@ -1,5 +1,6 @@
 import { buildSchema, graphql } from "https://cdn.skypack.dev/graphql@16.5.0";
 import {
+  CommentAuthorAssociation,
   MutationUpdateIssueArgs,
   QueryRepositoryArgs,
   QueryUserArgs,
@@ -248,6 +249,11 @@ const isIssueComment = (pathname: string): boolean => {
   return issueCommentRegexp.test(pathname);
 };
 
+const issueCreateCommentRegexp = /repos\/\w+\/\w+\/issues\/\d+\/comments/;
+const isCreateIssueComment = (pathname: string): boolean => {
+  return issueCreateCommentRegexp.test(pathname);
+};
+
 serve(async (req: Request) => {
   const url = new URL(req.url);
   const text = await req.text();
@@ -279,6 +285,27 @@ serve(async (req: Request) => {
       }
       break;
     case "POST":
+      if (isCreateIssueComment(url.pathname)) {
+        const body = JSON.parse(text).body;
+        const comment = {
+          "databaseId": 707714974,
+          "authorAssociation": CommentAuthorAssociation.Member,
+          "id": "IC_kwDOEdLNec460eDe",
+          "author": {
+            __typename: "User",
+            "login": "skanehira",
+          },
+          "body": body,
+          "bodyHTML": body,
+          "bodyText": body,
+          "createdAt": "2020-10-13T12:44:56Z",
+          "updatedAt": "2020-10-13T12:44:56Z",
+          "viewerDidAuthor": false,
+          "includesCreatedEdit": false,
+          "createdViaEmail": false,
+        };
+        testIssue.comments.nodes.push(comment);
+      }
       break;
   }
 

@@ -12,6 +12,7 @@ import {
   UpdateIssueMutation,
   UpdateIssueMutationVariables,
 } from "./graphql/operations.ts";
+import { AddCommentInput, IssueComment } from "./schema.ts";
 
 function ensureNonEmptyIssue(
   issue: Record<never, never>,
@@ -212,7 +213,7 @@ export async function updateIssueComment(args: {
   repo: string;
   id: number;
   body: string;
-}) {
+}): Promise<IssueComment> {
   const resp = await octokit.rest.issues.updateComment({
     owner: args.owner,
     repo: args.repo,
@@ -277,4 +278,17 @@ export async function getIssueComments(args: {
   }
 
   return resp.repository.issue.comments;
+}
+
+export async function addIssueComment(input: AddCommentInput) {
+  const resp = await octokit.rest.issues.createComment({
+    owner: input.owner,
+    repo: input.repo,
+    issue_number: input.issueNumber,
+    body: input.body,
+  });
+
+  if (resp.status >= 300) {
+    throw new Error(resp.message);
+  }
 }

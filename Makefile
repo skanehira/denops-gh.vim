@@ -2,7 +2,7 @@ ARG = denops
 
 .PHONY: start_graphql_server
 start_graphql_server:
-	@cd denops/gh/github/graphql && deno run -A server.ts &
+	@cd denops/gh/github/graphql && deno run -A --no-check server.ts &
 	@cd denops/gh/github/graphql && deno run -A wait.ts
 
 .PHONY: stop_graphql_server
