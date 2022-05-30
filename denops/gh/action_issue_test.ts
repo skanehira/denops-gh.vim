@@ -5,6 +5,7 @@ import {
   actionEditIssueComment,
   actionListAssignees,
   actionListIssue,
+  actionListIssueComment,
   actionListLabels,
   actionOpenIssue,
   actionSearchIssues,
@@ -241,6 +242,19 @@ test({
     assertEquals(await denops.call("getline", 1, "$"), ["bug", "duplicate"]);
   },
   timeout: 5000,
+});
+
+test({
+  mode: "all",
+  name: "not found comments",
+  fn: async (denops: Denops) => {
+    const ctx = newActionContext(
+      "gh://skanehira/test/issues/10/comments",
+    );
+
+    await actionListIssueComment(denops, ctx);
+    assertEquals(await denops.call("getline", 1), "");
+  },
 });
 
 test({

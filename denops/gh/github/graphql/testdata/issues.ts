@@ -73,6 +73,18 @@ export const comments = [
   },
 ];
 
+export const notfoundIssueComment = {
+  __typename: "Issue",
+  "number": 10,
+  "comments": {
+    "nodes": [],
+    "pageInfo": {
+      "startCursor": null,
+      "endCursor": null,
+    },
+  },
+};
+
 export const issueWithComments = {
   __typename: "Issue",
   "number": 2,

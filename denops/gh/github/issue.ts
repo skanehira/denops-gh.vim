@@ -8,6 +8,7 @@ import {
   GetIssuesQuery,
   GetIssuesQueryVariables,
   IssueBodyFragment,
+  IssueCommentFragment,
   UpdateIssueMutation,
   UpdateIssueMutationVariables,
 } from "./graphql/operations.ts";
@@ -268,11 +269,11 @@ export async function getIssueComments(args: {
     number: args.number,
   });
 
-  if (!resp.repository?.issue?.comments) {
+  if (!resp.repository?.issue?.comments.nodes) {
     return {
       nodes: [],
-      pageInfo: null,
-    };
+      pageInfo: {},
+    } as IssueCommentFragment;
   }
 
   return resp.repository.issue.comments;
