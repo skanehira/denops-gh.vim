@@ -15,6 +15,7 @@ import {
   issues,
   issueWithComments,
   labels,
+  notfoundIssueComment,
   repository,
   users as userTest,
 } from "./testdata/issues.ts";
@@ -179,11 +180,13 @@ const resolvers = {
     ) {
       return {
         issue: (args: RepositoryIssueArgs) => {
-          if (args.number === testIssue.number) {
-            return testIssue;
-          }
-          if (args.number === issueWithComments.number) {
-            return issueWithComments;
+          switch (args.number) {
+            case testIssue.number:
+              return testIssue;
+            case issueWithComments.number:
+              return issueWithComments;
+            case notfoundIssueComment.number:
+              return notfoundIssueComment;
           }
           return issues.find((issue) => issue.number === args.number);
         },

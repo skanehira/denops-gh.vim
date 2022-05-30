@@ -118,7 +118,7 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
     return;
   }
 
-  const body = await denops.eval(`getline(1, "$")`) as string[];
+  const body = await denops.call("getline", 1, "$") as string[];
   if (body.length === 1 && body[0] === "") {
     console.error("issue body cannot be empty");
     return;
@@ -256,7 +256,7 @@ export async function setIssueToBuffer(
   ctx: ActionContext,
   issues: IssueBodyFragment[],
 ): Promise<void> {
-  const objs = issues.map((issue) => {
+  const objects = issues.map((issue) => {
     return {
       number: "#" + issue.number,
       title: stringWidth(issue.title) >= 100
@@ -279,7 +279,7 @@ export async function setIssueToBuffer(
         : "",
     };
   });
-  const rows = obj2array(objs);
+  const rows = obj2array(objects);
   await denops.call("setline", 1, rows);
   await denops.cmd("setlocal nomodifiable");
 
@@ -293,13 +293,13 @@ export async function setIssueCommentsToBuffer(
   comments: Required<IssueCommentFragment>,
 ): Promise<void> {
   comments.nodes;
-  const objts = comments.nodes.map((comment) => {
+  const objcts = comments.nodes.map((comment) => {
     return {
       author: comment.author?.login ? "@" + comment.author.login : "",
       comment: comment.body ? comment.body.split(/\r?\n/)[0] : "",
     };
   });
-  const rows = obj2array(objts);
+  const rows = obj2array(objcts);
   await denops.call("setline", 1, rows);
   await denops.cmd("setlocal nomodifiable");
 
@@ -359,7 +359,7 @@ export async function actionCreateIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  const text = (await denops.eval(`getline(1, "$")`) as string[]).join("\n");
+  const text = (await denops.call("getline", 1, "$") as string[]).join("\n");
   const data = textEncoder.encode(text);
   const tmp = await Deno.makeTempFile();
   const issueBufnr = await denops.call("bufnr");
@@ -375,7 +375,7 @@ export async function actionCreateIssue(
     `${ctx.schema.owner}/${ctx.schema.repo}`,
   ], async (denops, exitCode) => {
     if (exitCode === 0) {
-      const text = await denops.eval(`getline(1, "$")`) as string[];
+      const text = await denops.call("getline", 1, "$") as string[];
       for (let i = text.length - 1; i > 0; i--) {
         const url = text[i];
         if (url.substring(0, 18) === "https://github.com") {
@@ -723,7 +723,7 @@ export async function actionUpdateIssueComment(
     throw new Error(`ctx.args is not comment: ${ctx.args}`);
   }
 
-  const body = await denops.eval(`getline(1, "$")`) as string[];
+  const body = await denops.call("getline", 1, "$") as string[];
   if (body.length === 1 && body[0] === "") {
     console.error("comment body cannot be empty");
     return;
@@ -745,15 +745,16 @@ export async function actionUpdateIssueComment(
   });
 }
 
+const hasIssueComments = (
+  arg: IssueCommentFragment,
+): arg is Required<IssueCommentFragment> => {
+  return !!arg.nodes && arg.nodes.length > 0;
+};
+
 export async function actionListIssueComment(
   denops: Denops,
   ctx: ActionContext,
 ) {
-  if (!isActionContext(ctx)) {
-    console.error(`ctx is not action context: ${Deno.inspect(ctx)}`);
-    return;
-  }
-
   const schema = ctx.schema;
   if (!schema.issue?.number) {
     throw new Error(`invalid schema: ${JSON.stringify(schema)}`);
@@ -764,14 +765,15 @@ export async function actionListIssueComment(
 
   await inprogress(denops, "loading...", async () => {
     try {
+      // currently, just show 100 comments max.
       const comments = await getIssueComments({
         owner: schema.owner,
         name: schema.repo,
         number: number,
       });
 
-      if (!comments.nodes || comments.nodes.length === 0) {
-        throw new Error("not found any issues");
+      if (!hasIssueComments(comments)) {
+        throw new Error("not found any comments");
       }
 
       await denops.cmd("silent %d_");
@@ -779,7 +781,7 @@ export async function actionListIssueComment(
       await setIssueCommentsToBuffer(
         denops,
         ctx,
-        comments as Required<IssueCommentFragment>,
+        comments,
       );
 
       const keyMaps = [
