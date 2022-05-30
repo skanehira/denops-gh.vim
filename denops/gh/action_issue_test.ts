@@ -1,6 +1,7 @@
 import { assertEquals, delay, Denops, path, test } from "./deps.ts";
 import {
   actionCloseIssue,
+  actionCreateIssueComment,
   actionEditIssue,
   actionEditIssueComment,
   actionListAssignees,
@@ -300,4 +301,20 @@ test({
     assertEquals(await denops.call("getline", 1, "$"), ["@skanehira test"]);
   },
   timeout: 5000,
+});
+
+test({
+  mode: "nvim",
+  name: "create new issue comment",
+  fn: async (denops: Denops) => {
+    await denops.call("setline", 1, ["this is it"]);
+    const basename = "gh://skanehira/test/issues/1/comments";
+    await actionCreateIssueComment(
+      denops,
+      newActionContext(basename + "/new"),
+    );
+    await actionListIssueComment(denops, newActionContext(basename));
+    const actual = await denops.call("getline", 1, "$");
+    assertEquals(actual, ["@skanehira this is it"]);
+  },
 });

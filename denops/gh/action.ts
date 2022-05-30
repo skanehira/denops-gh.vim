@@ -3,6 +3,7 @@ import { BufferSchema, isSchema } from "./buffer.ts";
 import {
   actionCloseIssue,
   actionCreateIssue,
+  actionCreateIssueComment,
   actionEditIssue,
   actionEditIssueComment,
   actionListAssignees,
@@ -10,6 +11,7 @@ import {
   actionListIssueComment,
   actionListLabels,
   actionNewIssue,
+  actionNewIssueComment,
   actionOpenIssue,
   actionSearchIssues,
   actionUpdateAssignees,
@@ -40,6 +42,7 @@ export type ActionType =
   | "comments:list"
   | "comments:edit"
   | "comments:new"
+  | "comments:create"
   | "comments:update";
 
 export type ActionContext = {
@@ -102,5 +105,7 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["comments:list", actionListIssueComment],
     ["comments:edit", actionEditIssueComment],
     ["comments:update", actionUpdateIssueComment],
+    ["comments:new", actionNewIssueComment],
+    ["comments:create", actionCreateIssueComment],
   ],
 );

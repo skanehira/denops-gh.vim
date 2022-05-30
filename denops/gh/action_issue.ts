@@ -8,6 +8,7 @@ import {
   setActionCtx,
 } from "./action.ts";
 import {
+  addIssueComment,
   getIssue,
   getIssueComment,
   getIssueComments,
@@ -761,7 +762,7 @@ export async function actionListIssueComment(
   }
   const number = schema.issue.number;
 
-  denops.cmd("setlocal ft=gh-issues-comments modifiable");
+  await denops.cmd("setlocal ft=gh-issues-comments modifiable");
 
   await inprogress(denops, "loading...", async () => {
     try {
@@ -790,6 +791,11 @@ export async function actionListIssueComment(
           lhs: "<Plug>(gh-issue-comment-edit)",
           rhs: `:<C-u>call gh#_action("comments:edit")<CR>`,
         },
+        {
+          defaultKey: "ghn",
+          lhs: "<Plug>(gh-issue-comment-new)",
+          rhs: `:<C-u>call gh#_action("comments:new")<CR>`,
+        },
       ];
 
       for (const m of keyMaps) {
@@ -810,4 +816,53 @@ export async function actionListIssueComment(
       console.error(e.message);
     }
   });
+}
+
+export async function actionNewIssueComment(
+  denops: Denops,
+  ctx: ActionContext,
+) {
+  await denops.cmd("setlocal ft=markdown buftype=acwrite nomodified");
+
+  await autocmd.group(
+    denops,
+    `gh_issue_comment_new_${ctx.schema.issue?.number}`,
+    (helper) => {
+      helper.remove("*", "<buffer>");
+      helper.define(
+        "BufWriteCmd",
+        "<buffer>",
+        `call gh#_action("comments:create")`,
+      );
+    },
+  );
+}
+
+export async function actionCreateIssueComment(
+  denops: Denops,
+  ctx: ActionContext,
+) {
+  if (!await denops.eval("&modified")) {
+    // if issue body doesn't changed, do nothing
+    return;
+  }
+
+  const schema = ctx.schema;
+  if (!schema.issue?.number) {
+    throw new Error(`invalid schema: ${JSON.stringify(schema)}`);
+  }
+
+  const body = await denops.call("getline", 1, "$") as string[];
+  if (body.length === 1 && body[0] === "") {
+    throw new Error("comment body cannot be empty");
+  }
+
+  await addIssueComment({
+    owner: schema.owner,
+    repo: schema.repo,
+    issueNumber: schema.issue.number,
+    body: body.join("\r\n"),
+  });
+
+  await denops.cmd("bw!");
 }
