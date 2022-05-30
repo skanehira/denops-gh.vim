@@ -165,8 +165,10 @@ gh://{owner}/{repo}/issues/{number}/labels
     source  name: |gh_issues_labels|
 
                                           *gh-buffer-issue-comment-new*
-gh://{owner}/{repo}/issues/:number/comments/new
-  TODO
+gh://{owner}/{repo}/issues/{number}/comments/new
+  Create a new comment.
+  When you type |:write|, then buffer's contents will be applied.
+  The buffer will be deleted(|:bwipeout|) if this action is complete.
 
                                           *gh-buffer-issue-comment-list*
 gh://{owner}/{repo}/issues/{number}/comments
