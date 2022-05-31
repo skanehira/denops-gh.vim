@@ -63,6 +63,13 @@ VARIABLES                                 *gh-variables*
 
 ------------------------------------------------------------------------------
 BUFFER                                    *gh-buffer*
+gh.vim providing some virtual buffers named 'gh://*'.
+You can do something (like see issue list) through the buffer.
+
+NOTE:
+  When you open `https://github.com/*` it will replace `gh://*`.
+  For example, if `:e https://github.com/owner/repo/issues`, it will
+  be replace to `gh://owner/repo/issues`
 
                                           *gh-buffer-issue-list*
 gh://{owner}/{repo}/issues
