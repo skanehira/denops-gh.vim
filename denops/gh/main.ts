@@ -21,9 +21,21 @@ export async function main(denops: Denops): Promise<void> {
       "gh://*",
       `call denops#notify("${denops.name}", "loadBuffer", [])`,
     );
+
+    helper.define(
+      "BufReadCmd",
+      "https://github.com/*",
+      `call denops#notify("${denops.name}", "loadHttpBuffer", [])`,
+    );
   });
 
   denops.dispatcher = {
+    async loadHttpBuffer(): Promise<void> {
+      const url = await denops.call("bufname") as string;
+      const bufname = url.replace("https://github.com/", "gh://");
+      await denops.cmd(`e ${bufname} | bw! ${url}`);
+    },
+
     async loadBuffer(): Promise<void> {
       const bufname = await denops.call("bufname") as string;
       if (!isString(bufname)) {
