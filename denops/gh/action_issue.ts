@@ -773,18 +773,6 @@ export async function actionListIssueComment(
         number: number,
       });
 
-      if (!hasIssueComments(comments)) {
-        throw new Error("not found any comments");
-      }
-
-      await denops.cmd("silent %d_");
-
-      await setIssueCommentsToBuffer(
-        denops,
-        ctx,
-        comments,
-      );
-
       const keyMaps = [
         {
           defaultKey: "ghe",
@@ -797,6 +785,32 @@ export async function actionListIssueComment(
           rhs: `:<C-u>call gh#_action("comments:new")<CR>`,
         },
       ];
+
+      // if not found any comment, just apply keymap
+      if (!hasIssueComments(comments)) {
+        await map(
+          denops,
+          keyMaps[1].defaultKey,
+          keyMaps[1].lhs,
+          keyMaps[1].rhs,
+          {
+            buffer: true,
+            silent: true,
+            mode: "n",
+            noremap: true,
+          },
+        );
+
+        return;
+      }
+
+      await denops.cmd("silent %d_");
+
+      await setIssueCommentsToBuffer(
+        denops,
+        ctx,
+        comments,
+      );
 
       for (const m of keyMaps) {
         await map(
