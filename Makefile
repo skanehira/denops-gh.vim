@@ -14,7 +14,6 @@ test-local: stop_graphql_server start_graphql_server
 	@DENOPS_PATH=$$GHQ_ROOT/github.com/vim-denops/denops.vim \
 		DENOPS_TEST_NVIM=$$(which nvim) \
 		DENOPS_TEST_VIM=$$(which vim) \
-		TEST_LOCAL=true \
 		GITHUB_ENDPOINT=http://localhost:8080 \
 		deno test -A --unstable --ignore=denops/gh/github/graphql ${ARG}
 

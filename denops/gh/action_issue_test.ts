@@ -26,8 +26,6 @@ import { vimRegister } from "./utils/helper.ts";
 import { getIssue } from "./github/issue.ts";
 import { main } from "./main.ts";
 
-const ignore = Deno.env.get("TEST_LOCAL") !== "true";
-
 test({
   mode: "all",
   name: "action open issue list buffer",
@@ -213,7 +211,6 @@ test({
 
 test({
   mode: "nvim",
-  ignore: ignore,
   name: "open assignee buffer from issue list",
   fn: async (denops: Denops) => {
     await main(denops);
@@ -230,7 +227,6 @@ test({
 
 test({
   mode: "nvim",
-  ignore: ignore,
   name: "open label buffer from issue list",
   fn: async (denops: Denops) => {
     await main(denops);
@@ -288,7 +284,6 @@ test({
 
 test({
   mode: "nvim",
-  ignore: ignore,
   name: "open comments buffer from issue list",
   fn: async (denops: Denops) => {
     await main(denops);
