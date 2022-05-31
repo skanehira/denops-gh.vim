@@ -76,7 +76,6 @@ gh://{owner}/{repo}/issues
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #12 test1 OPEN   @man1 (bug, docs)  1
     #25 test2 CLOSED @man2 (feature)    4
-    ...
 
      │    │     │      │       │        │
      │    │     │      │       │        └ Count of comments
@@ -100,10 +99,10 @@ issues-search
 
   NOTE:
     You can complements some qualifiers if ddc source be added.
-    Refer |gh-ddc-settings|.
+    Refer |gh-ddc-settings| and |gh-ddc-issues-search|.
 
-    autocmd name: |gh_open_issues_search|
-    source  name: |gh_issues_assginees|
+    autocmd name: 'gh_open_issue_search'
+    source  name: 'gh_issues_search'
 
                                           *gh-buffer-issue-edit*
 gh://{owner}/{repo}/issues/{number}
@@ -112,10 +111,10 @@ gh://{owner}/{repo}/issues/{number}
 
   NOTE:
     You can complements user's name and issue's title if ddc source be added.
-    Refer |gh-ddc-settings|.
+    Refer |gh-ddc-settings| and |gh-ddc-issues|.
 
-    autocmd name: |gh_open_issue|
-    source  name: |gh_issues|
+    autocmd name: 'gh_open_issue'
+    source  name: 'gh_issues'
 
                                           *gh-buffer-issue-new*
 gh://{owner}/{repo}/issues/new
@@ -127,48 +126,42 @@ gh://{owner}/{repo}/issues/new
 
   NOTE:
     You can complements user's name and issue's title if ddc source be added.
-    Refer |gh-ddc-settings|.
+    Refer |gh-ddc-settings| and |gh-ddc-issues|.
 
-    autocmd name: |gh_open_issue|
-    source  name: |gh_issues|
+    autocmd name: 'gh_open_issue'
+    source  name: 'gh_issues'
 
                                           *gh-buffer-issue-assignee-list*
 gh://{owner}/{repo}/issues/{number}/assignees
   Add or remove issue's assignees.
   You have to type login name of user in the buffer.
   When you type |:write|, then buffer's contents will be applied.
-  If you want to clear all assignees, just only make buffer empty.
+  If you want to clear all assignees, just delete all of buffer contents.
 
   NOTE:
     You can complements user's name if ddc source be added.
-    Refer |gh-ddc-settings|.
+    Refer |gh-ddc-settings| and |gh-ddc-issues-assignees|.
 
-    autocmd name: |gh_open_issue_assignees|
-    source  name: |gh_issues_assginees|
+    autocmd name: 'gh_open_issue_assignees'
+    source  name: 'gh_issues_assginees'
 
                                           *gh-buffer-issue-label-list*
 gh://{owner}/{repo}/issues/{number}/labels
   Add or remove issue's label.
   You have to type label names.
   When you type |:write|, then buffer's contents will be applied.
-  If you want to clear all labels, just only make buffer empty.
+  If you want to clear all labels, just delete all of buffer contents.
 
   NOTE: This buffer just get label until 20.
-        So if your issue has label more then 20,
+        So if issue has label more then 20,
         please add removed labels with manual.
 
   NOTE:
     You can complements label's name if ddc source be added.
-    Refer |gh-ddc-settings|.
+    Refer |gh-ddc-settings| and |gh-ddc-issues-labels|.
 
-    autocmd name: |gh_open_issue_labels|
-    source  name: |gh_issues_labels|
-
-                                          *gh-buffer-issue-comment-new*
-gh://{owner}/{repo}/issues/{number}/comments/new
-  Create a new comment.
-  When you type |:write|, then buffer's contents will be applied.
-  The buffer will be deleted(|:bwipeout|) if this action is complete.
+    autocmd name: 'gh_open_issue_labels'
+    source  name: 'gh_issues_labels'
 
                                           *gh-buffer-issue-comment-list*
 gh://{owner}/{repo}/issues/{number}/comments
@@ -182,10 +175,30 @@ gh://{owner}/{repo}/issues/{number}/comments
      │    └ Comment body (Just show first line of body)
      └ Author
 <
+                                          *gh-buffer-issue-comment-new*
+gh://{owner}/{repo}/issues/{number}/comments/new
+  Create a new comment.
+  When you type |:write|, then buffer's contents will be applied.
+  The buffer will be deleted(|:bwipeout|) if this action is complete.
+
+  NOTE:
+    You can complements user's name and issue's title if ddc source be added.
+    Refer |gh-ddc-settings| and |gh-ddc-issues|.
+
+    autocmd name: 'gh_open_issue_comment'
+    source  name: 'gh_issues'
+
                                           *gh-buffer-issue-comment-edit*
 gh://{owner}/{repo}/issues/{number}/comments/{id}
   Edit comment body.
   When you type |:write|, then buffer's contents will be applied.
+
+  NOTE:
+    You can complements user's name and issue's title if ddc source be added.
+    Refer |gh-ddc-settings| and |gh-ddc-issues|.
+
+    autocmd name: 'gh_open_issue_comment'
+    source  name: 'gh_issues'
 
                                           *gh-buffer-pull-list*
 gh://{owner}/{repo}/pulls
@@ -230,7 +243,7 @@ KEY-MAPPINGS                              *gh-key-mappings*
   Previw comment body.
   This body is not newest.
   If you want to see newest comment body,
-  please reload |gh:buffer:issue:comment:list|.
+  please reload |gh-buffer-issue-comment-list|.
 
 <Plug>(gh:issue:open)                     *<Plug>(gh:issue:open)*
   Open issue.
@@ -298,11 +311,13 @@ DDC-SETTINGS                              *gh-ddc-settings*
 
 gh.vim providing some |ddc|'s sources.
 For exmaple, you can auto complements mentionable users and
-issue numbers in the issue buffer.
-If you want do these, please add settings as bellow to your vimrc.
+issue numbers in the |gh-buffer-issue-edit|.
 
-NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
-      issue's body in popup/float window.
+If you want use ddc, you have to define autocmd to add ddc's settings
+Please refer sample settings as bellow.
+
+NOTE: Also you can use 'github.com/matsui54/denops-popup-preview.vim'
+      to preview issue's body in popup/float window.
 >
   " If matsui54/denops-popup-preview.vim are installed,
   " you can preview issue body's in popup window.
@@ -312,13 +327,14 @@ NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
   " when you use denops-popup-preview.vim
   set completeopt-=preview
 
-  augroup gh_autocmd
+  " define autocmd for gh's ddc settings
+  augroup gh_ddc
     au!
-    au User gh_open_issue call EnableAutoCompletionForGh('gh_issues')
-    au User gh_open_issue_assignees call EnableAutoCompletionForGh('gh_issues_assginees')
+    au User gh_open_issue call <SID>enableAutoCompletionForGh('gh_issues')
+    au User gh_open_issue_assignees call <SID>enableAutoCompletionForGh('gh_issues_assginees')
   augroup END
 
-  function! EnableAutoCompletionForGh(kind) abort
+  function! s:enableAutoCompletionForGh(kind) abort
     call ddc#custom#patch_buffer('sources', [a:kind])
     call ddc#custom#patch_buffer('specialBufferCompletion', v:true)
 
@@ -326,28 +342,31 @@ NOTE: Also you can use 'matsui54/denops-popup-preview.vim' to preview
     call ddc#custom#patch_buffer({'keywordPattern':
           \ "[a-zA-Z0-9_À-ÿ\u30a0-\u30ff\u3040-\u309f\u3005-\u3006\u30e0-\u9fcf]*"})
 
+    let option = {}
     if a:kind ==# 'gh_issues'
-      call ddc#custom#patch_buffer('sourceOptions', {
+      let option = {
             \ 'gh_issues': {
               \  'matcherKey': 'menu',
               \  'minAutoCompleteLength': 1,
-              \ }})
+              \ }}
     elseif a:kind ==# 'gh_issues_assginees'
-      call ddc#custom#patch_buffer('sourceOptions', {
+      let option = {
             \ 'gh_issues_assginees': {
               \  'minAutoCompleteLength': 1,
               \ }})
     endif
+    call ddc#custom#patch_buffer('sourceOptions', option)
   endfunction
 <
 GH-DDC-SOURCE                             *gh-ddc-sources*
 
 autocmd name            | source name
 ------------------------+---------------------
-`gh_open_issue`           | |gh_issues|
-`gh_open_issue_assignees` | |gh_issues_assginees|
-`gh_open_issue_labels`    | |gh_issues_labels|
-`gh_open_issues_search`   | |gh_issues_search|
+gh_open_issue           | gh_issues
+gh_open_issue_comment   | gh_issues
+gh_open_issue_assignees | gh_issues_assginees
+gh_open_issue_labels    | gh_issues_labels
+gh_open_issue_search    | gh_issues_search
 
 GH-DDC-ISSUES                             *gh-ddc-issues*
 
@@ -361,6 +380,12 @@ GH-DDC-ISSUES-ASSIGNEES                   *gh-ddc-issues-assignees*
 Assignable user name can be complemented like bellow.
 
 'sk' can be complemented user's name that is start with 'sk...'
+
+GH-DDC-ISSUES-LABELS                      *gh-ddc-issues-labels*
+
+Label name can be complemented like bellow.
+
+'doc' can be complemented label's name that is start with 'doc...'
 
 GH-DDC-ISSUES-SEARCH                      *gh-ddc-issues-search*
 

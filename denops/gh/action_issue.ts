@@ -865,6 +865,8 @@ export async function actionNewIssueComment(
       );
     },
   );
+
+  await denops.cmd("doautocmd User gh_open_issue_comment");
 }
 
 export async function actionCreateIssueComment(

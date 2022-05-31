@@ -207,7 +207,7 @@ function! s:issue_search_buffer() abort
     setlocal ft=issue-search noswapfile buftype=nofile
     call setline(1, filters)
 
-    doautocmd User gh_open_issues_search
+    doautocmd User gh_open_issue_search
   else
     call win_gotoid(winid)
     call feedkeys("A")
