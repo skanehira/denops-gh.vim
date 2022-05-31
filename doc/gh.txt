@@ -96,10 +96,10 @@ issues-search
   Refer https://git.io/JSKd3 to check more qualifiers.
 
   NOTE: This buffer applies only to the buffer
-        that executed <Plug>(gh-issue-search).
+        that executed <Plug>(gh:issue:search).
 
   NOTE:
-    You can complements complements some qualifiers if ddc source be added.
+    You can complements some qualifiers if ddc source be added.
     Refer |gh-ddc-settings|.
 
     autocmd name: |gh_open_issues_search|
@@ -214,80 +214,80 @@ gh://{owner}/gists/:id
 --------------------------------------------------------------------
 KEY-MAPPINGS                              *gh-key-mappings*
 
-<Plug>(gh-issue-edit)                     *<Plug>(gh-issue-edit)*
+<Plug>(gh:issue:edit)                     *<Plug>(gh:issue:edit)*
   Open editing buffer of issue.
 
-<Plug>(gh-issue-new)                      *<Plug>(gh-issue-new)*
+<Plug>(gh:issue:new)                      *<Plug>(gh:issue:new)*
   Create new issue.
 
-<Plug>(gh-issue-comment-new)              *<Plug>(gh-issue-comment-new)*
+<Plug>(gh:issue:comment:new)              *<Plug>(gh:issue:comment:new)*
   Create new issue comment.
 
-<Plug>(gh-issue-comment-edit)             *<Plug>(gh-issue-comment-edit)*
+<Plug>(gh:issue:comment:edit)             *<Plug>(gh:issue:comment:edit)*
   Open editing buffer of issue comment.
 
-<Plug>(gh-issue-comment-preview)          *<Plug>(gh-issue-comment-preview)*
+<Plug>(gh:issue:comment:preview)          *<Plug>(gh:issue:comment:preview)*
   Previw comment body.
   This body is not newest.
   If you want to see newest comment body,
-  please reload |gh-buffer-issue-comment-list|.
+  please reload |gh:buffer:issue:comment:list|.
 
-<Plug>(gh-issue-open)                     *<Plug>(gh-issue-open)*
+<Plug>(gh:issue:open)                     *<Plug>(gh:issue:open)*
   Open issue.
 
-<Plug>(gh-issue-close)                    *<Plug>(gh-issue-close)*
+<Plug>(gh:issue:close)                    *<Plug>(gh:issue:close)*
   Close issue.
 
-<Plug>(gh-issue-view)                     *<Plug>(gh-issue-view)*
+<Plug>(gh:issue:view)                     *<Plug>(gh:issue:view)*
   View issue in browser.
 
-<Plug>(gh-issue-preview)                  *<Plug>(gh-issue-preview)*
+<Plug>(gh:issue:preview)                  *<Plug>(gh:issue:preview)*
   Previw issue body.
   This body is not newest.
   If you want to see newest issue body,
   please reload |gh-buffer-issue-list|.
 
-<Plug>(gh-issue-select-next)              *<Plug>(gh-issue-select-next)*
+<Plug>(gh:issue:select:next)              *<Plug>(gh:issue:select:next)*
   Toggle selecting issue and move cursor down.
 
-<Plug>(gh-issue-select-prev)              *<Plug>(gh-issue-select-prev)*
+<Plug>(gh:issue:select:prev)              *<Plug>(gh:issue:select:prev)*
   Toggle selecting issue and move cursor up.
 
-<Plug>(gh-issue-yank)                     *<Plug>(gh-issue-yank)*
+<Plug>(gh:issue:yank)                     *<Plug>(gh:issue:yank)*
   Yank issues url.
 
-<Plug>(gh-issue-search)                   *<Plug>(gh-issue-search)*
+<Plug>(gh:issue:search)                   *<Plug>(gh:issue:search)*
   Open buffer that for searching issues.
 
-<Plug>(gh-issue-assignees)                *<Plug>(gh-issue-assignees)*
+<Plug>(gh:issue:assignees)                *<Plug>(gh:issue:assignees)*
   Open buffer that for assign users to issue.
 
-<Plug>(gh-issue-labels)                   *<Plug>(gh-issue-labels)*
+<Plug>(gh:issue:labels)                   *<Plug>(gh:issue:labels)*
   Open buffer that for add or remove label on the issue.
 
 DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
 
 {buffer}                      {mode}     {lhs}     {rhs}
 ----------------------------  --------   ------    -----------------------
-|gh-buffer-issue-list|          normal     ghe       <Plug>(gh-issue-edit)
-                              normal     ghn       <Plug>(gh-issue-new)
-                              normal     gho       <Plug>(gh-issue-open)
-                              normal     ghc       <Plug>(gh-issue-close)
-                              normal     gha       <Plug>(gh-issue-assignees)
-                              normal     ghm       <Plug>(gh-issue-comments)
-                              normal     ghl       <Plug>(gh-issue-labels)
-                              normal     <C-O>     <Plug>(gh-issue-view)
-                              normal     <C-J>     <Plug>(gh-issue-select-next)
-                              normal     <C-K>     <Plug>(gh-issue-select-prev)
-                              normal     ghy       <Plug>(gh-issue-yank)
-                              normal     K         <Plug>(gh-issue-preview)
-                              normal     ghs       <Plug>(gh-issue-search)
-|gh-buffer-issue-edit|          normal     gha       <Plug>(gh-issue-assignees)
-                              normal     ghl       <Plug>(gh-issue-labels)
-                              normal     ghm       <Plug>(gh-issue-comments)
-|gh-buffer-issue-comment-list|  normal     ghn       <Plug>(gh-issue-comment-new)
-                              normal     ghe       <Plug>(gh-issue-comment-edit)
-                              normal     K         <Plug>(gh-issue-comment-preview)
+|gh-buffer-issue-list|          normal     ghe       <Plug>(gh:issue:edit)
+                              normal     ghn       <Plug>(gh:issue:new)
+                              normal     gho       <Plug>(gh:issue:open)
+                              normal     ghc       <Plug>(gh:issue:close)
+                              normal     gha       <Plug>(gh:issue:assignees)
+                              normal     ghm       <Plug>(gh:issue:comments)
+                              normal     ghl       <Plug>(gh:issue:labels)
+                              normal     <C-O>     <Plug>(gh:issue:view)
+                              normal     <C-J>     <Plug>(gh:issue:select:next)
+                              normal     <C-K>     <Plug>(gh:issue:select:prev)
+                              normal     ghy       <Plug>(gh:issue:yank)
+                              normal     K         <Plug>(gh:issue:preview)
+                              normal     ghs       <Plug>(gh:issue:search)
+|gh-buffer-issue-edit|          normal     gha       <Plug>(gh:issue:assignees)
+                              normal     ghl       <Plug>(gh:issue:labels)
+                              normal     ghm       <Plug>(gh:issue:comments)
+|gh-buffer-issue-comment-list|  normal     ghn       <Plug>(gh:issue:comment:new)
+                              normal     ghe       <Plug>(gh:issue:comment:edit)
+                              normal     K         <Plug>(gh:issue:comment:preview)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*

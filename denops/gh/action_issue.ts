@@ -77,17 +77,17 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
       const keyMaps = [
         {
           defaultKey: "ghm",
-          lhs: "<Plug>(gh-issue-comments)",
+          lhs: "<Plug>(gh:issue:comments)",
           rhs: `:<C-u>call gh#_action("comments:list")<CR>`,
         },
         {
           defaultKey: "gha",
-          lhs: "<Plug>(gh-issue-assignees)",
+          lhs: "<Plug>(gh:issue:assignees)",
           rhs: `:<C-u>call gh#_action("issues:assignees")<CR>`,
         },
         {
           defaultKey: "ghl",
-          lhs: "<Plug>(gh-issue-labels)",
+          lhs: "<Plug>(gh:issue:labels)",
           rhs: `:<C-u>call gh#_action("issues:labels")<CR>`,
         },
       ];
@@ -177,67 +177,67 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
       const keyMaps = [
         {
           defaultKey: "ghm",
-          lhs: "<Plug>(gh-issue-comments)",
+          lhs: "<Plug>(gh:issue:comments)",
           rhs: `:<C-u>call gh#_action("comments:list")<CR>`,
         },
         {
           defaultKey: "gha",
-          lhs: "<Plug>(gh-issue-assignees)",
+          lhs: "<Plug>(gh:issue:assignees)",
           rhs: `:<C-u>call gh#_action("issues:assignees")<CR>`,
         },
         {
           defaultKey: "ghl",
-          lhs: "<Plug>(gh-issue-labels)",
+          lhs: "<Plug>(gh:issue:labels)",
           rhs: `:<C-u>call gh#_action("issues:labels")<CR>`,
         },
         {
           defaultKey: "ghe",
-          lhs: "<Plug>(gh-issue-edit)",
+          lhs: "<Plug>(gh:issue:edit)",
           rhs: `:<C-u>call gh#_action("issues:edit")<CR>`,
         },
         {
           defaultKey: "ghn",
-          lhs: "<Plug>(gh-issue-new)",
+          lhs: "<Plug>(gh:issue:new)",
           rhs: `:<C-u>new gh://${schema.owner}/${schema.repo}/issues/new<CR>`,
         },
         {
           defaultKey: "<C-o>",
-          lhs: "<Plug>(gh-issue-view)",
+          lhs: "<Plug>(gh:issue:view)",
           rhs: `:<C-u>call gh#_action("issues:view")<CR>`,
         },
         {
           defaultKey: "ghy",
-          lhs: "<Plug>(gh-issue-yank)",
+          lhs: "<Plug>(gh:issue:yank)",
           rhs: `:<C-u>call gh#_action("issues:yank")<CR>`,
         },
         {
           defaultKey: "<C-j>",
-          lhs: "<Plug>(gh-issue-select-next)",
+          lhs: "<Plug>(gh:issue:select:next)",
           rhs: `:<C-u>call gh#_select_toggle('+')<CR>`,
         },
         {
           defaultKey: "<C-k>",
-          lhs: "<Plug>(gh-issue-select-prev)",
+          lhs: "<Plug>(gh:issue:select:prev)",
           rhs: `:<C-u>call gh#_select_toggle('-')<CR>`,
         },
         {
           defaultKey: "ghs",
-          lhs: "<Plug>(gh-issue-search)",
+          lhs: "<Plug>(gh:issue:search)",
           rhs: `:<C-u>call gh#_action("issues:search")<CR>`,
         },
         {
           defaultKey: "ghc",
-          lhs: "<Plug>(gh-issue-close)",
+          lhs: "<Plug>(gh:issue:close)",
           rhs: `:<C-u>call gh#_action("issues:close")<CR>`,
         },
         {
           defaultKey: "gho",
-          lhs: "<Plug>(gh-issue-open)",
+          lhs: "<Plug>(gh:issue:open)",
           rhs: `:<C-u>call gh#_action("issues:open")<CR>`,
         },
         {
           defaultKey: "K",
-          lhs: "<Plug>(gh-issue-preview)",
+          lhs: "<Plug>(gh:issue:preview)",
           rhs: `:<C-u>call gh#_action("issues:preview")<CR>`,
         },
       ];
@@ -786,17 +786,17 @@ export async function actionListIssueComment(
       const keyMaps = [
         {
           defaultKey: "ghe",
-          lhs: "<Plug>(gh-issue-comment-edit)",
+          lhs: "<Plug>(gh:issue:comment:edit)",
           rhs: `:<C-u>call gh#_action("comments:edit")<CR>`,
         },
         {
           defaultKey: "ghn",
-          lhs: "<Plug>(gh-issue-comment-new)",
+          lhs: "<Plug>(gh:issue:comment:new)",
           rhs: `:<C-u>call gh#_action("comments:new")<CR>`,
         },
         {
           defaultKey: "K",
-          lhs: "<Plug>(gh-issue-comment-preview)",
+          lhs: "<Plug>(gh:issue:comment:preview)",
           rhs: `:<C-u>call gh#_action("comments:preview")<CR>`,
         },
       ];
