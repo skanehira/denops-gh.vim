@@ -13,6 +13,7 @@ import {
   actionNewIssue,
   actionNewIssueComment,
   actionOpenIssue,
+  actionPreview,
   actionSearchIssues,
   actionUpdateAssignees,
   actionUpdateIssue,
@@ -26,6 +27,7 @@ export type ActionType =
   | "issues:close"
   | "issues:open"
   | "issues:view"
+  | "issues:preview"
   | "issues:new"
   | "issues:create"
   | "issues:edit"
@@ -43,6 +45,7 @@ export type ActionType =
   | "comments:edit"
   | "comments:new"
   | "comments:create"
+  | "comments:preview"
   | "comments:update";
 
 export type ActionContext = {
@@ -95,6 +98,7 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["issues:new", actionNewIssue],
     ["issues:create", actionCreateIssue],
     ["issues:view", actionViewIssue],
+    ["issues:preview", actionPreview],
     ["issues:search", actionSearchIssues],
     ["issues:open", actionOpenIssue],
     ["issues:close", actionCloseIssue],
@@ -107,5 +111,6 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["comments:update", actionUpdateIssueComment],
     ["comments:new", actionNewIssueComment],
     ["comments:create", actionCreateIssueComment],
+    ["comments:preview", actionPreview],
   ],
 );

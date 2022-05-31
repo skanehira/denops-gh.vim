@@ -71,8 +71,20 @@ type Reactions = {
   eyes: number;
 };
 
+export const isIssueList = (
+  arg: unknown,
+): arg is { issues: IssueBodyFragment[] } => {
+  return "issues" in (arg as Record<string, unknown>);
+};
+
 export const isIssueComment = (arg: unknown): arg is IssueComment => {
   return "body" in (arg as Record<string, string>);
+};
+
+export const isIssueCommentList = (
+  arg: unknown,
+): arg is { nodes: IssueComment[] } => {
+  return "nodes" in (arg as Record<string, unknown>);
 };
 
 export type PullRequest = {

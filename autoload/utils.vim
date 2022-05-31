@@ -13,3 +13,8 @@ function! utils#yank(arg) abort
     call setreg(s:clipboard_register, a:arg)
   endif
 endfunction
+
+" delete buffer line in silent
+function! utils#deletebufline(bufnr, start, end) abort
+  silent call deletebufline(a:bufnr, a:start, a:end)
+endfunction

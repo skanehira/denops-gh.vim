@@ -18,7 +18,12 @@ import {
 } from "./github/issue.ts";
 import { getUsers } from "./github/user.ts";
 import { getIssueTemplate, getLabels } from "./github/repository.ts";
-import { isIssueBody, isIssueComment } from "./github/schema.ts";
+import {
+  isIssueBody,
+  isIssueComment,
+  isIssueCommentList,
+  isIssueList,
+} from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
 import { map } from "./mapping.ts";
 import {
@@ -229,6 +234,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
           defaultKey: "gho",
           lhs: "<Plug>(gh-issue-open)",
           rhs: `:<C-u>call gh#_action("issues:open")<CR>`,
+        },
+        {
+          defaultKey: "K",
+          lhs: "<Plug>(gh-issue-preview)",
+          rhs: `:<C-u>call gh#_action("issues:preview")<CR>`,
         },
       ];
 
@@ -784,6 +794,11 @@ export async function actionListIssueComment(
           lhs: "<Plug>(gh-issue-comment-new)",
           rhs: `:<C-u>call gh#_action("comments:new")<CR>`,
         },
+        {
+          defaultKey: "K",
+          lhs: "<Plug>(gh-issue-comment-preview)",
+          rhs: `:<C-u>call gh#_action("comments:preview")<CR>`,
+        },
       ];
 
       // if not found any comment, just apply keymap
@@ -879,4 +894,56 @@ export async function actionCreateIssueComment(
   });
 
   await denops.cmd("bw!");
+}
+
+export async function actionPreview(denops: Denops, ctx: ActionContext) {
+  const ft = await denops.eval("&ft");
+  let body = "";
+  switch (ft) {
+    case "gh-issues": {
+      if (!isIssueList(ctx.args)) {
+        throw new Error(`ctx.args type is not 'IssueListArg'`);
+      }
+      const line = await denops.call("line", ".") as number;
+      const issue = ctx.args.issues.at(line - 1);
+      if (!issue) {
+        throw new Error("not found issue");
+      }
+      body = issue.body;
+      break;
+    }
+    case "gh-issues-comments": {
+      if (!isIssueCommentList(ctx.args)) {
+        throw new Error(`ctx.args type is not 'IssueCommentList'`);
+      }
+      const line = await denops.call("line", ".") as number;
+      const comment = ctx.args.nodes.at(line - 1);
+      if (!comment) {
+        throw new Error("not found comment");
+      }
+      body = comment.body;
+      break;
+    }
+  }
+
+  const bufname = "gh:preview";
+  const bufnr = await denops.call("bufadd", bufname);
+  await denops.batch(
+    ["bufload", bufnr],
+    ["utils#deletebufline", bufnr, 1, "$"],
+    [
+      "setbufline",
+      bufnr,
+      1,
+      body.split(/\r?\n/),
+    ],
+  );
+
+  if (await denops.call("bufwinid", bufnr) === -1) {
+    const oldwin = await denops.call("win_getid");
+    await denops.cmd(
+      `vnew ${bufname} | setlocal buftype=nofile ft=markdown | nnoremap <buffer> <silent> q :bw!<CR>`,
+    );
+    await denops.call("win_gotoid", oldwin);
+  }
 }
