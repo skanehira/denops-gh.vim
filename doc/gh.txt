@@ -220,6 +220,12 @@ KEY-MAPPINGS                              *gh-key-mappings*
 <Plug>(gh-issue-new)                      *<Plug>(gh-issue-new)*
   Create new issue.
 
+<Plug>(gh-issue-comment-new)              *<Plug>(gh-issue-comment-new)*
+  Create new issue comment.
+
+<Plug>(gh-issue-comment-edit)             *<Plug>(gh-issue-comment-edit)*
+  Open editing buffer of issue comment.
+
 <Plug>(gh-issue-open)                     *<Plug>(gh-issue-open)*
   Open issue.
 
@@ -249,21 +255,25 @@ KEY-MAPPINGS                              *gh-key-mappings*
 
 DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
 
-{buffer}                {mode}     {lhs}     {rhs}
---------------------------------------------------------------------
-|gh-buffer-issue-list|    normal     ghe         <Plug>(gh-issue-edit)
-                        normal     ghn         <Plug>(gh-issue-new)
-                        normal     gho         <Plug>(gh-issue-open)
-                        normal     ghc         <Plug>(gh-issue-close)
-                        normal     gha         <Plug>(gh-issue-assignees)
-                        normal     ghl         <Plug>(gh-issue-labels)
-                        normal     <C-O>       <Plug>(gh-issue-view)
-                        normal     <C-J>       <Plug>(gh-issue-select-next)
-                        normal     <C-K>       <Plug>(gh-issue-select-prev)
-                        normal     ghy         <Plug>(gh-issue-yank)
-                        normal     ghs         <Plug>(gh-issue-search)
-|gh-buffer-issue-edit|    normal     gha         <Plug>(gh-issue-assignees)
-                        normal     ghl         <Plug>(gh-issue-labels)
+{buffer}                  {mode}     {lhs}     {rhs}
+------------------------  --------------------------------------------
+|gh-buffer-issue-list|      normal     ghe         <Plug>(gh-issue-edit)
+                          normal     ghn         <Plug>(gh-issue-new)
+                          normal     gho         <Plug>(gh-issue-open)
+                          normal     ghc         <Plug>(gh-issue-close)
+                          normal     gha         <Plug>(gh-issue-assignees)
+                          normal     ghm         <Plug>(gh-issue-comments)
+                          normal     ghl         <Plug>(gh-issue-labels)
+                          normal     <C-O>       <Plug>(gh-issue-view)
+                          normal     <C-J>       <Plug>(gh-issue-select-next)
+                          normal     <C-K>       <Plug>(gh-issue-select-prev)
+                          normal     ghy         <Plug>(gh-issue-yank)
+                          normal     ghs         <Plug>(gh-issue-search)
+|gh-buffer-issue-edit|      normal     gha         <Plug>(gh-issue-assignees)
+                          normal     ghl         <Plug>(gh-issue-labels)
+                          normal     ghm         <Plug>(gh-issue-comments)
+|gh-buffer-issue-comments|  normal     ghn         <Plug>(gh-issue-comment-new)
+                                     ghe         <Plug>(gh-issue-comment-edit)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*
