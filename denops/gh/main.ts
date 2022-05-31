@@ -65,6 +65,9 @@ export async function main(denops: Denops): Promise<void> {
           throw new Error(`not found action: ${actionType}`);
         }
         await action(denops, ctx);
+        if (denops.meta.host === "vim") {
+          await denops.cmd("redraw!");
+        }
       } catch (err) {
         console.error(err.message);
       }
