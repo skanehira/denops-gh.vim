@@ -233,6 +233,7 @@ fragment issueComment on IssueCommentConnection {
     author {
       login
     }
+    url
     body
   }
   pageInfo {

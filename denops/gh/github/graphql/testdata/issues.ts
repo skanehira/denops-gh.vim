@@ -41,6 +41,7 @@ export const comments = [
       __typename: "User",
       "login": "skanehira",
     },
+    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707713426",
     "body": "テスト4\r\nテスト5",
   },
   {
@@ -49,6 +50,7 @@ export const comments = [
       __typename: "User",
       "login": "skanehira",
     },
+    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707714271",
     "body": "## これはテスト5\n",
   },
   {
@@ -57,6 +59,7 @@ export const comments = [
       __typename: "User",
       "login": "skanehira",
     },
+    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707714566",
     "body": "test6",
   },
   {
@@ -65,6 +68,7 @@ export const comments = [
       __typename: "User",
       "login": "skanehira",
     },
+    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707729573",
     "body": "test7",
   },
 ];
@@ -217,6 +221,8 @@ export const issues = [
             __typename: "User",
             "login": "skanehira",
           },
+          "url":
+            "https://github.com/skanehira/test/issues/26#issuecomment-986833117",
           "body": "test",
         },
       ],

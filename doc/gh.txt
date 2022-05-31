@@ -239,6 +239,15 @@ KEY-MAPPINGS                              *gh-key-mappings*
 <Plug>(gh:issue:comment:edit)             *<Plug>(gh:issue:comment:edit)*
   Open editing buffer of issue comment.
 
+<Plug>(gh:issue:comment:select:next)      *<Plug>(gh:issue:comment:select:next)*
+  Toggle selecting comment and move cursor down.
+
+<Plug>(gh:issue:comment:select:prev)      *<Plug>(gh:issue:comment:select:prev)*
+  Toggle selecting comment and move cursor up.
+
+<Plug>(gh:issue:comment:yank)             *<Plug>(gh:issue:comment:yank)*
+  yank issue comment url.
+
 <Plug>(gh:issue:comment:preview)          *<Plug>(gh:issue:comment:preview)*
   Previw comment body.
   This body is not newest.

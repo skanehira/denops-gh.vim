@@ -369,3 +369,20 @@ test({
     await assertEqualTextFile(file, actual);
   },
 });
+
+test({
+  mode: "all",
+  name: "action yank issue comment urls",
+  fn: async (denops: Denops) => {
+    await loadAutoload(denops);
+
+    const ctx = newActionContext("gh://skanehira/test/issues/2/comments");
+    await actionListIssueComment(denops, ctx);
+    await denops.call("gh#_action", "comments:yank");
+    const got = await denops.call("getreg", vimRegister);
+    const expect =
+      "https://github.com/skanehira/test/issues/2#issuecomment-707713426";
+    assertEquals(got, expect);
+  },
+  timeout: 5000,
+});

@@ -295,6 +295,8 @@ serve(async (req: Request) => {
             __typename: "User",
             "login": "skanehira",
           },
+          "url":
+            "https://github.com/skanehira/test/issues/26#issuecomment-986833117",
           "body": body,
           "bodyHTML": body,
           "bodyText": body,
