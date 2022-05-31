@@ -9,9 +9,13 @@ on:
       - main
     paths-ignore:
       - 'README.md'
+      - 'doc/**'
+      - 'syntax/**'
   pull_request:
     paths-ignore:
       - 'README.md'
+      - 'doc/**'
+      - 'syntax/**'
 jobs:
   lint:
     strategy:
