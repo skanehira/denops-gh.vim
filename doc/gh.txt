@@ -310,6 +310,9 @@ DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
 |gh-buffer-issue-comment-list|  normal     ghn       <Plug>(gh:issue:comment:new)
                               normal     ghe       <Plug>(gh:issue:comment:edit)
                               normal     K         <Plug>(gh:issue:comment:preview)
+                              normal     <C-J>     <Plug>(gh:issue:comment:select:next)
+                              normal     <C-K>     <Plug>(gh:issue:comment:select:prev)
+                              normal     ghy       <Plug>(gh:issue:comment:yank)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*
