@@ -799,6 +799,21 @@ export async function actionListIssueComment(
           lhs: "<Plug>(gh:issue:comment:preview)",
           rhs: `:<C-u>call gh#_action("comments:preview")<CR>`,
         },
+        {
+          defaultKey: "ghy",
+          lhs: "<Plug>(gh:issue:comment:yank)",
+          rhs: `:<C-u>call gh#_action("comments:yank")<CR>`,
+        },
+        {
+          defaultKey: "<C-j>",
+          lhs: "<Plug>(gh:issue:comment:select:next)",
+          rhs: `:<C-u>call gh#_select_toggle('+')<CR>`,
+        },
+        {
+          defaultKey: "<C-k>",
+          lhs: "<Plug>(gh:issue:comment:select:prev)",
+          rhs: `:<C-u>call gh#_select_toggle('-')<CR>`,
+        },
       ];
 
       // if not found any comment, just apply keymap

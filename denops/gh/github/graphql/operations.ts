@@ -31,7 +31,7 @@ export type UpdateIssueMutationVariables = Types.Exact<{
 
 export type UpdateIssueMutation = { updateIssue?: { issue?: IssueBodyFragment } };
 
-export type IssueCommentFragment = { nodes?: Array<{ databaseId?: number, body: string, author?: { login: string } }>, pageInfo: { startCursor?: string, endCursor?: string } };
+export type IssueCommentFragment = { nodes?: Array<{ databaseId?: number, url: any, body: string, author?: { login: string } }>, pageInfo: { startCursor?: string, endCursor?: string } };
 
 export type GetIssueCommentsQueryVariables = Types.Exact<{
   owner: Types.Scalars['String'];

@@ -94,6 +94,17 @@ function! gh#_get_selected_issue() abort
   return issues
 endfunction
 
+function! gh#_get_selected_comment() abort
+  let idxs = gh#_get_selected_idx()
+  if empty(idxs)
+    call add(idxs, line(".")-1)
+  endif
+
+  let comments = filter(copy(b:gh_action_ctx.args.nodes),
+        \ { i ->  index(idxs, i) != -1 })
+  return comments
+endfunction
+
 function! gh#_clear_selected() abort
   call sign_unplace('gh', {'buffer': bufname()})
 endfunction
@@ -161,6 +172,14 @@ function s:issue_comment_edit() abort
 
   call execute(printf("%s gh://%s/%s/issues/%d/comments/%d", opencmd, schema.owner, schema.repo, 
         \ schema.issue.number, comment.databaseId))
+endfunction
+
+function! s:comment_yank() abort
+  let comments = gh#_get_selected_comment()
+  let urls = map(comments, { _, comment -> comment.url })
+  call utils#yank(urls)
+  call gh#_message(["yanked:"] + map(copy(urls), { _, url -> "  " .. url }))
+  call gh#_clear_selected()
 endfunction
 
 function! s:issue_yank() abort
@@ -267,6 +286,8 @@ function! gh#_action(type) abort
     call s:issue_comment_new()
   elseif a:type ==# "issues:yank"
     call s:issue_yank()
+  elseif a:type ==# "comments:yank"
+    call s:comment_yank()
   elseif a:type ==# "issues:search"
     call s:issue_search_buffer()
   elseif a:type ==# "issues:assignees"
