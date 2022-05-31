@@ -9,6 +9,7 @@ import {
   actionListIssueComment,
   actionListLabels,
   actionOpenIssue,
+  actionPreview,
   actionSearchIssues,
   actionUpdateAssignees,
   actionUpdateIssue,
@@ -316,5 +317,55 @@ test({
     await actionListIssueComment(denops, newActionContext(basename));
     const actual = await denops.call("getline", 1, "$");
     assertEquals(actual, ["@skanehira this is it"]);
+  },
+});
+
+test({
+  mode: "all",
+  name: "preview issue body",
+  fn: async (denops: Denops) => {
+    await loadAutoload(denops);
+    const ctx = newActionContext("gh://skanehira/test/issues");
+    await actionListIssue(
+      denops,
+      ctx,
+    );
+    await actionPreview(denops, ctx);
+    const actual =
+      (await denops.call("getbufline", "gh:preview", 1, "$") as string[]).join(
+        "\n",
+      );
+    const file = path.join(
+      "denops",
+      "gh",
+      "testdata",
+      "want_issue_body_preview.txt",
+    );
+    await assertEqualTextFile(file, actual);
+  },
+});
+
+test({
+  mode: "all",
+  name: "preview issue comment body",
+  fn: async (denops: Denops) => {
+    await loadAutoload(denops);
+    const ctx = newActionContext("gh://skanehira/test/issues/2/comments");
+    await actionListIssueComment(
+      denops,
+      ctx,
+    );
+    await actionPreview(denops, ctx);
+    const actual =
+      (await denops.call("getbufline", "gh:preview", 1, "$") as string[]).join(
+        "\n",
+      );
+    const file = path.join(
+      "denops",
+      "gh",
+      "testdata",
+      "want_issue_comment_body_preview.txt",
+    );
+    await assertEqualTextFile(file, actual);
   },
 });
