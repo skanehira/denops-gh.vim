@@ -78,7 +78,7 @@ Deno.test({
         cond: {
           owner: "skanehira",
           repo: "test",
-          number: 1,
+          number: 26,
         },
       },
     );
@@ -121,7 +121,7 @@ Deno.test({
     const update = (state: Types.IssueState) => {
       return updateIssue({
         input: {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          id: "MDU6SXNzdWU4MTI4NzYzMjI=",
           state: state,
         },
       });
@@ -141,7 +141,7 @@ Deno.test({
     const update = (title: string) => {
       return updateIssue({
         input: {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          id: "MDU6SXNzdWU4MTI4NzY0MDg=",
           title: title,
         },
       });
@@ -150,7 +150,7 @@ Deno.test({
       const actual = await update("hogehoge");
       assertEquals(actual.title, "hogehoge");
     } finally {
-      await update("test1");
+      await update("test2");
     }
   },
 });
@@ -161,17 +161,20 @@ Deno.test({
     const update = (body: string) => {
       return updateIssue({
         input: {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          id: "MDU6SXNzdWU4MTI4NzY0MDg=",
           body: body,
         },
       });
     };
 
+    const oldBody =
+      "## 💪 タスク\r\ntest3\r\n\r\n### 🔖 関連issue\r\ntest3\r\n\r\n### 📄 資料\r\n(参考資料、サイトなどあれば書く )\r\n\r\n### ✅ 作業\r\n(どんな作業があるのか、大まかに書く)\r\n\r\n### 🚀 ゴール\r\n(タスクのゴールを書く)\r\n";
+
     try {
       const actual = await update("please give me a banana");
       assertEquals(actual.body, "please give me a banana");
     } finally {
-      await update("# this is test\r\ntest issue");
+      await update(oldBody);
     }
   },
 });
@@ -182,7 +185,7 @@ Deno.test({
     const update = (assignees: string[]) => {
       return updateIssue({
         input: {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          id: "MDU6SXNzdWU4MTI4NzY0MDg=",
           assigneeIds: assignees,
         },
       });
@@ -202,7 +205,7 @@ Deno.test({
       };
       assertEquals(actual.assignees, expect);
     } finally {
-      await update(["MDQ6VXNlcjc4ODg1OTE=", "MDQ6VXNlcjU3NTc5MTIz"]);
+      await update([]);
     }
   },
 });
@@ -213,7 +216,7 @@ Deno.test({
     const update = (assignees: string[]) => {
       return updateIssue({
         input: {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          id: "MDU6SXNzdWU4MTI4NzYzMjI=",
           assigneeIds: assignees,
         },
       });
@@ -226,7 +229,7 @@ Deno.test({
       };
       assertEquals(actual.assignees, expect);
     } finally {
-      await update(["MDQ6VXNlcjU3NTc5MTIz", "MDQ6VXNlcjc4ODg1OTE="]);
+      await update(["MDQ6VXNlcjc4ODg1OTE="]);
     }
   },
 });
@@ -237,7 +240,7 @@ Deno.test({
     const update = (labels: string[]) => {
       return updateIssue({
         input: {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          id: "MDU6SXNzdWU4MTI4NzY0MDg=",
           labelIds: labels,
         },
       });
@@ -266,7 +269,7 @@ Deno.test({
 
       assertEquals(actual.labels, expect);
     } finally {
-      await update(["MDU6TGFiZWwyMzgwMTEzMTk5"]);
+      await update([]);
     }
   },
 });
@@ -277,21 +280,24 @@ Deno.test({
     const update = (labels: string[]) => {
       return updateIssue({
         input: {
-          id: "MDU6SXNzdWU3MDk3MzE0NTA=",
+          id: "MDU6SXNzdWU4MTI4NzYzMjI=",
           labelIds: labels,
         },
       });
     };
 
     try {
-      const actual = await update([]);
+      await update([]);
       const expect = {
         nodes: [],
       };
+      const actual = await getIssue({
+        cond: { owner: "skanehira", repo: "test", number: 26 },
+      });
 
       assertEquals(actual.labels, expect);
     } finally {
-      await update(["MDU6TGFiZWwyMzgwMTEzMTk5"]);
+      await update(["MDU6TGFiZWwyMzgwMTEzMTk4", "MDU6TGFiZWwyMzgwMTEzMTk5"]);
     }
   },
 });

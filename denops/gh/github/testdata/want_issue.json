@@ -1,6 +1,6 @@
 {
-  "id": "MDU6SXNzdWU3MDk3MzE0NTA=",
-  "title": "test1",
+  "id": "MDU6SXNzdWU4MTI4NzYzMjI=",
+  "title": "テスト",
   "author": {
     "login": "skanehira"
   },
@@ -11,18 +11,17 @@
         "login": "skanehira",
         "name": "skanehira",
         "bio": "Like Vim, Go.\r\nMany CLI/TUI Tools, Vim plugins author."
-      },
-      {
-        "id": "MDQ6VXNlcjU3NTc5MTIz",
-        "login": "gorilla",
-        "name": "gorilla",
-        "bio": "This is test user"
       }
     ]
   },
-  "body": "# this is test\ntest issue",
+  "body": "## 🐛 Summary\nバグ\n\n## 👀 Steps\n(バグの再現手順)\n\n1. Do action\n2. Do another action\n3. Wrong Behavior !!\n\n## 🆗 Expected\n(本来あるべき姿)\n\n## 🚑 Actual\n(Issueを作成した時点の動作)\n\n## 📎 Images or log(optional)\n(バグ発生時の画像もしくはログ)\n",
   "labels": {
     "nodes": [
+      {
+        "name": "bug",
+        "color": "d73a4a",
+        "description": "Something isn't working"
+      },
       {
         "name": "documentation",
         "color": "0075ca",
@@ -30,17 +29,17 @@
       }
     ]
   },
-  "closed": false,
-  "number": 1,
+  "closed": true,
+  "number": 26,
   "repository": {
     "name": "test"
   },
-  "url": "https://github.com/skanehira/test/issues/1",
+  "url": "https://github.com/skanehira/test/issues/26",
   "state": "CLOSED",
   "comments": {
     "nodes": [
       {
-        "id": "IC_kwDOEdLNec460eDe"
+        "id": "IC_kwDOEdLNec460eDd"
       }
     ]
   }

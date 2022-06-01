@@ -29,9 +29,9 @@
             "description": "Something isn't working"
           },
           {
-            "name": "duplicate",
-            "color": "cfd3d7",
-            "description": "This issue or pull request already exists"
+            "name": "documentation",
+            "color": "0075ca",
+            "description": "Improvements or additions to documentation"
           }
         ]
       },

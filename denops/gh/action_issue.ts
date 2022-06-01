@@ -120,8 +120,9 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
   }
 
   if (!isIssueBody(ctx.args)) {
-    console.error(`ctx.args is not IssutItem: ${Deno.inspect(ctx.args)}`);
-    return;
+    throw new Error(
+      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.args)}`,
+    );
   }
 
   const body = await denops.call("getline", 1, "$") as string[];

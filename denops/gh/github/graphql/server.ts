@@ -11,15 +11,7 @@ import {
   SearchType,
 } from "./types.ts";
 import { serve } from "https://deno.land/std@0.139.0/http/server.ts";
-import {
-  issue as testIssue,
-  issues,
-  issueWithComments,
-  labels,
-  notfoundIssueComment,
-  repository,
-  users as userTest,
-} from "./testdata/issues.ts";
+import { issues, labels, repository, users } from "./testdata/issues.ts";
 import { mentionAndAssigneUsers } from "./testdata/users.ts";
 import { issueTemplates } from "./testdata/templates.ts";
 import { issueComment } from "./testdata/issues_comment.ts";
@@ -181,14 +173,6 @@ const resolvers = {
     ) {
       return {
         issue: (args: RepositoryIssueArgs) => {
-          switch (args.number) {
-            case testIssue.number:
-              return testIssue;
-            case issueWithComments.number:
-              return issueWithComments;
-            case notfoundIssueComment.number:
-              return notfoundIssueComment;
-          }
           return issues.find((issue) => issue.number === args.number);
         },
         mentionableUsers: getMentionAndAssigneUsers,
@@ -212,7 +196,10 @@ const resolvers = {
     }
   },
   updateIssue: (args: MutationUpdateIssueArgs) => {
-    const issue = testIssue;
+    const issue = issues.find((issue) => args.input.id === issue.id);
+    if (!issue) {
+      return;
+    }
     if (args.input.id === issue.id) {
       if (args.input.state) {
         issue.state = args.input.state;
@@ -225,7 +212,7 @@ const resolvers = {
       }
       if (args.input.assigneeIds) {
         issue.assignees = {
-          nodes: Object.values(userTest).filter((u) =>
+          nodes: Object.values(users).filter((u) =>
             args.input.assigneeIds?.some((id) => id === u.id)
           ),
         };
@@ -306,7 +293,7 @@ serve(async (req: Request) => {
           "includesCreatedEdit": false,
           "createdViaEmail": false,
         };
-        testIssue.comments.nodes.push(comment);
+        issues[0].comments.nodes.push(comment);
       }
       break;
   }
