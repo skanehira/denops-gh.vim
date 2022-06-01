@@ -76,6 +76,11 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
 
       const keyMaps = [
         {
+          defaultKey: "ght",
+          lhs: "<Plug>(gh:issue:edit:title)",
+          rhs: `:<C-u>call gh#_action("issues:edit:title")<CR>`,
+        },
+        {
           defaultKey: "ghm",
           lhs: "<Plug>(gh:issue:comments)",
           rhs: `:<C-u>call gh#_action("comments:list")<CR>`,
@@ -176,6 +181,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
       await setIssueToBuffer(denops, ctx, issues);
 
       const keyMaps = [
+        {
+          defaultKey: "ght",
+          lhs: "<Plug>(gh:issue:edit:title)",
+          rhs: `:<C-u>call gh#_action("issues:edit:title")<CR>`,
+        },
         {
           defaultKey: "ghm",
           lhs: "<Plug>(gh:issue:comments)",
@@ -911,6 +921,68 @@ export async function actionCreateIssueComment(
     body: body.join("\r\n"),
   });
 
+  await denops.cmd("bw!");
+}
+
+async function getIssueFromCtx(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<IssueBodyFragment> {
+  if (isIssueList(ctx.args)) {
+    const line = await denops.call("line", ".") as number;
+    const issue = ctx.args.issues.at(line - 1);
+    if (!issue) {
+      throw new Error("not found issue");
+    }
+    return issue;
+  }
+
+  if (isIssueBody(ctx.args)) {
+    return ctx.args;
+  }
+
+  throw new Error(`unexpect ctx.args: ${JSON.stringify(ctx.args)}`);
+}
+
+export async function actionEditIssueTitle(denops: Denops, ctx: ActionContext) {
+  const issue = await getIssueFromCtx(denops, ctx);
+  await denops.cmd("1new gh:issue:title");
+  const cloneCtx = { ...ctx };
+  cloneCtx.args = issue;
+  await setActionCtx(denops, cloneCtx);
+  await denops.call("setline", 1, issue.title);
+  await denops.cmd("setlocal buftype=acwrite nomodified");
+
+  await autocmd.group(
+    denops,
+    `gh_issue_edit_title_${issue.number}`,
+    (helper) => {
+      helper.remove("*", "<buffer>");
+      helper.define(
+        "BufWriteCmd",
+        "<buffer>",
+        `call gh#_action("issues:update:title")`,
+      );
+    },
+  );
+}
+
+export async function actionUpdateIssueTitle(
+  denops: Denops,
+  ctx: ActionContext,
+) {
+  const title = await denops.call("getline", 1) as string;
+  if (!isIssueBody(ctx.args)) {
+    throw new Error(
+      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.args)}`,
+    );
+  }
+  await updateIssue({
+    input: {
+      id: ctx.args.id,
+      title: title,
+    },
+  });
   await denops.cmd("bw!");
 }
 
