@@ -1,4 +1,4 @@
-import { Comment, IssueState } from "../types.ts";
+import { IssueState } from "../types.ts";
 
 export const labels = {
   "MDU6TGFiZWwyMzgwMTEzMTk4": {
@@ -31,106 +31,6 @@ export const users = {
     "name": "gorilla",
     "bio": "This is test user",
     "login": "gorilla",
-  },
-};
-
-export const comments = [
-  {
-    "databaseId": 707713426,
-    "author": {
-      __typename: "User",
-      "login": "skanehira",
-    },
-    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707713426",
-    "body": "テスト4\r\nテスト5",
-  },
-  {
-    "databaseId": 707714271,
-    "author": {
-      __typename: "User",
-      "login": "skanehira",
-    },
-    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707714271",
-    "body": "## これはテスト5\n",
-  },
-  {
-    "databaseId": 707714566,
-    "author": {
-      __typename: "User",
-      "login": "skanehira",
-    },
-    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707714566",
-    "body": "test6",
-  },
-  {
-    "databaseId": 707729573,
-    "author": {
-      __typename: "User",
-      "login": "skanehira",
-    },
-    "url": "https://github.com/skanehira/test/issues/2#issuecomment-707729573",
-    "body": "test7",
-  },
-];
-
-export const notfoundIssueComment = {
-  __typename: "Issue",
-  "number": 10,
-  "comments": {
-    "nodes": [],
-    "pageInfo": {
-      "startCursor": null,
-      "endCursor": null,
-    },
-  },
-};
-
-export const issueWithComments = {
-  __typename: "Issue",
-  "number": 2,
-  "comments": (input: { first: number }) => {
-    return {
-      nodes: comments.slice(0, input.first),
-      "pageInfo": {
-        "startCursor": "Y3Vyc29yOnYyOpHOKi7Zkg==",
-        "endCursor": "Y3Vyc29yOnYyOpHOKi8YpQ==",
-      },
-    };
-  },
-};
-
-export const issue = {
-  __typename: "Issue",
-  "id": "MDU6SXNzdWU3MDk3MzE0NTA=",
-  "title": "test1",
-  "author": users["MDQ6VXNlcjc4ODg1OTE="],
-  "assignees": {
-    "nodes": [
-      users["MDQ6VXNlcjc4ODg1OTE="],
-      users["MDQ6VXNlcjU3NTc5MTIz"],
-    ],
-  },
-  "body": "# this is test\r\ntest issue",
-  "labels": {
-    "nodes": [
-      labels["MDU6TGFiZWwyMzgwMTEzMTk5"],
-    ],
-  },
-  "closed": false,
-  "number": 1,
-  "repository": {
-    __typename: "Repository",
-    "owner": "skanehira",
-    "name": "test",
-  },
-  "url": "https://github.com/skanehira/test/issues/1",
-  "state": IssueState.Closed,
-  "comments": {
-    "nodes": [],
-    "pageInfo": {
-      hasNextPage: false,
-      hasPreviousPage: false,
-    },
   },
 };
 
@@ -172,6 +72,10 @@ export const issues = [
     state: IssueState.Open,
     comments: {
       nodes: [],
+      pageInfo: {
+        "startCursor": "Y3Vyc29yOnYyOpHOKi7Zkg==",
+        "endCursor": "Y3Vyc29yOnYyOpHOKi8YpQ==",
+      },
     },
   },
   {
@@ -190,18 +94,7 @@ export const issues = [
     body:
       "## 🐛 Summary\r\nバグ\r\n\r\n## 👀 Steps\r\n(バグの再現手順)\r\n\r\n1. Do action\r\n2. Do another action\r\n3. Wrong Behavior !!\r\n\r\n## 🆗 Expected\r\n(本来あるべき姿)\r\n\r\n## 🚑 Actual\r\n(Issueを作成した時点の動作)\r\n\r\n## 📎 Images or log(optional)\r\n(バグ発生時の画像もしくはログ)\r\n",
     labels: {
-      nodes: [
-        {
-          name: "bug",
-          color: "d73a4a",
-          description: "Something isn't working",
-        },
-        {
-          name: "duplicate",
-          color: "cfd3d7",
-          description: "This issue or pull request already exists",
-        },
-      ],
+      nodes: Object.values(labels),
     },
     closed: true,
     number: 26,
@@ -238,5 +131,4 @@ export const repository = {
   __typename: "Repository",
   owner: "skanehira",
   name: "test",
-  issue: issue,
 };

@@ -294,11 +294,15 @@ KEY-MAPPINGS                              *gh-key-mappings*
 <Plug>(gh:issue:labels)                   *<Plug>(gh:issue:labels)*
   Open buffer that for add or remove label on the issue.
 
+<Plug>(gh:issue:edit:title)               *<Plug>(gh:issue:edit:title)*
+  Edit issue title.
+
 DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
 
 {buffer}                      {mode}     {lhs}     {rhs}
 ----------------------------  --------   ------    -----------------------
 |gh-buffer-issue-list|          normal     ghe       <Plug>(gh:issue:edit)
+                              normal     ght       <Plug>(gh:issue:edit:title)
                               normal     ghn       <Plug>(gh:issue:new)
                               normal     gho       <Plug>(gh:issue:open)
                               normal     ghc       <Plug>(gh:issue:close)
@@ -314,6 +318,7 @@ DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
 |gh-buffer-issue-edit|          normal     gha       <Plug>(gh:issue:assignees)
                               normal     ghl       <Plug>(gh:issue:labels)
                               normal     ghm       <Plug>(gh:issue:comments)
+                              normal     ght       <Plug>(gh:issue:edit:title)
 |gh-buffer-issue-comment-list|  normal     ghn       <Plug>(gh:issue:comment:new)
                               normal     ghe       <Plug>(gh:issue:comment:edit)
                               normal     K         <Plug>(gh:issue:comment:preview)

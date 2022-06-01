@@ -56,33 +56,29 @@ test({
   mode: "all",
   name: "action edit and update issue buffer",
   fn: async (denops: Denops) => {
-    const bufname = "gh://skanehira/test/issues/1";
+    const bufname = "gh://skanehira/test/issues/26";
     const schema = buildSchema(bufname);
     const ctx = { schema: schema };
     await actionEditIssue(denops, ctx);
-    const actual = await denops.call("getline", 1, "$") as string[];
-    const issueBody = [
-      "# this is test",
-      "test issue",
-    ];
-    assertEquals(actual, issueBody);
+    const oldBody = await denops.call("getline", 1, "$") as string[];
 
     try {
-      const newIssueBody = ["hello", "world"];
-      await denops.call("setline", 1, newIssueBody);
+      await denops.cmd("%d_");
+      const newBody = ["hello", "world"];
+      await denops.call("setline", 1, newBody);
       await actionUpdateIssue(denops, ctx);
 
       const newIssue = await getIssue({
         cond: {
           owner: schema.owner,
           repo: schema.repo,
-          number: 1,
+          number: 26,
         },
       });
 
-      assertEquals(newIssue.body.split("\n"), newIssueBody);
+      assertEquals(newIssue.body.split("\n"), newBody);
     } finally {
-      await denops.call("setline", 1, issueBody);
+      await denops.call("setline", 1, oldBody);
       await actionUpdateIssue(denops, ctx);
     }
   },
@@ -136,7 +132,7 @@ test({
     const current = await denops.call("getline", 1);
     assertEquals(
       current,
-      "#27 test2  OPEN              ()                  ",
+      "#27 test2  OPEN              ()                      ",
     );
 
     await actionCloseIssue(denops, ctx);
@@ -162,7 +158,7 @@ test({
         dir,
         "want_issue_state_close.json",
       ),
-      actual,
+      await denops.call("getline", 1, "$"),
     );
   },
 });
@@ -171,7 +167,7 @@ test({
   mode: "all",
   name: "update assignees",
   fn: async (denops: Denops) => {
-    const ctx = newActionContext("gh://skanehira/test/issues/1");
+    const ctx = newActionContext("gh://skanehira/test/issues/27");
     try {
       await actionListAssignees(denops, ctx);
       await denops.cmd("%d_");
@@ -184,7 +180,6 @@ test({
       assertEquals(await denops.call("getline", 1, "$"), ["skanehira"]);
     } finally {
       await denops.cmd("%d_");
-      await denops.call("setline", 1, ["skanehira", "gorilla"]);
       await actionUpdateAssignees(denops, ctx);
     }
   },
@@ -194,7 +189,7 @@ test({
   mode: "all",
   name: "update label",
   fn: async (denops: Denops) => {
-    const ctx = newActionContext("gh://skanehira/test/issues/1");
+    const ctx = newActionContext("gh://skanehira/test/issues/27");
     try {
       await actionListLabels(denops, ctx);
       await denops.cmd("%d_");
@@ -206,7 +201,6 @@ test({
       assertEquals(await denops.call("getline", 1, "$"), ["bug"]);
     } finally {
       await denops.cmd("%d_");
-      await denops.call("setline", 1, ["documentation"]);
       await actionUpdateLabels(denops, ctx);
     }
   },
@@ -241,7 +235,10 @@ test({
     await actionListIssue(denops, ctx);
     await denops.call("feedkeys", "ghln");
     await delay(300);
-    assertEquals(await denops.call("getline", 1, "$"), ["bug", "duplicate"]);
+    assertEquals(await denops.call("getline", 1, "$"), [
+      "bug",
+      "documentation",
+    ]);
   },
   timeout: 5000,
 });
@@ -309,7 +306,7 @@ test({
   name: "create new issue comment",
   fn: async (denops: Denops) => {
     await denops.call("setline", 1, ["this is it"]);
-    const basename = "gh://skanehira/test/issues/1/comments";
+    const basename = "gh://skanehira/test/issues/27/comments";
     await actionCreateIssueComment(
       denops,
       newActionContext(basename + "/new"),
@@ -350,7 +347,7 @@ test({
   name: "preview issue comment body",
   fn: async (denops: Denops) => {
     await loadAutoload(denops);
-    const ctx = newActionContext("gh://skanehira/test/issues/2/comments");
+    const ctx = newActionContext("gh://skanehira/test/issues/27/comments");
     await actionListIssueComment(
       denops,
       ctx,
@@ -376,12 +373,12 @@ test({
   fn: async (denops: Denops) => {
     await loadAutoload(denops);
 
-    const ctx = newActionContext("gh://skanehira/test/issues/2/comments");
+    const ctx = newActionContext("gh://skanehira/test/issues/26/comments");
     await actionListIssueComment(denops, ctx);
     await denops.call("gh#_action", "comments:yank");
     const got = await denops.call("getreg", vimRegister);
     const expect =
-      "https://github.com/skanehira/test/issues/2#issuecomment-707713426";
+      "https://github.com/skanehira/test/issues/26#issuecomment-986833117";
     assertEquals(got, expect);
   },
   timeout: 5000,
