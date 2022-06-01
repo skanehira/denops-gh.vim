@@ -4,6 +4,7 @@ import {
   actionCreateIssueComment,
   actionEditIssue,
   actionEditIssueComment,
+  actionEditIssueTitle,
   actionListAssignees,
   actionListIssue,
   actionListIssueComment,
@@ -14,6 +15,7 @@ import {
   actionUpdateAssignees,
   actionUpdateIssue,
   actionUpdateIssueComment,
+  actionUpdateIssueTitle,
   actionUpdateLabels,
 } from "./action_issue.ts";
 import { buildSchema } from "./buffer.ts";
@@ -26,6 +28,7 @@ import {
 import { vimRegister } from "./utils/helper.ts";
 import { getIssue } from "./github/issue.ts";
 import { main } from "./main.ts";
+import { getActionCtx } from "./action.ts";
 
 const ignore = Deno.env.get("TEST_LOCAL") !== "true";
 
@@ -382,4 +385,27 @@ test({
     assertEquals(got, expect);
   },
   timeout: 5000,
+});
+
+test({
+  mode: "all",
+  name: "action update issue title from issue list",
+  fn: async (denops: Denops) => {
+    await loadAutoload(denops);
+    await main(denops);
+    const ctx = newActionContext("gh://skanehira/test/issues");
+    await actionListIssue(denops, ctx);
+    await actionEditIssueTitle(denops, ctx);
+    await denops.call("setline", 1, ["new title"]);
+    const cloneCtx = await getActionCtx(denops);
+    await actionUpdateIssueTitle(denops, cloneCtx);
+    await actionListIssue(denops, ctx);
+    const actual = await denops.call("getline", 1);
+    assertEquals(actual, "#27 new title OPEN  ()  1");
+
+    // restore
+    await actionEditIssueTitle(denops, ctx);
+    await denops.call("setline", 1, ["test2"]);
+    await actionUpdateIssueTitle(denops, cloneCtx);
+  },
 });

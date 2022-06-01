@@ -6,6 +6,7 @@ import {
   actionCreateIssueComment,
   actionEditIssue,
   actionEditIssueComment,
+  actionEditIssueTitle,
   actionListAssignees,
   actionListIssue,
   actionListIssueComment,
@@ -18,6 +19,7 @@ import {
   actionUpdateAssignees,
   actionUpdateIssue,
   actionUpdateIssueComment,
+  actionUpdateIssueTitle,
   actionUpdateLabels,
   actionViewIssue,
 } from "./action_issue.ts";
@@ -31,7 +33,9 @@ export type ActionType =
   | "issues:new"
   | "issues:create"
   | "issues:edit"
+  | "issues:edit:title"
   | "issues:update"
+  | "issues:update:title"
   | "issues:list"
   | "issues:search"
   | "issues:assignees"
@@ -93,7 +97,9 @@ export const isIssueListArgs = (arg: unknown): arg is IssueListArg => {
 export const actionStore = new Map<ActionType, ActionFn>(
   [
     ["issues:edit", actionEditIssue],
+    ["issues:edit:title", actionEditIssueTitle],
     ["issues:update", actionUpdateIssue],
+    ["issues:update:title", actionUpdateIssueTitle],
     ["issues:list", actionListIssue],
     ["issues:new", actionNewIssue],
     ["issues:create", actionCreateIssue],
