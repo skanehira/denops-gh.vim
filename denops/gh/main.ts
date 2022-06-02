@@ -46,7 +46,7 @@ export async function main(denops: Denops): Promise<void> {
           const schema = buildSchema(bufname);
           const ctx: ActionContext = { schema: schema };
           if (schema.actionType === "issues:list") {
-            ctx.args = { filters: "state:open" };
+            ctx.data = { filters: "state:open" };
           }
           return ctx;
         };

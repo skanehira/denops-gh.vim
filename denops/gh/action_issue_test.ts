@@ -40,7 +40,7 @@ test({
     const schema = buildSchema(bufname);
     const ctx = {
       schema: schema,
-      args: { filters: "state:open state:closed" },
+      data: { filters: "state:open state:closed" },
     };
     await actionListIssue(denops, ctx);
     const actual = await denops.eval(`getline(1, "$")`) as string[];
@@ -109,7 +109,7 @@ test({
   name: "action search issue",
   fn: async (denops: Denops) => {
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.args = { filters: "state:closed label:bug" };
+    ctx.data = { filters: "state:closed label:bug" };
     await actionSearchIssues(denops, ctx);
     const actual = await denops.call("getline", 1, "$");
     const file = path.join(
@@ -128,7 +128,7 @@ test({
   name: "change issue state",
   fn: async (denops: Denops) => {
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.args = { filters: "" };
+    ctx.data = { filters: "" };
 
     await loadAutoload(denops);
     await actionSearchIssues(denops, ctx);
@@ -217,7 +217,7 @@ test({
     await main(denops);
     await loadAutoload(denops);
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.args = { filters: "state:closed" };
+    ctx.data = { filters: "state:closed" };
     await actionListIssue(denops, ctx);
     await denops.call("feedkeys", "ghan");
     await delay(300);
@@ -234,7 +234,7 @@ test({
     await main(denops);
     await loadAutoload(denops);
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.args = { filters: "state:closed" };
+    ctx.data = { filters: "state:closed" };
     await actionListIssue(denops, ctx);
     await denops.call("feedkeys", "ghln");
     await delay(300);
@@ -295,7 +295,7 @@ test({
     await main(denops);
     await loadAutoload(denops);
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.args = { filters: "state:closed" };
+    ctx.data = { filters: "state:closed" };
     await actionListIssue(denops, ctx);
     await denops.call("feedkeys", "ghmn");
     await delay(300);
