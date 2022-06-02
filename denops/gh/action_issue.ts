@@ -315,13 +315,13 @@ export async function setIssueCommentsToBuffer(
   comments: Required<IssueCommentFragment>,
 ): Promise<void> {
   comments.nodes;
-  const objcts = comments.nodes.map((comment) => {
+  const objects = comments.nodes.map((comment) => {
     return {
       author: comment.author?.login ? "@" + comment.author.login : "",
       comment: comment.body ? comment.body.split(/\r?\n/)[0] : "",
     };
   });
-  const rows = obj2array(objcts);
+  const rows = obj2array(objects);
   await denops.call("setline", 1, rows);
   await denops.cmd("setlocal nomodifiable");
 

@@ -85,7 +85,7 @@ export const setActionCtx = async (
 };
 
 export const isActionContext = (arg: unknown): arg is ActionContext => {
-  return ["schema"].some((v) => v in (arg as Record<string, unknown>));
+  return !!arg && typeof arg === "object" && "schema" in arg;
 };
 
 export type IssueListArg = {
@@ -94,7 +94,7 @@ export type IssueListArg = {
 };
 
 export const isIssueListArgs = (arg: unknown): arg is IssueListArg => {
-  return ["filters"].some((v) => v in (arg as Record<string, unknown>));
+  return !!arg && typeof arg === "object" && "filters" in arg;
 };
 
 export const ensureAction = (arg: unknown): ActionType => {
