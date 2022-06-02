@@ -2,7 +2,6 @@ import { request } from "./api.ts";
 import { GetLabels } from "./schema.ts";
 import { gql } from "../deps.ts";
 import {
-  AssignableUserFragment,
   GetAssignableUsersQuery,
   GetAssignableUsersQueryVariables,
   GetIssueTemplatesQuery,
@@ -11,10 +10,11 @@ import {
   GetMentionableUsersQueryVariables,
   IssueTemplateBodyFragment,
   LabelBodyFragment,
-  MentionableUserFragment,
   SearchLabelsQuery,
   SearchLabelsQueryVariables,
+  UserFragment,
 } from "./graphql/operations.ts";
+import { fragmentUser } from "./user.ts";
 
 const fragmentIssueTemplateBody = gql`
 fragment issueTemplateBody on IssueTemplate {
@@ -67,22 +67,14 @@ export async function getIssueTemplate(args: {
   return templates;
 }
 
-const fragmentMentionableUser = gql`
-fragment mentionableUser on User {
-  login
-  name
-  bio
-}
-`;
-
 const queryGetMentionableUsers = gql`
-${fragmentMentionableUser}
+${fragmentUser}
 
 query getMentionableUsers($owner: String!, $name: String!, $word: String!) {
   repository(owner: $owner, name: $name) {
     mentionableUsers(first: 10, query: $word) {
       nodes {
-        ... mentionableUser
+        ... user
       }
     }
   }
@@ -95,7 +87,7 @@ export async function getMentionableUsers(args: {
     name: string;
   };
   word: string;
-}): Promise<MentionableUserFragment[]> {
+}): Promise<UserFragment[]> {
   const resp = await request<
     GetMentionableUsersQuery,
     GetMentionableUsersQueryVariables
@@ -112,22 +104,14 @@ export async function getMentionableUsers(args: {
   return resp.repository.mentionableUsers.nodes;
 }
 
-const fragmentAssignableUser = gql`
-fragment assignableUser on User {
-  login
-  name
-  bio
-}
-`;
-
 const queryGetAssignableUsers = gql`
-${fragmentAssignableUser}
+${fragmentUser}
 
 query getAssignableUsers($owner: String!, $name: String!, $word: String!) {
   repository(owner: $owner, name: $name) {
     assignableUsers(first: 10, query: $word) {
       nodes {
-        ... assignableUser
+        ... user
       }
     }
   }
@@ -140,7 +124,7 @@ export async function getAssignableUsers(args: {
     name: string;
   };
   word: string;
-}): Promise<AssignableUserFragment[]> {
+}): Promise<UserFragment[]> {
   const resp = await request<
     GetAssignableUsersQuery,
     GetAssignableUsersQueryVariables
@@ -157,7 +141,7 @@ export async function getAssignableUsers(args: {
   return resp.repository.assignableUsers.nodes;
 }
 
-const fragmentLabelBody = gql`
+export const fragmentLabelBody = gql`
 fragment labelBody on Label {
   name
   color

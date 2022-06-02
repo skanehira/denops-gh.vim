@@ -2,13 +2,13 @@ import { GetUsers } from "./schema.ts";
 import { gql } from "../deps.ts";
 import { request } from "./api.ts";
 import {
-  SearchUserBodyFragment,
   SearchUsersQuery,
   SearchUsersQueryVariables,
+  UserFragment,
 } from "./graphql/operations.ts";
 
-const fragmentSearchUser = gql`
-fragment searchUserBody on User {
+export const fragmentUser = gql`
+fragment user on User {
   id
   login
   name
@@ -17,13 +17,13 @@ fragment searchUserBody on User {
 `;
 
 const querySearchUsers = gql`
-${fragmentSearchUser}
+${fragmentUser}
 
 query searchUsers($user: String!) {
   search(type: USER, query: $user, first: 10) {
     nodes{
       ... on User{
-        ... searchUserBody
+        ... user
       }
     }
   }
@@ -32,7 +32,7 @@ query searchUsers($user: String!) {
 
 export async function searchUsers(args: {
   word: string;
-}): Promise<SearchUserBodyFragment[]> {
+}): Promise<UserFragment[]> {
   const resp = await request<SearchUsersQuery, SearchUsersQueryVariables>(
     querySearchUsers,
     {

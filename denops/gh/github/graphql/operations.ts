@@ -1,6 +1,6 @@
 import * as Types from './types.ts';
 
-export type IssueBodyFragment = { id: string, title: string, body: string, closed: boolean, number: number, url: any, state: Types.IssueState, author?: { login: string }, assignees: { nodes?: Array<{ id: string, login: string, name?: string, bio?: string }> }, labels?: { nodes?: Array<{ name: string, color: string, description?: string }> }, repository: { name: string }, comments: { nodes?: Array<{ id: string }> } };
+export type IssueBodyFragment = { id: string, title: string, body: string, closed: boolean, number: number, url: any, state: Types.IssueState, author?: { login: string }, assignees: { nodes?: Array<UserFragment> }, labels?: { nodes?: Array<LabelBodyFragment> }, repository: { name: string }, comments: { nodes?: Array<{ id: string }> } };
 
 export type GetIssueQueryVariables = Types.Exact<{
   owner: Types.Scalars['String'];
@@ -52,8 +52,6 @@ export type GetIssueTemplatesQueryVariables = Types.Exact<{
 
 export type GetIssueTemplatesQuery = { repository?: { issueTemplates?: Array<IssueTemplateBodyFragment> } };
 
-export type MentionableUserFragment = { login: string, name?: string, bio?: string };
-
 export type GetMentionableUsersQueryVariables = Types.Exact<{
   owner: Types.Scalars['String'];
   name: Types.Scalars['String'];
@@ -61,9 +59,7 @@ export type GetMentionableUsersQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetMentionableUsersQuery = { repository?: { mentionableUsers: { nodes?: Array<MentionableUserFragment> } } };
-
-export type AssignableUserFragment = { login: string, name?: string, bio?: string };
+export type GetMentionableUsersQuery = { repository?: { mentionableUsers: { nodes?: Array<UserFragment> } } };
 
 export type GetAssignableUsersQueryVariables = Types.Exact<{
   owner: Types.Scalars['String'];
@@ -72,7 +68,7 @@ export type GetAssignableUsersQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetAssignableUsersQuery = { repository?: { assignableUsers: { nodes?: Array<AssignableUserFragment> } } };
+export type GetAssignableUsersQuery = { repository?: { assignableUsers: { nodes?: Array<UserFragment> } } };
 
 export type LabelBodyFragment = { name: string, color: string, description?: string };
 
@@ -85,11 +81,11 @@ export type SearchLabelsQueryVariables = Types.Exact<{
 
 export type SearchLabelsQuery = { repository?: { labels?: { nodes?: Array<LabelBodyFragment> } } };
 
-export type SearchUserBodyFragment = { id: string, login: string, name?: string, bio?: string };
+export type UserFragment = { id: string, login: string, name?: string, bio?: string };
 
 export type SearchUsersQueryVariables = Types.Exact<{
   user: Types.Scalars['String'];
 }>;
 
 
-export type SearchUsersQuery = { search: { nodes?: Array<SearchUserBodyFragment> } };
+export type SearchUsersQuery = { search: { nodes?: Array<UserFragment> } };

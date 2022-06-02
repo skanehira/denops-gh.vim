@@ -5,7 +5,7 @@ import { setActionCtx } from "../gh/action.ts";
 import { assertEqualFile, parseJSON } from "../gh/utils/test.ts";
 import {
   IssueBodyFragment,
-  MentionableUserFragment,
+  UserFragment,
 } from "../gh/github/graphql/operations.ts";
 
 test({
@@ -102,7 +102,7 @@ test({
         "want_candidate_user_list.json",
       );
 
-      const candidates = await parseJSON<Candidate<MentionableUserFragment>[]>(
+      const candidates = await parseJSON<Candidate<UserFragment>[]>(
         cache,
       );
       for (const c of candidates) {

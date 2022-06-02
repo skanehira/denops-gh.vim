@@ -17,7 +17,7 @@ export type GetLabels = {
 };
 
 export const isIssueBody = (arg: unknown): arg is IssueBodyFragment => {
-  return ["id", "title", "author", "number", "closed"].some((v) =>
+  return ["id", "title", "author", "number", "closed", "body"].some((v) =>
     v in (arg as Record<string, unknown>)
   );
 };
