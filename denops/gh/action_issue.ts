@@ -19,10 +19,10 @@ import {
 import { getUsers } from "./github/user.ts";
 import { getIssueTemplate, getLabels } from "./github/repository.ts";
 import {
+  ensureIssueCommentList,
+  ensureIssueList,
   isIssueBody,
   isIssueComment,
-  isIssueCommentList,
-  isIssueList,
 } from "./github/schema.ts";
 import { obj2array } from "./utils/formatter.ts";
 import { map } from "./mapping.ts";
@@ -126,7 +126,7 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
 
   if (!isIssueBody(ctx.data)) {
     throw new Error(
-      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.data)}`,
+      `ctx.data is not IssueBodyFragment: ${JSON.stringify(ctx.data)}`,
     );
   }
 
@@ -156,8 +156,9 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
     return;
   }
   if (!isIssueListArgs(ctx.data)) {
-    console.error("ctx.args type is not 'IssueListArg'");
-    return;
+    throw new Error(
+      `ctx.data type is not 'IssueListArg': ${JSON.stringify(ctx.data)}`,
+    );
   }
   const args = ctx.data;
 
@@ -433,20 +434,14 @@ export async function actionViewIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  if (!isIssueListArgs(ctx.data)) {
-    console.error(`ctx.args type is not 'IssueListArg'`);
-    return;
-  }
-  if (ctx.data.issues!.length == 0) {
-    return;
-  }
+  const { issues } = ensureIssueList(ctx.data);
   const idxs = await denops.call("gh#_get_selected_idx") as number[];
   if (!idxs.length) {
     const idx = (await denops.call("line", ".") as number) - 1;
     idxs.push(idx);
   }
   for (const idx of idxs) {
-    const issue = ctx.data.issues![idx];
+    const issue = issues[idx];
     open(issue.url);
   }
   await denops.call("gh#_clear_selected");
@@ -478,20 +473,7 @@ export async function changeIssueState(
   ctx: ActionContext,
   state: Types.IssueState,
 ): Promise<void> {
-  if (!isIssueListArgs(ctx.data)) {
-    console.error(`ctx.args type is not 'IssueListArg'`);
-    return;
-  }
-  if (!ctx.data.issues) {
-    return;
-  }
-
-  const issues = ctx.data.issues;
-
-  if (issues.length == 0) {
-    return;
-  }
-
+  const { issues } = ensureIssueList(ctx.data);
   const idxs = await denops.call("gh#_get_selected_idx") as number[];
   if (!idxs.length) {
     const idx = (await denops.call("line", ".") as number) - 1;
@@ -742,7 +724,7 @@ export async function actionUpdateIssueComment(
   }
 
   if (!isIssueComment(ctx.data)) {
-    throw new Error(`ctx.args is not comment: ${ctx.data}`);
+    throw new Error(`ctx.data is not comment: ${JSON.stringify(ctx.data)}`);
   }
 
   const body = await denops.call("getline", 1, "$") as string[];
@@ -928,20 +910,16 @@ async function getIssueFromCtx(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<IssueBodyFragment> {
-  if (isIssueList(ctx.data)) {
-    const line = await denops.call("line", ".") as number;
-    const issue = ctx.data.issues.at(line - 1);
-    if (!issue) {
-      throw new Error("not found issue");
-    }
-    return issue;
-  }
-
   if (isIssueBody(ctx.data)) {
     return ctx.data;
   }
-
-  throw new Error(`unexpect ctx.args: ${JSON.stringify(ctx.data)}`);
+  const { issues } = ensureIssueList(ctx.data);
+  const line = await denops.call("line", ".") as number;
+  const issue = issues.at(line - 1);
+  if (!issue) {
+    throw new Error("not found issue");
+  }
+  return issue;
 }
 
 export async function actionEditIssueTitle(denops: Denops, ctx: ActionContext) {
@@ -974,7 +952,7 @@ export async function actionUpdateIssueTitle(
   const title = await denops.call("getline", 1) as string;
   if (!isIssueBody(ctx.data)) {
     throw new Error(
-      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.data)}`,
+      `ctx.data is not IssueBodyFragment: ${JSON.stringify(ctx.data)}`,
     );
   }
   await updateIssue({
@@ -991,11 +969,9 @@ export async function actionPreview(denops: Denops, ctx: ActionContext) {
   let body = "";
   switch (ft) {
     case "gh-issues": {
-      if (!isIssueList(ctx.data)) {
-        throw new Error(`ctx.args type is not 'IssueListArg'`);
-      }
+      const { issues } = ensureIssueList(ctx.data);
       const line = await denops.call("line", ".") as number;
-      const issue = ctx.data.issues.at(line - 1);
+      const issue = issues.at(line - 1);
       if (!issue) {
         throw new Error("not found issue");
       }
@@ -1003,11 +979,9 @@ export async function actionPreview(denops: Denops, ctx: ActionContext) {
       break;
     }
     case "gh-issues-comments": {
-      if (!isIssueCommentList(ctx.data)) {
-        throw new Error(`ctx.args type is not 'IssueCommentList'`);
-      }
+      const { nodes } = ensureIssueCommentList(ctx.data);
       const line = await denops.call("line", ".") as number;
-      const comment = ctx.data.nodes.at(line - 1);
+      const comment = nodes.at(line - 1);
       if (!comment) {
         throw new Error("not found comment");
       }

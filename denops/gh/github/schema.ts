@@ -71,20 +71,34 @@ type Reactions = {
   eyes: number;
 };
 
-export const isIssueList = (
+type IssueList = {
+  issues: IssueBodyFragment[];
+};
+
+export const ensureIssueList = (
   arg: unknown,
-): arg is { issues: IssueBodyFragment[] } => {
-  return "issues" in (arg as Record<string, unknown>);
+): IssueList => {
+  if (!!arg && typeof arg === "object" && "issues" in arg) {
+    return arg as IssueList;
+  }
+  throw new Error(`object doesn't contain issues: ${JSON.stringify(arg)}`);
 };
 
 export const isIssueComment = (arg: unknown): arg is IssueComment => {
   return "body" in (arg as Record<string, string>);
 };
 
-export const isIssueCommentList = (
+type IssueCommentList = {
+  nodes: IssueComment[];
+};
+
+export const ensureIssueCommentList = (
   arg: unknown,
-): arg is { nodes: IssueComment[] } => {
-  return "nodes" in (arg as Record<string, unknown>);
+): IssueCommentList => {
+  if (!!arg && typeof arg === "object" && "nodes" in arg) {
+    return arg as IssueCommentList;
+  }
+  throw new Error(`object doesn't contains comments: ${JSON.stringify(arg)}`);
 };
 
 export type PullRequest = {

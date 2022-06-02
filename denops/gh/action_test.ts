@@ -1,9 +1,4 @@
-import {
-  actionTypes,
-  ensureAction,
-  isActionContext,
-  isIssueListArgs,
-} from "./action.ts";
+import { actionTypes, ensureAction, isIssueListArgs } from "./action.ts";
 import { assertEquals, assertRejects } from "./deps.ts";
 
 Deno.test("valid action type", () => {
