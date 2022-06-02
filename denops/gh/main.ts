@@ -7,6 +7,7 @@ import {
   actionStore,
   ensureAction,
   getActionCtx,
+  isActionContext,
   setActionCtx,
 } from "./action.ts";
 
@@ -72,6 +73,9 @@ export async function main(denops: Denops): Promise<void> {
     async doAction(actionType: unknown): Promise<void> {
       try {
         const ctx = await getActionCtx(denops);
+        if (!isActionContext(ctx)) {
+          throw new Error(`invalid context: ${JSON.stringify(ctx)}`);
+        }
         const action = actionStore.get(ensureAction(actionType));
         if (!action) {
           throw new Error(`not found action: ${actionType}`);
