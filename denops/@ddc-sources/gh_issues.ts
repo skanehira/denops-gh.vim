@@ -12,7 +12,7 @@ import { getActionCtx } from "../gh/action.ts";
 import { inprogress } from "../gh/utils/helper.ts";
 import {
   IssueBodyFragment,
-  MentionableUserFragment,
+  UserFragment,
 } from "../gh/github/graphql/operations.ts";
 
 type Params = {
@@ -22,13 +22,13 @@ type Params = {
 export const issueCache = new Map<string, Candidate<IssueBodyFragment>>();
 export const userCache = new Map<
   string,
-  Candidate<MentionableUserFragment>
+  Candidate<UserFragment>
 >();
 
 export const getCandidates = async (
   denops: Denops,
   word: string,
-): Promise<Candidate<IssueBodyFragment | MentionableUserFragment>[]> => {
+): Promise<Candidate<IssueBodyFragment | UserFragment>[]> => {
   const completeIssue = word?.at(0) === "#";
   const action = await getActionCtx(denops);
 
@@ -82,7 +82,7 @@ export const getCandidates = async (
     }
   }
 
-  const result = await inprogress<MentionableUserFragment[]>(
+  const result = await inprogress<UserFragment[]>(
     denops,
     "fetching...",
     async () => {
@@ -112,7 +112,7 @@ export const getCandidates = async (
 };
 
 export class Source
-  extends BaseSource<Params, IssueBodyFragment | MentionableUserFragment> {
+  extends BaseSource<Params, IssueBodyFragment | UserFragment> {
   async gatherCandidates(args: {
     denops: Denops;
     context: Context;
@@ -120,7 +120,7 @@ export class Source
     sourceOptions: SourceOptions;
     sourceParams: Params;
     completeStr: string;
-  }): Promise<Candidate<IssueBodyFragment | MentionableUserFragment>[]> {
+  }): Promise<Candidate<IssueBodyFragment | UserFragment>[]> {
     try {
       const pos = await args.denops.call("getcurpos") as number[];
       const col = pos[2];

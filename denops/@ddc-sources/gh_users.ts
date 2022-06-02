@@ -5,26 +5,19 @@ import {
   getMentionableUsers,
 } from "../gh/github/repository.ts";
 import { ActionContext } from "../gh/action.ts";
-import {
-  AssignableUserFragment,
-  MentionableUserFragment,
-} from "../gh/github/graphql/operations.ts";
+import { UserFragment } from "../gh/github/graphql/operations.ts";
 import { inprogress } from "../gh/utils/helper.ts";
 
-export type User =
-  | AssignableUserFragment
-  | MentionableUserFragment;
-
-export const mentionableUserCache = new Map<string, Candidate<User>>();
-export const assignableUserCache = new Map<string, Candidate<User>>();
+export const mentionableUserCache = new Map<string, Candidate<UserFragment>>();
+export const assignableUserCache = new Map<string, Candidate<UserFragment>>();
 
 export async function getUserList(
   denops: Denops,
   ctx: ActionContext,
   kind: "assignee" | "mentions" | "author",
   word: string,
-): Promise<Candidate<User>[]> {
-  let cache: Map<string, Candidate<User>>;
+): Promise<Candidate<UserFragment>[]> {
+  let cache: Map<string, Candidate<UserFragment>>;
   let getUserFn: (args: {
     endpoint?: string;
     repo: {
@@ -32,7 +25,7 @@ export async function getUserList(
       name: string;
     };
     word: string;
-  }) => Promise<User[]>;
+  }) => Promise<UserFragment[]>;
 
   switch (kind) {
     case "author":
@@ -63,15 +56,19 @@ export async function getUserList(
     }
   }
 
-  const result = await inprogress<User[]>(denops, "fetching...", async () => {
-    return await getUserFn({
-      repo: {
-        owner: ctx.schema.owner,
-        name: ctx.schema.repo,
-      },
-      word: word,
-    });
-  });
+  const result = await inprogress<UserFragment[]>(
+    denops,
+    "fetching...",
+    async () => {
+      return await getUserFn({
+        repo: {
+          owner: ctx.schema.owner,
+          name: ctx.schema.repo,
+        },
+        word: word,
+      });
+    },
+  );
 
   const candidates = result!.map((user) => {
     return {

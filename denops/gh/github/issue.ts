@@ -13,6 +13,8 @@ import {
   UpdateIssueMutationVariables,
 } from "./graphql/operations.ts";
 import { AddCommentInput, IssueComment } from "./schema.ts";
+import { fragmentLabelBody } from "./repository.ts";
+import { fragmentUser } from "./user.ts";
 
 function ensureNonEmptyIssue(
   issue: Record<never, never>,
@@ -21,6 +23,10 @@ function ensureNonEmptyIssue(
 }
 
 const fragmentIssueBody = gql`
+${fragmentLabelBody}
+
+${fragmentUser}
+
 fragment issueBody on Issue {
   id
   title
@@ -29,18 +35,13 @@ fragment issueBody on Issue {
   }
   assignees(first: 10) {
     nodes {
-      id
-      login
-      name
-      bio
+      ... user
     }
   }
   body
   labels(first: 20) {
     nodes {
-      name
-      color
-      description
+      ... labelBody
     }
   }
   closed
