@@ -89,7 +89,7 @@ function! gh#_get_selected_issue() abort
     call add(idxs, line(".")-1)
   endif
 
-  let issues = filter(copy(b:gh_action_ctx.args.issues),
+  let issues = filter(copy(b:gh_action_ctx.data.issues),
         \ { i ->  index(idxs, i) != -1 })
   return issues
 endfunction
@@ -100,7 +100,7 @@ function! gh#_get_selected_comment() abort
     call add(idxs, line(".")-1)
   endif
 
-  let comments = filter(copy(b:gh_action_ctx.args.nodes),
+  let comments = filter(copy(b:gh_action_ctx.data.nodes),
         \ { i ->  index(idxs, i) != -1 })
   return comments
 endfunction
@@ -119,8 +119,8 @@ function! s:opencmd() abort
 endfunction
 
 function! s:issue_edit() abort
-  if empty(b:gh_action_ctx.args.issues)
-    echoerr("b:gh_action_ctx.args.issues is empty")
+  if empty(b:gh_action_ctx.data.issues)
+    echoerr("b:gh_action_ctx.data.issues is empty")
     return
   endif
   if len(gh#_get_selected_idx()) > 0
@@ -129,7 +129,7 @@ function! s:issue_edit() abort
   endif
 
   let schema = b:gh_action_ctx.schema
-  let issue = b:gh_action_ctx.args.issues[line('.')-1]
+  let issue = b:gh_action_ctx.data.issues[line('.')-1]
   let opencmd = s:opencmd()
   if opencmd ==# ""
     return
@@ -144,7 +144,7 @@ function s:issue_comment_new() abort
     return
   endif
   if &ft ==# 'gh-issues'
-    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+    let number = b:gh_action_ctx.data.issues[line('.')-1].number
   else
     let number = b:gh_action_ctx.schema.issue.number
   endif
@@ -153,8 +153,8 @@ function s:issue_comment_new() abort
 endfunction
 
 function s:issue_comment_edit() abort
-  if empty(b:gh_action_ctx.args.nodes)
-    call gh#_error("b:gh_action_ctx.args.nodes is empty")
+  if empty(b:gh_action_ctx.data.nodes)
+    call gh#_error("b:gh_action_ctx.data.nodes is empty")
     return
   endif
 
@@ -164,7 +164,7 @@ function s:issue_comment_edit() abort
   endif
   
   let schema = b:gh_action_ctx.schema
-  let comment = b:gh_action_ctx.args.nodes[line('.')-1]
+  let comment = b:gh_action_ctx.data.nodes[line('.')-1]
   let opencmd = s:opencmd()
   if opencmd ==# ""
     return
@@ -196,11 +196,11 @@ function! s:issue_search() abort
   call win_gotoid(s:old_winid)
 
   " if doesn't changed filters, do nothing
-  if filters ==# "" || filters ==# b:gh_action_ctx.args.filters
+  if filters ==# "" || filters ==# b:gh_action_ctx.data.filters
     return
   endif
 
-  let b:gh_action_ctx.args.filters = filters
+  let b:gh_action_ctx.data.filters = filters
   call denops#notify("gh", "doAction", ["issues:search"])
 endfunction
 
@@ -214,7 +214,7 @@ augroup END
 function! s:issue_search_buffer() abort
   let s:old_winid = win_getid()
   let ctx = b:gh_action_ctx
-  let filters = b:gh_action_ctx.args.filters
+  let filters = b:gh_action_ctx.data.filters
 
   let bufname = "issues-search"
 
@@ -239,7 +239,7 @@ function! s:issue_assignees() abort
     return
   endif
   if &ft ==# 'gh-issues'
-    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+    let number = b:gh_action_ctx.data.issues[line('.')-1].number
   else
     let number = b:gh_action_ctx.schema.issue.number
   endif
@@ -253,7 +253,7 @@ function! s:issue_labels() abort
     return
   endif
   if &ft ==# 'gh-issues'
-    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+    let number = b:gh_action_ctx.data.issues[line('.')-1].number
   else
     let number = b:gh_action_ctx.schema.issue.number
   endif
@@ -267,7 +267,7 @@ function! s:issue_comments() abort
     return
   endif
   if &ft ==# 'gh-issues'
-    let number = b:gh_action_ctx.args.issues[line('.')-1].number
+    let number = b:gh_action_ctx.data.issues[line('.')-1].number
   else
     let number = b:gh_action_ctx.schema.issue.number
   endif

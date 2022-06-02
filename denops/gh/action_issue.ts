@@ -58,7 +58,7 @@ export async function actionEditIssue(denops: Denops, ctx: ActionContext) {
       await denops.call("setline", 1, issue.body.split("\n"));
       await denops.cmd("setlocal ft=markdown buftype=acwrite nomodified");
 
-      ctx.args = issue;
+      ctx.data = issue;
       setActionCtx(denops, ctx);
 
       await autocmd.group(
@@ -124,9 +124,9 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
     return;
   }
 
-  if (!isIssueBody(ctx.args)) {
+  if (!isIssueBody(ctx.data)) {
     throw new Error(
-      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.args)}`,
+      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.data)}`,
     );
   }
 
@@ -137,7 +137,7 @@ export async function actionUpdateIssue(denops: Denops, ctx: ActionContext) {
   }
 
   const input = {
-    id: ctx.args.id,
+    id: ctx.data.id,
     body: body.join("\r\n"),
   };
   await inprogress(denops, "updating...", async () => {
@@ -155,11 +155,11 @@ export async function actionListIssue(denops: Denops, ctx: ActionContext) {
     console.error(`ctx is not action context: ${Deno.inspect(ctx)}`);
     return;
   }
-  if (!isIssueListArgs(ctx.args)) {
+  if (!isIssueListArgs(ctx.data)) {
     console.error("ctx.args type is not 'IssueListArg'");
     return;
   }
-  const args = ctx.args;
+  const args = ctx.data;
 
   const schema = ctx.schema;
   denops.cmd("setlocal ft=gh-issues modifiable");
@@ -305,7 +305,7 @@ export async function setIssueToBuffer(
   await denops.call("setline", 1, rows);
   await denops.cmd("setlocal nomodifiable");
 
-  (ctx.args as IssueListArg).issues = issues;
+  (ctx.data as IssueListArg).issues = issues;
   await setActionCtx(denops, ctx);
 }
 
@@ -325,7 +325,7 @@ export async function setIssueCommentsToBuffer(
   await denops.call("setline", 1, rows);
   await denops.cmd("setlocal nomodifiable");
 
-  (ctx.args as Required<IssueCommentFragment>) = comments;
+  (ctx.data as Required<IssueCommentFragment>) = comments;
   await setActionCtx(denops, ctx);
 }
 
@@ -433,11 +433,11 @@ export async function actionViewIssue(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<void> {
-  if (!isIssueListArgs(ctx.args)) {
+  if (!isIssueListArgs(ctx.data)) {
     console.error(`ctx.args type is not 'IssueListArg'`);
     return;
   }
-  if (ctx.args.issues!.length == 0) {
+  if (ctx.data.issues!.length == 0) {
     return;
   }
   const idxs = await denops.call("gh#_get_selected_idx") as number[];
@@ -446,7 +446,7 @@ export async function actionViewIssue(
     idxs.push(idx);
   }
   for (const idx of idxs) {
-    const issue = ctx.args.issues![idx];
+    const issue = ctx.data.issues![idx];
     open(issue.url);
   }
   await denops.call("gh#_clear_selected");
@@ -478,15 +478,15 @@ export async function changeIssueState(
   ctx: ActionContext,
   state: Types.IssueState,
 ): Promise<void> {
-  if (!isIssueListArgs(ctx.args)) {
+  if (!isIssueListArgs(ctx.data)) {
     console.error(`ctx.args type is not 'IssueListArg'`);
     return;
   }
-  if (!ctx.args.issues) {
+  if (!ctx.data.issues) {
     return;
   }
 
-  const issues = ctx.args.issues;
+  const issues = ctx.data.issues;
 
   if (issues.length == 0) {
     return;
@@ -540,7 +540,7 @@ export async function actionListAssignees(
         "setlocal ft=gh-issues-assignees buftype=acwrite nomodified",
       );
 
-      ctx.args = issue;
+      ctx.data = issue;
       setActionCtx(denops, ctx);
 
       await autocmd.group(
@@ -592,7 +592,7 @@ export async function actionUpdateAssignees(
 
     await updateIssue({
       input: {
-        id: (ctx.args as IssueBodyFragment).id,
+        id: (ctx.data as IssueBodyFragment).id,
         assigneeIds: assignees,
       },
     });
@@ -624,7 +624,7 @@ export async function actionListLabels(
       }
       await denops.cmd("setlocal buftype=acwrite nomodified");
 
-      ctx.args = issue;
+      ctx.data = issue;
       setActionCtx(denops, ctx);
 
       await autocmd.group(
@@ -677,7 +677,7 @@ export async function actionUpdateLabels(
 
     await updateIssue({
       input: {
-        id: (ctx.args as IssueBodyFragment).id,
+        id: (ctx.data as IssueBodyFragment).id,
         labelIds: labels,
       },
     });
@@ -705,7 +705,7 @@ export async function actionEditIssueComment(
       await denops.call("setline", 1, comment.body.split(/\r?\n/));
       await denops.cmd("setlocal ft=markdown buftype=acwrite nomodified");
 
-      ctx.args = comment;
+      ctx.data = comment;
       setActionCtx(denops, ctx);
 
       await autocmd.group(
@@ -741,8 +741,8 @@ export async function actionUpdateIssueComment(
     throw new Error(`ctx.schema is not comment: ${ctx.schema}`);
   }
 
-  if (!isIssueComment(ctx.args)) {
-    throw new Error(`ctx.args is not comment: ${ctx.args}`);
+  if (!isIssueComment(ctx.data)) {
+    throw new Error(`ctx.args is not comment: ${ctx.data}`);
   }
 
   const body = await denops.call("getline", 1, "$") as string[];
@@ -928,27 +928,27 @@ async function getIssueFromCtx(
   denops: Denops,
   ctx: ActionContext,
 ): Promise<IssueBodyFragment> {
-  if (isIssueList(ctx.args)) {
+  if (isIssueList(ctx.data)) {
     const line = await denops.call("line", ".") as number;
-    const issue = ctx.args.issues.at(line - 1);
+    const issue = ctx.data.issues.at(line - 1);
     if (!issue) {
       throw new Error("not found issue");
     }
     return issue;
   }
 
-  if (isIssueBody(ctx.args)) {
-    return ctx.args;
+  if (isIssueBody(ctx.data)) {
+    return ctx.data;
   }
 
-  throw new Error(`unexpect ctx.args: ${JSON.stringify(ctx.args)}`);
+  throw new Error(`unexpect ctx.args: ${JSON.stringify(ctx.data)}`);
 }
 
 export async function actionEditIssueTitle(denops: Denops, ctx: ActionContext) {
   const issue = await getIssueFromCtx(denops, ctx);
   await denops.cmd("1new gh:issue:title");
   const cloneCtx = { ...ctx };
-  cloneCtx.args = issue;
+  cloneCtx.data = issue;
   await setActionCtx(denops, cloneCtx);
   await denops.call("setline", 1, issue.title);
   await denops.cmd("setlocal buftype=acwrite nomodified");
@@ -972,14 +972,14 @@ export async function actionUpdateIssueTitle(
   ctx: ActionContext,
 ) {
   const title = await denops.call("getline", 1) as string;
-  if (!isIssueBody(ctx.args)) {
+  if (!isIssueBody(ctx.data)) {
     throw new Error(
-      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.args)}`,
+      `ctx.args is not IssueBodyFragment: ${JSON.stringify(ctx.data)}`,
     );
   }
   await updateIssue({
     input: {
-      id: ctx.args.id,
+      id: ctx.data.id,
       title: title,
     },
   });
@@ -991,11 +991,11 @@ export async function actionPreview(denops: Denops, ctx: ActionContext) {
   let body = "";
   switch (ft) {
     case "gh-issues": {
-      if (!isIssueList(ctx.args)) {
+      if (!isIssueList(ctx.data)) {
         throw new Error(`ctx.args type is not 'IssueListArg'`);
       }
       const line = await denops.call("line", ".") as number;
-      const issue = ctx.args.issues.at(line - 1);
+      const issue = ctx.data.issues.at(line - 1);
       if (!issue) {
         throw new Error("not found issue");
       }
@@ -1003,11 +1003,11 @@ export async function actionPreview(denops: Denops, ctx: ActionContext) {
       break;
     }
     case "gh-issues-comments": {
-      if (!isIssueCommentList(ctx.args)) {
+      if (!isIssueCommentList(ctx.data)) {
         throw new Error(`ctx.args type is not 'IssueCommentList'`);
       }
       const line = await denops.call("line", ".") as number;
-      const comment = ctx.args.nodes.at(line - 1);
+      const comment = ctx.data.nodes.at(line - 1);
       if (!comment) {
         throw new Error("not found comment");
       }

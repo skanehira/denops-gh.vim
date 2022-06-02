@@ -54,7 +54,7 @@ export type ActionType =
 
 export type ActionContext = {
   schema: BufferSchema;
-  args?: unknown;
+  data?: unknown;
 };
 
 export type ActionFn = (
