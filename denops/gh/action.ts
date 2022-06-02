@@ -25,32 +25,35 @@ import {
 } from "./action_issue.ts";
 import { IssueBodyFragment } from "./github/graphql/operations.ts";
 
-export type ActionType =
-  | "issues:close"
-  | "issues:open"
-  | "issues:view"
-  | "issues:preview"
-  | "issues:new"
-  | "issues:create"
-  | "issues:edit"
-  | "issues:edit:title"
-  | "issues:update"
-  | "issues:update:title"
-  | "issues:list"
-  | "issues:search"
-  | "issues:assignees"
-  | "issues:assignees:update"
-  | "issues:labels"
-  | "issues:labels:update"
-  | "pulls:new"
-  | "pulls:list"
-  | "pulls:edit"
-  | "comments:list"
-  | "comments:edit"
-  | "comments:new"
-  | "comments:create"
-  | "comments:preview"
-  | "comments:update";
+export const actionTypes = [
+  "issues:close",
+  "issues:open",
+  "issues:view",
+  "issues:preview",
+  "issues:new",
+  "issues:create",
+  "issues:edit",
+  "issues:edit:title",
+  "issues:update",
+  "issues:update:title",
+  "issues:list",
+  "issues:search",
+  "issues:assignees",
+  "issues:assignees:update",
+  "issues:labels",
+  "issues:labels:update",
+  "pulls:new",
+  "pulls:list",
+  "pulls:edit",
+  "comments:list",
+  "comments:edit",
+  "comments:new",
+  "comments:create",
+  "comments:preview",
+  "comments:update",
+] as const;
+
+export type ActionType = typeof actionTypes[number];
 
 export type ActionContext = {
   schema: BufferSchema;
@@ -92,6 +95,13 @@ export type IssueListArg = {
 
 export const isIssueListArgs = (arg: unknown): arg is IssueListArg => {
   return ["filters"].some((v) => v in (arg as Record<string, unknown>));
+};
+
+export const ensureAction = (arg: unknown): ActionType => {
+  if (!actionTypes.some((action) => action === arg)) {
+    throw new Error(`invalid action: ${arg}`);
+  }
+  return arg as ActionType;
 };
 
 export const actionStore = new Map<ActionType, ActionFn>(

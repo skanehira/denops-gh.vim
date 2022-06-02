@@ -5,7 +5,7 @@ import { buildSchema, initializeBuffer } from "./buffer.ts";
 import {
   ActionContext,
   actionStore,
-  ActionType,
+  ensureAction,
   getActionCtx,
   setActionCtx,
 } from "./action.ts";
@@ -72,7 +72,7 @@ export async function main(denops: Denops): Promise<void> {
     async doAction(actionType: unknown): Promise<void> {
       try {
         const ctx = await getActionCtx(denops);
-        const action = actionStore.get(actionType as ActionType);
+        const action = actionStore.get(ensureAction(actionType));
         if (!action) {
           throw new Error(`not found action: ${actionType}`);
         }
