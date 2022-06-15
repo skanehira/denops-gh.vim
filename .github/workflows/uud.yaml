@@ -26,7 +26,7 @@ jobs:
       - name: Diff check
         id: diff
         run: |
-          echo "::set-output name=diff::$(git diff --name-only | grep ts)"
+          echo "::set-output name=content::$(git diff --name-only | grep ts)"
       - name: Commit changes
         if: ${{ steps.diff.outputs.content != '' }}
         run: |
@@ -45,7 +45,7 @@ jobs:
         with:
           title: ":package: Update Deno dependencies"
           body: |
-            The output of `make update` is
+            The output of `make deps` is
 
             ```
             ${{ steps.log.outputs.content }}

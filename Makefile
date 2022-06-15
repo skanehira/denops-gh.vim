@@ -27,6 +27,6 @@ test: start_graphql_server
 	@GITHUB_ENDPOINT=http://localhost:8080 \
 		deno test -A --unstable --ignore=denops/gh/github/graphql --coverage=cov denops/
 
-.PHONY: update-deps
+.PHONY: deps
 update-deps:
 	@udd denops/gh/deps.ts
