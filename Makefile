@@ -28,5 +28,5 @@ test: start_graphql_server
 		deno test -A --unstable --ignore=denops/gh/github/graphql --coverage=cov denops/
 
 .PHONY: deps
-update-deps:
+deps:
 	@udd denops/gh/deps.ts
