@@ -52,7 +52,7 @@ test({
     );
     await assertEqualTextFile(file, actual.join("\n") + "\n");
   },
-  timeout: 3000,
+  timeout: 30000,
 });
 
 test({
@@ -85,7 +85,7 @@ test({
       await actionUpdateIssue(denops, ctx);
     }
   },
-  timeout: 3000,
+  timeout: 30000,
 });
 
 test({
@@ -101,7 +101,7 @@ test({
     const want = "https://github.com/skanehira/test/issues/27";
     assertEquals(got, want);
   },
-  timeout: 5000,
+  timeout: 30000,
 });
 
 test({
@@ -120,7 +120,7 @@ test({
     );
     await assertEqualFile(file, actual);
   },
-  timeout: 5000,
+  timeout: 30000,
 });
 
 test({
@@ -164,6 +164,7 @@ test({
       await denops.call("getline", 1, "$"),
     );
   },
+  timeout: 30000,
 });
 
 test({
@@ -186,6 +187,7 @@ test({
       await actionUpdateAssignees(denops, ctx);
     }
   },
+  timeout: 30000,
 });
 
 test({
@@ -207,6 +209,7 @@ test({
       await actionUpdateLabels(denops, ctx);
     }
   },
+  timeout: 30000,
 });
 
 test({
@@ -217,13 +220,13 @@ test({
     await main(denops);
     await loadAutoload(denops);
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.data = { filters: "state:closed" };
+    ctx.data = { filters: "state:closed assignee:skanehira" };
     await actionListIssue(denops, ctx);
     await denops.call("feedkeys", "ghan");
-    await delay(300);
+    await delay(1000);
     assertEquals(await denops.call("getline", 1, "$"), ["skanehira"]);
   },
-  timeout: 5000,
+  timeout: 30000,
 });
 
 test({
@@ -234,16 +237,16 @@ test({
     await main(denops);
     await loadAutoload(denops);
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.data = { filters: "state:closed" };
+    ctx.data = { filters: "is:open label:bug" };
     await actionListIssue(denops, ctx);
     await denops.call("feedkeys", "ghln");
-    await delay(300);
+    await delay(1000);
     assertEquals(await denops.call("getline", 1, "$"), [
       "bug",
       "documentation",
     ]);
   },
-  timeout: 5000,
+  timeout: 30000,
 });
 
 test({
@@ -257,6 +260,7 @@ test({
     await actionListIssueComment(denops, ctx);
     assertEquals(await denops.call("getline", 1), "");
   },
+  timeout: 30000,
 });
 
 test({
@@ -285,6 +289,7 @@ test({
       await actionUpdateIssueComment(denops, ctx);
     }
   },
+  timeout: 30000,
 });
 
 test({
@@ -295,13 +300,13 @@ test({
     await main(denops);
     await loadAutoload(denops);
     const ctx = newActionContext("gh://skanehira/test/issues");
-    ctx.data = { filters: "state:closed" };
+    ctx.data = { filters: "is:open title:テスト" };
     await actionListIssue(denops, ctx);
     await denops.call("feedkeys", "ghmn");
-    await delay(300);
+    await delay(1000);
     assertEquals(await denops.call("getline", 1, "$"), ["@skanehira test"]);
   },
-  timeout: 5000,
+  timeout: 30000,
 });
 
 test({
@@ -318,6 +323,7 @@ test({
     const actual = await denops.call("getline", 1, "$");
     assertEquals(actual, ["@skanehira this is it"]);
   },
+  timeout: 30000,
 });
 
 test({
@@ -343,6 +349,7 @@ test({
     );
     await assertEqualTextFile(file, actual);
   },
+  timeout: 30000,
 });
 
 test({
@@ -368,6 +375,7 @@ test({
     );
     await assertEqualTextFile(file, actual);
   },
+  timeout: 30000,
 });
 
 test({
@@ -384,7 +392,7 @@ test({
       "https://github.com/skanehira/test/issues/26#issuecomment-986833117";
     assertEquals(got, expect);
   },
-  timeout: 5000,
+  timeout: 30000,
 });
 
 test({
@@ -408,4 +416,5 @@ test({
     await denops.call("setline", 1, ["test2"]);
     await actionUpdateIssueTitle(denops, cloneCtx);
   },
+  timeout: 30000,
 });
