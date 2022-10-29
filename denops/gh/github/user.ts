@@ -1,5 +1,4 @@
 import { GetUsers } from "./schema.ts";
-import { gql } from "../deps.ts";
 import { request } from "./api.ts";
 import {
   SearchUsersQuery,
@@ -7,7 +6,7 @@ import {
   UserFragment,
 } from "./graphql/operations.ts";
 
-export const fragmentUser = gql`
+export const fragmentUser = `
 fragment user on User {
   id
   login
@@ -16,7 +15,7 @@ fragment user on User {
 }
 `;
 
-const querySearchUsers = gql`
+const querySearchUsers = `
 ${fragmentUser}
 
 query searchUsers($user: String!) {

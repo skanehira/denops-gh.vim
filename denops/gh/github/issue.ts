@@ -1,5 +1,4 @@
 import { octokit, request } from "./api.ts";
-import { gql } from "../deps.ts";
 import {
   GetIssueCommentsQuery,
   GetIssueCommentsQueryVariables,
@@ -22,7 +21,7 @@ function ensureNonEmptyIssue(
   return Object.keys(issue).length > 0;
 }
 
-const fragmentIssueBody = gql`
+const fragmentIssueBody = `
 ${fragmentLabelBody}
 
 ${fragmentUser}
@@ -59,7 +58,7 @@ fragment issueBody on Issue {
 }
 `;
 
-const queryGetIssue = gql`
+const queryGetIssue = `
 ${fragmentIssueBody}
 
 query getIssue($owner: String!, $repo: String!, $number: Int!) {
@@ -71,7 +70,7 @@ query getIssue($owner: String!, $repo: String!, $number: Int!) {
 }
 `;
 
-const queryGetIssues = gql`
+const queryGetIssues = `
 ${fragmentIssueBody}
 
 query getIssues($first: Int!, $filter: String!) {
@@ -150,7 +149,7 @@ export async function getIssue(
   return resp.repository.issue;
 }
 
-const updateIssueMutation = gql`
+const updateIssueMutation = `
 ${fragmentIssueBody}
 
 mutation UpdateIssue($id: ID!, $title: String, $state: IssueState, $body: String, $labelIds: [ID!], $assigneeIds: [ID!]){
@@ -227,7 +226,7 @@ export async function updateIssueComment(args: {
   return resp;
 }
 
-const fragmentIssueComment = gql`
+const fragmentIssueComment = `
 fragment issueComment on IssueCommentConnection {
   nodes {
     databaseId
@@ -244,7 +243,7 @@ fragment issueComment on IssueCommentConnection {
 }
 `;
 
-const queryGetIssueComments = gql`
+const queryGetIssueComments = `
 ${fragmentIssueComment}
 
 query getIssueComments($owner: String!, $name: String!, $number: Int!) {

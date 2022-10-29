@@ -1,6 +1,5 @@
 import { request } from "./api.ts";
 import { GetLabels } from "./schema.ts";
-import { gql } from "../deps.ts";
 import {
   GetAssignableUsersQuery,
   GetAssignableUsersQueryVariables,
@@ -16,14 +15,14 @@ import {
 } from "./graphql/operations.ts";
 import { fragmentUser } from "./user.ts";
 
-const fragmentIssueTemplateBody = gql`
+const fragmentIssueTemplateBody = `
 fragment issueTemplateBody on IssueTemplate {
   name
   body
 }
 `;
 
-const queryGetIssueTemplates = gql`
+const queryGetIssueTemplates = `
 ${fragmentIssueTemplateBody}
 
 query getIssueTemplates($owner: String!, $name: String!) {
@@ -67,7 +66,7 @@ export async function getIssueTemplate(args: {
   return templates;
 }
 
-const queryGetMentionableUsers = gql`
+const queryGetMentionableUsers = `
 ${fragmentUser}
 
 query getMentionableUsers($owner: String!, $name: String!, $word: String!) {
@@ -104,7 +103,7 @@ export async function getMentionableUsers(args: {
   return resp.repository.mentionableUsers.nodes;
 }
 
-const queryGetAssignableUsers = gql`
+const queryGetAssignableUsers = `
 ${fragmentUser}
 
 query getAssignableUsers($owner: String!, $name: String!, $word: String!) {
@@ -141,7 +140,7 @@ export async function getAssignableUsers(args: {
   return resp.repository.assignableUsers.nodes;
 }
 
-export const fragmentLabelBody = gql`
+export const fragmentLabelBody = `
 fragment labelBody on Label {
   name
   color
@@ -149,7 +148,7 @@ fragment labelBody on Label {
 }
 `;
 
-const querySearchLabels = gql`
+const querySearchLabels = `
 ${fragmentLabelBody}
 
 query searchLabels($owner: String!, $name: String!, $word: String!) {
