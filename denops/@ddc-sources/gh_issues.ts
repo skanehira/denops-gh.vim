@@ -1,11 +1,11 @@
 import {
   BaseSource,
-  Candidate,
   Context,
   DdcOptions,
+  Item,
   SourceOptions,
-} from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
-import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
+} from "https://deno.land/x/ddc_vim@v3.0.0/types.ts";
+import { Denops } from "https://deno.land/x/ddc_vim@v3.0.0/deps.ts";
 import { getIssues } from "../gh/github/issue.ts";
 import { getMentionableUsers } from "../gh/github/repository.ts";
 import { getActionCtx } from "../gh/action.ts";
@@ -19,16 +19,13 @@ type Params = {
   maxSize: number;
 };
 
-export const issueCache = new Map<string, Candidate<IssueBodyFragment>>();
-export const userCache = new Map<
-  string,
-  Candidate<UserFragment>
->();
+export const issueCache = new Map<string, Item<IssueBodyFragment>>();
+export const userCache = new Map<string, Item<UserFragment>>();
 
 export const getCandidates = async (
   denops: Denops,
   word: string,
-): Promise<Candidate<IssueBodyFragment | UserFragment>[]> => {
+): Promise<Item<(IssueBodyFragment | UserFragment)>[]> => {
   const completeIssue = word?.at(0) === "#";
   const action = await getActionCtx(denops);
 
@@ -58,13 +55,14 @@ export const getCandidates = async (
     );
 
     const candidates = result!.map((issue) => {
-      return {
+      const candidate: Item<IssueBodyFragment> = {
         word: String(issue.number),
         info: issue.body.replaceAll("\r\n", "\n"),
         kind: "[Issue]",
         menu: issue.title,
         user_data: issue,
       };
+      return candidate;
     });
     for (const can of candidates) {
       issueCache.set(can.word, can);
@@ -113,14 +111,14 @@ export const getCandidates = async (
 
 export class Source
   extends BaseSource<Params, IssueBodyFragment | UserFragment> {
-  async gatherCandidates(args: {
+  async gather(args: {
     denops: Denops;
     context: Context;
     options: DdcOptions;
     sourceOptions: SourceOptions;
     sourceParams: Params;
     completeStr: string;
-  }): Promise<Candidate<IssueBodyFragment | UserFragment>[]> {
+  }): Promise<Item<IssueBodyFragment | UserFragment>[]> {
     try {
       const pos = await args.denops.call("getcurpos") as number[];
       const col = pos[2];

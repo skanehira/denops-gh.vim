@@ -1,6 +1,7 @@
-import { Candidate } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
+import { Denops } from "https://deno.land/x/ddc_vim@v3.0.0/deps.ts";
+import { Item } from "https://deno.land/x/ddc_vim@v3.0.0/types.ts";
 import { getCandidates, issueCache, userCache } from "./gh_issues.ts";
-import { Denops, path, test } from "../gh/deps.ts";
+import { path, test } from "../gh/deps.ts";
 import { setActionCtx } from "../gh/action.ts";
 import { assertEqualFile, parseJSON } from "../gh/utils/test.ts";
 import {
@@ -45,7 +46,7 @@ test({
         "want_candidate_issue_list.json",
       );
 
-      const candidates = await parseJSON<Candidate<IssueBodyFragment>[]>(
+      const candidates = await parseJSON<Item<IssueBodyFragment>[]>(
         cache,
       );
       for (const c of candidates) {
@@ -102,7 +103,7 @@ test({
         "want_candidate_user_list.json",
       );
 
-      const candidates = await parseJSON<Candidate<UserFragment>[]>(
+      const candidates = await parseJSON<Item<UserFragment>[]>(
         cache,
       );
       for (const c of candidates) {

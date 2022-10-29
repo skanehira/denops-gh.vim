@@ -1,5 +1,5 @@
-import { Candidate } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
-import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
+import { Denops } from "https://deno.land/x/ddc_vim@v3.0.0/deps.ts";
+import { Item } from "https://deno.land/x/ddc_vim@v3.0.0/types.ts";
 import {
   getAssignableUsers,
   getMentionableUsers,
@@ -8,16 +8,16 @@ import { ActionContext } from "../gh/action.ts";
 import { UserFragment } from "../gh/github/graphql/operations.ts";
 import { inprogress } from "../gh/utils/helper.ts";
 
-export const mentionableUserCache = new Map<string, Candidate<UserFragment>>();
-export const assignableUserCache = new Map<string, Candidate<UserFragment>>();
+export const mentionableUserCache = new Map<string, Item<UserFragment>>();
+export const assignableUserCache = new Map<string, Item<UserFragment>>();
 
 export async function getUserList(
   denops: Denops,
   ctx: ActionContext,
   kind: "assignee" | "mentions" | "author",
   word: string,
-): Promise<Candidate<UserFragment>[]> {
-  let cache: Map<string, Candidate<UserFragment>>;
+): Promise<Item<UserFragment>[]> {
+  let cache: Map<string, Item<UserFragment>>;
   let getUserFn: (args: {
     endpoint?: string;
     repo: {

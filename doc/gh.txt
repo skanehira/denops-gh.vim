@@ -377,7 +377,7 @@ NOTE: Also you can use 'github.com/matsui54/denops-popup-preview.vim'
       let option = {
             \ 'gh_issues_assginees': {
               \  'minAutoCompleteLength': 1,
-              \ }})
+              \ }}
     endif
     call ddc#custom#patch_buffer('sourceOptions', option)
   endfunction

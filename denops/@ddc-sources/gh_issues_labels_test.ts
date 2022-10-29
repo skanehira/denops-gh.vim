@@ -1,4 +1,4 @@
-import { Candidate } from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
+import { Item } from "https://deno.land/x/ddc_vim@v3.0.0/types.ts";
 import { LabelBodyFragment } from "../gh/github/graphql/operations.ts";
 import { Denops, path, test } from "../gh/deps.ts";
 import { getRepoLabels, labelCache } from "./gh_issues_labels.ts";
@@ -50,7 +50,7 @@ test({
         "cache_candidate_label_list.json",
       );
 
-      const candidates = await parseJSON<Candidate<LabelBodyFragment>[]>(cache);
+      const candidates = await parseJSON<Item<LabelBodyFragment>[]>(cache);
       for (const c of candidates) {
         labelCache.set(c.word, c);
       }

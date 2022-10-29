@@ -1,23 +1,23 @@
 import {
   BaseSource,
-  Candidate,
   Context,
   DdcOptions,
+  Item,
   SourceOptions,
-} from "https://deno.land/x/ddc_vim@v0.15.0/types.ts#^";
-import { Denops } from "https://deno.land/x/ddc_vim@v0.15.0/deps.ts#^";
+} from "https://deno.land/x/ddc_vim@v3.0.0/types.ts";
+import { Denops } from "https://deno.land/x/ddc_vim@v3.0.0/deps.ts";
 import { LabelBodyFragment } from "../gh/github/graphql/operations.ts";
 import { searchLabels } from "../gh/github/repository.ts";
 import { ActionContext, getActionCtx } from "../gh/action.ts";
 import { inprogress, trim } from "../gh/utils/helper.ts";
 
-export const labelCache = new Map<string, Candidate<LabelBodyFragment>>();
+export const labelCache = new Map<string, Item<LabelBodyFragment>>();
 
 export async function getRepoLabels(
   denops: Denops,
   ctx: ActionContext,
   word: string,
-): Promise<Candidate<LabelBodyFragment>[]> {
+): Promise<Item<LabelBodyFragment>[]> {
   // if label has white space, query must be sourround by `"`,
   // so, if user typed query contains `"` both ends, isn't be used seraching label.
   word = trim(word, `"`);
@@ -66,14 +66,14 @@ type Params = {
 };
 
 export class Source extends BaseSource<Params, LabelBodyFragment> {
-  async gatherCandidates(args: {
+  async gather(args: {
     denops: Denops;
     context: Context;
     options: DdcOptions;
     sourceOptions: SourceOptions;
     sourceParams: Params;
     completeStr: string;
-  }): Promise<Candidate<LabelBodyFragment>[]> {
+  }): Promise<Item<LabelBodyFragment>[]> {
     const pos = await args.denops.call("getcurpos") as number[];
     const col = pos[2];
     const word = args.context.input.substring(0, col).split(" ").at(-1);
