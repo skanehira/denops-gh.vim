@@ -22,6 +22,7 @@ import {
   actionUpdateIssueTitle,
   actionUpdateLabels,
   actionViewIssue,
+actionViewIssueComment,
 } from "./action_issue.ts";
 import { IssueBodyFragment } from "./github/graphql/operations.ts";
 
@@ -51,6 +52,7 @@ export const actionTypes = [
   "comments:create",
   "comments:preview",
   "comments:update",
+  "comments:view",
 ] as const;
 
 export type ActionType = typeof actionTypes[number];
@@ -128,5 +130,6 @@ export const actionStore = new Map<ActionType, ActionFn>(
     ["comments:new", actionNewIssueComment],
     ["comments:create", actionCreateIssueComment],
     ["comments:preview", actionPreview],
+    ["comments:view", actionViewIssueComment],
   ],
 );

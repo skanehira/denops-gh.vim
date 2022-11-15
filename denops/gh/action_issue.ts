@@ -793,6 +793,11 @@ export async function actionListIssueComment(
           rhs: `:<C-u>call gh#_action("comments:preview")<CR>`,
         },
         {
+          defaultKey: "<C-o>",
+          lhs: "<Plug>(gh:issue:comment:view)",
+          rhs: `:<C-u>call gh#_action("comments:view")<CR>`,
+        },
+        {
           defaultKey: "ghy",
           lhs: "<Plug>(gh:issue:comment:yank)",
           rhs: `:<C-u>call gh#_action("comments:yank")<CR>`,
@@ -904,6 +909,23 @@ export async function actionCreateIssueComment(
   });
 
   await denops.cmd("bw!");
+}
+
+export async function actionViewIssueComment(
+  denops: Denops,
+  ctx: ActionContext,
+): Promise<void> {
+  const { nodes } = ensureIssueCommentList(ctx.data);
+  const idxs = await denops.call("gh#_get_selected_idx") as number[];
+  if (!idxs.length) {
+    const idx = (await denops.call("line", ".") as number) - 1;
+    idxs.push(idx);
+  }
+  for (const idx of idxs) {
+    const comment = nodes[idx];
+    open(comment.url);
+  }
+  await denops.call("gh#_clear_selected");
 }
 
 async function getIssueFromCtx(
