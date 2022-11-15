@@ -261,6 +261,9 @@ KEY-MAPPINGS                              *gh-key-mappings*
   If you want to see newest comment body,
   please reload |gh-buffer-issue-comment-list|.
 
+<Plug>(gh:issue:comment:view)             *<Plug>(gh:issue:comment:view)*
+  View issue comment in browser.
+
 <Plug>(gh:issue:open)                     *<Plug>(gh:issue:open)*
   Open issue.
 
@@ -325,6 +328,7 @@ DEFAULT-KEY-MAPPINGS                      *gh-default-key-mappings*
                               normal     <C-J>     <Plug>(gh:issue:comment:select:next)
                               normal     <C-K>     <Plug>(gh:issue:comment:select:prev)
                               normal     ghy       <Plug>(gh:issue:comment:yank)
+                              normal     <C-O>     <Plug>(gh:issue:comment:view)
 
 --------------------------------------------------------------------
 FUNCTIONS                                 *gh-functions*
