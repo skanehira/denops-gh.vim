@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/skanehira/denops-gh.vim#readme",
   "dependencies": {
-    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/cli": "^2.16.5",
     "@graphql-codegen/import-types-preset": "^2.1.18",
     "@graphql-codegen/typescript": "^2.4.11",
     "@graphql-codegen/typescript-operations": "^2.4.0",
